@@ -1,0 +1,184 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="rightbarChanged($event)"
+    [(isVisible)]="openassets"
+    title="Assets Count"
+  >
+    <ng-container class="modal-content">
+      <div style="padding-top: 32px">
+        <div *ngFor="let item of assets">
+          <h4 class="amber-text">{{ item.key }}</h4>
+          <div *ngFor="let data of item.value">
+            <h4 class="white-text text-lighten-3">
+              {{ data.label }} :
+              <a (click)="viewAsset(data)"
+                ><span class="amber-text"> {{ data.assetcount }}</span></a
+              >
+            </h4>
+          </div>
+          &nbsp;
+        </div>
+      </div>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <nz-tabset [nzSelectedIndex]="tabIndex" (nzSelectChange)="TagtabChange($event)">
+      <nz-tab nzTitle="Tags">
+        <div class="param-table" style="margin-top: 0px">
+          <div class="row">
+            <div class="col s12 m2 left left-align">
+              <button
+                *ngIf="createTag"
+                nz-button
+                nzType="primary"
+                (click)="showAddForm('tag')"
+              >
+                <i class="anticon anticon-plus"></i>Add
+              </button>
+            </div>
+
+            <app-cloudmatiq-data-table
+              (dataChanged)="tagDataChanged($event)"
+              [tableData]="tagList"
+              [tableHeader]="tableHeader"
+              [selectedcolumns]="selectedcolumns"
+              [tableConfig]="tableConfig"
+              [totalCount]="totalCount"
+            ></app-cloudmatiq-data-table>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Tag Groups">
+        <div class="row">
+          <div nz-col nz-span="4" class="left">
+            <button
+              *ngIf="tagGroupList.length > 0"
+              nz-button
+              nzType="primary"
+              (click)="isGroupHierarchyVisible = true"
+              style="position: relative; top: 12px"
+            >
+              <i class="anticon anticon-swap"></i>Rearrange Group
+            </button>
+          </div>
+          <div nz-col nz-span="4" class="right right-align">
+            <button
+              nz-button
+              nzType="primary"
+              (click)="router.navigate(['tagmanager/creategroup'])"
+            >
+              <i class="anticon anticon-plus"></i>Create Group
+            </button>
+          </div>
+        </div>
+        <div class="param-table" style="margin-top: 0px">
+          <app-cloudmatiq-data-table
+          *ngIf="tabIndex == 1"
+            (dataChanged)="tagGroupDataChanged($event)"
+            [tableData]="tagGroupList"
+            [tableHeader]="tagGroupableHeader"
+            [selectedcolumns]="tagGroupSelectedColumns"
+            [tableConfig]="tableConfig"
+            [totalCount]="totalCount"
+          ></app-cloudmatiq-data-table>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </ng-container>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-tag-add-edit
+        [tagObj]="tagObj"
+        (notifyTagEntry)="notifyTagEntry($event)"
+      >
+      </app-cloudmatiq-tag-add-edit>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onChanged($event)"
+    [(isVisible)]="isGroupHierarchyVisible"
+    [title]="'Rearrange Group'"
+  >
+    <ng-container class="modal-content">
+      <div style="margin-bottom: 19px">
+        <nz-input-group [nzAddOnAfter]="addOnAfterTemplate">
+          <input
+            style="margin-left: 4px !important"
+            nz-input
+            placeholder="Folder Name"
+            [(ngModel)]="folderName"
+          />
+        </nz-input-group>
+        <span style="border-bottom: none !important">
+          <ng-template
+            #addOnAfterTemplate
+            style="border-bottom: none !important"
+          >
+            <button
+              (click)="createFolder()"
+              nz-button
+              nzType="primary"
+              style="margin-bottom: 0 !important; font-size: 10px !important"
+            >
+              <i
+                class="anticon anticon-plus"
+                style="font-size: 9px !important"
+              ></i>
+            </button>
+          </ng-template>
+        </span>
+      </div>
+      <tree-root [nodes]="nodes" [options]="treeOptions">
+        <ng-template
+          #treeNodeTemplate
+          let-node
+          let-index="index"
+          let-templates="templates"
+        >
+          <span *ngIf="node.isLeaf" style="color: white !important">{{
+            node.data.name
+          }}</span>
+          <div
+            *ngIf="!node.isLeaf"
+            (contextmenu)="contextMenu($event, treeMenu)"
+          >
+            <span style="color: white !important" *ngIf="node.edit">
+              <input
+                class="inline-input"
+                type="text"
+                [(ngModel)]="node.data.name"
+                (keydown.enter)="node.edit = false"
+              />
+            </span>
+            <span
+              style="color: #1890ff !important; font-weight: bold"
+              *ngIf="!node.edit"
+            >
+              {{ node.data.name }}
+            </span>
+            <ng-template #treeMenu>
+              <ul nz-menu nzInDropDown>
+                <li nz-menu-item (click)="node.edit = true; dropdown.close()">
+                  Edit
+                </li>
+                <li nz-menu-item (click)="deleteTree(node)">Delete</li>
+              </ul>
+            </ng-template>
+          </div>
+        </ng-template>
+      </tree-root>
+      <button
+        style="position: fixed; bottom: 0px; right: 9px"
+        [nzLoading]="savingStructure"
+        (click)="saveTree()"
+        nz-button
+      >
+        Save
+      </button>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+</app-cloudmatiq-side-nav>

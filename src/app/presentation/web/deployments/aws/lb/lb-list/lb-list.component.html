@@ -1,0 +1,44 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <div class="col s12 m3 mt-1">
+      <nz-select
+        nzShowSearch
+        placeholder="Select Provider"
+        nzPlaceHolder="Select Provider"
+        [(ngModel)]="provider"
+        style="width: 22%"
+        (ngModelChange)="onChange($event)"
+      >
+        <nz-option
+          *ngFor="let i of providerList"
+          [nzLabel]="i.keyname"
+          [nzValue]="i.keyvalue"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div
+      class="param-table"
+      style="margin-top: 0px"
+      *ngIf="awslbList.length != 0"
+    >
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="awslbList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+    </div>
+    <div
+      class="param-table"
+      style="margin-top: 0px"
+      *ngIf="awslbList.length == 0"
+    >
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="awslbList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

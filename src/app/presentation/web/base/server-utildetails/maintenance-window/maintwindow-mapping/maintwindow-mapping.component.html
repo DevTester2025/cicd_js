@@ -1,0 +1,85 @@
+<div>
+  <nz-spin [nzSpinning]="loading" [nzTip]="loadermessage" [nzSize]="'large'">
+    <app-cloudmatiq-side-bar
+      *ngIf="viewMaintwindow"
+      [width]="820"
+      (dataChanged)="viewMaintwindow = false"
+      [(isVisible)]="viewMaintwindow"
+      title="Maintenance Window"
+    >
+      <ng-container class="modal-content">
+        <app-add-edit-window
+          [windowObj]="windowObj"
+          (notifyEntry)="viewMaintwindow = false"
+        >
+        </app-add-edit-window>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <app-cloudmatiq-side-bar
+      (dataChanged)="addmaintwindowmap = false"
+      [width]="450"
+      [(isVisible)]="addmaintwindowmap"
+      title="Add Maintenance Window"
+    >
+      <ng-container class="modal-content">
+        <div nz-row>
+          <div nz-cols nzSpan="24">
+            <nz-select
+              style="width: 100%"
+              [(ngModel)]="maintwindowid"
+              (ngModelChange)="onMaintwindowSelect($event)"
+              nzShowSearch
+              nzPlaceHolder="Select"
+            >
+              <nz-option
+                *ngFor="let option of maintwindowList"
+                [nzLabel]="option.windowname"
+                [nzValue]="option.maintwindowid"
+              >
+              </nz-option>
+            </nz-select>
+          </div>
+          <!-- <div nz-cols nzSpan="24" *ngIf="metaData" style="padding-top: 89px;">
+          <div *ngFor="let item of metaData | keyvalue">
+            <h5 class="white-text text-lighten-3 ml-1">
+              {{ item.key }} :
+              <span class="grey-text"> {{ item.value }}</span>
+            </h5>
+          </div>
+        </div> -->
+        </div>
+        <div class="row right">
+          <div class="col s12 md4">
+            <button
+              (click)="save()"
+              class="save-button"
+              nz-button
+              [nzLoading]="disabled"
+              nzType="primary"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+
+    <button
+      class="col s12 m2 right right-align mt-1"
+      (click)="addmaintwindowmap = true; maintwindowid = null"
+      nz-button
+    >
+      Add
+    </button>
+    <app-cloudmatiq-data-table
+      [tableData]="maintwindowMapList"
+      [tableHeader]="tableHeader"
+      [tableConfig]="tableConfig"
+      (dataChanged)="dataChanged($event)"
+    >
+    </app-cloudmatiq-data-table>
+    <div>
+      <p class="count-container">Total Records : {{totalCount}}</p>
+  </div>
+  </nz-spin>
+</div>

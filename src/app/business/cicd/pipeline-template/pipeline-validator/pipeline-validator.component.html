@@ -1,0 +1,80 @@
+<div nz-row>
+  <div nz-row class="worflowSetting" *ngIf="isOrchestration">
+    <div nz-col nzSpan="22">
+      <span>
+        {{
+          !orchname
+            ? "Orchestration name is missing"
+            : "Orchestration name: " + orchname
+        }}</span
+      >
+    </div>
+    <div nz-col nzSpan="2" class="text-end">
+      <span class="fail-text" *ngIf="!orchname">
+        <i class="anticon anticon-close-circle"></i>
+      </span>
+      <span class="success-text" *ngIf="orchname">
+        <i class="anticon anticon-check-circle"></i>
+      </span>
+    </div>
+  </div>
+  <div class="node-container">
+    <nz-timeline>
+      <nz-timeline-item
+        *ngFor="let node of nodes"
+        [nzDot]="dotTemplate"
+        [ngClass]="{
+          'node-pass-border': node.status === 'PASS',
+          'node-fail-border': node.status === 'FAIL',
+          'node-validation-fail' : node.nodeValid.status === 'FAIL'
+        }"
+      >
+        <ng-container>
+          {{ formatNodeName(node.name) }} ({{node.nodename}})
+          <div class="inline-end">
+            <span
+              class="node-container-view cursor-pointer m-r-3"
+            >
+              {{ node.passnode }}
+              <span class="success-text">
+                <i class="anticon anticon-check-circle"></i>
+              </span>
+            </span>
+            <span
+              *ngIf="node.failnode > 0"
+              class="node-container-view cursor-pointer"
+            >
+              {{ node.failnode }}
+              <span class="fail-text">
+                <i class="anticon anticon-close-circle"></i>
+              </span>
+            </span>
+          </div>
+          <div *ngIf="isOrchestration && node.referenceType !==''">
+            <span class="amber-text">Name: {{ node.referenceType }}</span>
+          </div>
+          <div class="validation-errors">
+            <div
+              *ngIf="node.status === 'FAIL'"
+              (click)="onFieldChange(node.referenceType)"
+              class="cursor-pointer"
+            >
+              Required Fields: {{ node.failfields }}
+            </div>
+            <div class="node_error">
+             {{ node.nodeValid.error }}
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #dotTemplate>
+          <ng-container *ngIf="isOrchestration">
+            <i class="fa fa-icon" [ngClass]="node.svgImg"></i>
+          </ng-container>
+          <ng-container *ngIf="!isOrchestration">
+            <img [src]="node.svgImg" alt="node-img" class="node-img" />
+          </ng-container>
+        </ng-template>
+      </nz-timeline-item>
+    </nz-timeline>
+  </div>
+</div>

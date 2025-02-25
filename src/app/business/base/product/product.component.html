@@ -1,0 +1,45 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+    <app-cloudmatiq-side-bar
+    (dataChanged)="rightbarChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-product-add-edit
+      [productObj]="productObj"
+      (notifyProductEntry)="notifyProductEntry();
+      isVisible = false"
+      >
+
+      </app-cloudmatiq-product-add-edit>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+    <ng-container class="page-body">
+      <div class="row param-table">
+        <div class="row">
+          <div class="col s12 m2 left left-align">
+            <button
+            *ngIf="createProduct"
+              nz-button
+              nzType="primary"
+              (click)="showAddForm()"
+            >
+              <i class="anticon anticon-plus"></i>Add
+            </button>
+          </div>
+  
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="productList"
+            [tableHeader]="tableHeader"
+            [selectedcolumns]="selectedcolumns"
+            [tableConfig]="tableconfig"
+            [totalCount]="totalCount"
+          ></app-cloudmatiq-data-table>
+          <div>
+            <p class="count-container">Total Records : {{totalCount}}</p>
+        </div>
+        </div>
+      </div>
+    </ng-container>
+  </app-cloudmatiq-side-nav>

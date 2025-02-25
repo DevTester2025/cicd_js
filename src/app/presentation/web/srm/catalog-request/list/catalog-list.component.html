@@ -1,0 +1,181 @@
+<div class="row data-table card-toggle-btn">
+  <div>
+    <button
+    nz-button
+    (click)="refresh()"
+    style="border-radius: 10px;"
+    class="publish-button right right-align"
+    title="Reload"
+  >
+    <i class="anticon anticon-reload"></i>
+  </button>
+  </div>
+  <div class="col s12 m2 right mr-0">
+    <nz-input-group nzAddOnAfterIcon="anticon anticon-search">
+      <input
+        type="search"
+        nz-input
+        [(ngModel)]="searchText"
+        (ngModelChange)="globalSearch($event)"
+        placeholder="Search"
+        title="Click to search"
+      />
+    </nz-input-group>
+  </div>
+  <div class="col s12 m6 left ml-0">
+    <button
+      (click)="listType = 'card'"
+      [ngClass]="{ 'active-btn': listType === 'card' }"
+      nz-button
+      nzType="primary"
+      title="Card View"
+    >
+      <i class="anticon anticon-appstore"></i>
+    </button>
+    <button
+      (click)="listType = 'list'"
+      [ngClass]="{ 'active-btn': listType === 'list' }"
+      nz-button
+      nzType="primary"
+      title="List View"
+    >
+      <i class="anticon anticon-bars"></i>
+    </button>
+  </div>
+</div>
+<div class="col s24 m6 ml-0">
+  <button nz-button nzType="primary" *ngIf="downloadflag" (click)="download()" title="Download">
+    <i class="anticon anticon-download"></i>
+  </button>
+</div>
+<div *ngIf="listType == 'card'" class="row">
+  <div *ngFor="let service of cardViewList; index as i">
+    <div class="ant-card" [ngClass]="{ 'ant-card-margin': checkIndex(i) }">
+      <nz-card class="ant-card-view">
+        <div class="card-image">
+          <p class="logo-name">
+            {{ service.catalogname?.substring(0, 1) }}
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="title card-title">{{ service.catalogname }}</div>
+          <div class="sub-title">
+            <div>
+              <div class="t1">Group Name</div>
+              <div>: {{ service.group_name }}</div>
+            </div>
+            <div>
+              <div class="t1">End Date</div>
+              <div>: {{ service.enddate | date: "dd-MMM-yyyy" }}</div>
+            </div>
+            <div>
+              <div class="t1">Request Type</div>
+              <div>: {{ service.referencetype }}</div>
+            </div>
+            <div>
+              <div class="t1">Created Date</div>
+              <div>: {{ service.createddt | date: "dd-MMM-yyyy" }}</div>
+            </div>
+          </div>
+          <div class="actions">
+            <a
+              *ngIf="createServiceFlag"
+              title="Create Request"
+              (click)="selected(service)"
+            >
+              <i class="anticon anticon-plus" style="color: #ffcc00"></i
+              >&nbsp;&nbsp;
+            </a>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+</div>
+<div class="count-container" *ngIf="listType == 'card'">
+  <p style="color:#ffcc00;">Total Records: {{pageTotal}}</p>
+</div>
+<div *ngIf="listType == 'card'" class="card-paginator">
+  <nz-pagination
+    [nzPageIndex]="1"
+    [nzTotal]="pageTotal"
+    [nzPageSize]="9"
+    [nzShowTotal]="totalTemplate"
+    (nzPageIndexChange)="onPageChange($event)"
+  ></nz-pagination>
+</div>
+<div *ngIf="listType == 'list'" class="row table-section">
+  <nz-table
+    #serviceTable
+    [nzData]="serviceList"
+    nzSize="middle"
+    [nzWidthConfig]="widthConfig"
+    [nzLoading]="loading"
+    nzShowSizeChanger 
+    [nzPageSizeOptions]="pageCount" 
+    (nzPageSizeChange)="onPageSizeChange($event)"
+    >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th id="Thumbnail" class="left-align">Thumbnail</th>
+        <th id="Group_Name" class="left-align" nzShowSort nzSortKey="group_name">Group Name</th>
+        <th id="Service_Name" class="left-align" nzShowSort nzSortKey="servicename">
+          Service Name
+        </th>
+        <th id="Characteristics" class="left-align" nzShowSort nzSortKey="description">
+          Characteristics
+        </th>
+        <th id="Updated_By" class="left-align" nzShowSort nzSortKey="lastupdatedby">
+          Updated By
+        </th>
+        <th id="Updated_On" class="left-align" nzShowSort nzSortKey="lastupdateddt">
+          Updated On
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of serviceTable.data">
+        <td
+          class="left-align"
+          (click)="onPreview(data.catalogimage, 'Service Image')"
+        >
+          <img class="imgs" [src]="data.catalogimage" alt=Preview-Image />
+        </td>
+        <td class="left-align">{{ data.group_name }}</td>
+        <td class="left-align" style="width: 20%">
+          <a
+            *ngIf="createServiceFlag"
+            style="color: #ffcc00"
+            (click)="selected(data)"
+            >{{ data.servicename }}</a
+          >
+          <span *ngIf="!createServiceFlag">{{ data.servicename }}</span>
+        </td>
+        <td class="left-align" style="width: 25%">{{ data.description }}</td>
+        <td class="left-align">{{ data.lastupdatedby }}</td>
+        <td class="left-align">
+          {{ data.lastupdateddt | date: "dd-MMM-yyyy hh:mm:ss" }}
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <div class="count-container">
+    <p style="color:#ffcc00;">Total Records: {{pageTotal}}</p>
+  </div>
+  <nz-modal
+    [nzVisible]="previewVisible"
+    [nzTitle]="previewTitle"
+    [nzContent]="modalContent"
+    [nzFooter]="modalFooter"
+    [nzClosable]="false"
+  >
+    <ng-template #modalContent>
+      <img [src]="previewImage" [ngStyle]="{ width: '100%' }" alt="Preview-Image" />
+    </ng-template>
+    <ng-template #modalFooter>
+      <button nz-button nzType="default" (click)="previewVisible = false">
+        Close
+      </button>
+    </ng-template>
+  </nz-modal>
+</div>

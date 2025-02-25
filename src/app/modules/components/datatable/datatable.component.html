@@ -1,0 +1,642 @@
+<!-- <nz-card style="width:100%;margin-top: 75px;"> -->
+<div class="row data-table">
+  <div *ngIf="tableConfig.title" class="col s12 m4 left">
+    <h3 class="amber-text">{{ tableConfig.title }}</h3>
+  </div>
+</div>
+<div class="row data-table">
+  <div>
+    <button
+      *ngIf="tableConfig.tabledownload"
+      nz-button
+      style="position: relative; float: left"
+      (click)="downloadCsv()"
+      title="Download as CSV"
+    >
+      <i class="anticon anticon-download"></i>
+    </button>
+    <button
+      *ngIf="tableConfig.refresh"
+      nz-button
+      style="position: relative; float: right"
+      (click)="refresh()"
+      title="Reload"
+    >
+      <i class="anticon anticon-reload"></i>
+    </button>
+    <button
+      *ngIf="tableConfig.overallsync"
+      nz-button
+      style="position: relative; float: right; margin-right: 10px"
+      (click)="sync()"
+      title="Sync"
+    >
+      <i class="anticon anticon-sync"></i>
+    </button>
+    <span class="right">
+      <nz-input-group *ngIf="tableConfig.globalsearch">
+        <input
+          type="search"
+          nz-input
+          [(ngModel)]="searchText"
+          (keyup.enter)="globalSearch(searchText, true)"
+          (ngModelChange)="globalSearch($event)"
+          placeholder="Search"
+          style="width: 80% !important"
+        />
+        <i
+          title="Click to search"
+          class="anticon anticon-search amber-text p-t-10 p-l-5"
+          (click)="globalSearch(searchText, true)"
+        ></i>
+      </nz-input-group>
+    </span>
+  </div>
+  <div
+    *ngIf="tableConfig.manualsorting"
+    class="col s12 m1 right mr-0 data-table"
+    style="margin-top: 11px; padding: 1px; padding-left: 45px"
+  >
+    <i
+      *ngIf="asc == 1"
+      class="anticon hover-pointer amber-text anticon-arrow-up"
+      (click)="onClickOrder()"
+    ></i>
+    <i
+      *ngIf="desc == 1"
+      class="anticon hover-pointer amber-text anticon-arrow-down"
+      (click)="onClickOrder()"
+    ></i>
+  </div>
+  <div
+    *ngIf="tableConfig.manualsorting"
+    class="col s12 m2 right mr-0 data-table"
+  >
+    <nz-select
+      [(ngModel)]="sortby"
+      style="width: 115%"
+      nzAllowClear
+      nzPlaceHolder="Sort By"
+      (ngModelChange)="onSortingChange($event)"
+    >
+      <nz-option
+        *ngFor="let t of tableConfig.sortbyList; index as ti"
+        [nzLabel]="t.header"
+        [nzValue]="t.field"
+      >
+      </nz-option>
+    </nz-select>
+  </div>
+</div>
+<div
+  [style.margin-top]="tableConfig.globalsearch == true ? '5px' : '15px'"
+  class="table-section mb-1"
+>
+  <!-- [nzPageSize]="tableConfig.pageSize" -->
+  <nz-table
+    [nzNoResult]="noResult || 'No Data'"
+    [nzLoading]="tableConfig.loading"
+    [nzWidthConfig]="widthConfig"
+    #dataTable
+    [nzPageSize]="tableConfig.pageSize"
+    [nzData]="tableData"
+    [nzScroll]="tableConfig.scroll"
+    [nzFrontPagination]="
+      tableConfig.frontpagination ? tableConfig.frontpagination : true
+    "
+    [nzShowPagination]="tableConfig.pagination"
+    nzShowSizeChanger
+    [nzPageSizeOptions]="pageCount"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+  >
+    <thead
+      (nzSortChange)="sort($event)"
+      nzSingleSort
+      *ngIf="!tableConfig.apisort"
+    >
+      <tr>
+        <th class="center" *ngIf="tableConfig.selection"></th>
+        <th
+          *ngFor="let col of tableHeader"
+          [nzWidth]="col.width"
+          [style.width]="col.iWidth"
+          [nzShowFilter]="col.filter"
+          [nzFilters]="filterList"
+          nzShowSort
+          nzSortKey="{{ col.field }}"
+        >
+          <i
+            *ngIf="col.isfilter"
+            (click)="openFilterFor(col)"
+            class="anticon anticon-filter"
+            style="margin: 0"
+            title="Filter"
+          ></i>
+          {{ col.header }}
+        </th>
+        <!-- #OP_T620 -->
+        <th
+          class="center"
+          nzRight="0px"
+          *ngIf="
+            tableConfig.edit ||
+            tableConfig.delete ||
+            tableConfig.view ||
+            tableConfig.rightsize ||
+            tableConfig.log ||
+            tableConfig.execute ||
+            tableConfig.progress
+          "
+        >
+          Action
+        </th>
+      </tr>
+    </thead>
+    <thead *ngIf="tableConfig.apisort">
+      <tr>
+        <th class="center" *ngIf="tableConfig.selection"></th>
+        <th
+          *ngFor="let col of selectedcolumns"
+          [nzWidth]="col.width"
+          [style.width]="col.iWidth"
+          [nzShowFilter]="col.filter"
+          [nzFilters]="filterList"
+        >
+          <i
+            *ngIf="col.isfilter"
+            (click)="openFilterFor(col)"
+            class="anticon anticon-filter"
+            style="margin: 0"
+            title="Filter"
+          ></i>
+          {{ col.header }}
+          <ng-container *ngIf="!col.isDisableSort">
+            <i
+              *ngIf="sortby != col.field"
+              (click)="onClickOrder(col.field, 1)"
+              class="fa fa-sort"
+              style="margin: 0"
+              title="Sorting"
+            ></i>
+            <i
+              *ngIf="sortby == col.field && asc == 1"
+              (click)="onClickOrder(col.field, 0)"
+              class="fa fa-sort-alpha-asc"
+              style="margin: 0"
+              title="Asc"
+            ></i>
+            <i
+              *ngIf="sortby == col.field && asc != 1"
+              (click)="onClickOrder(col.field, 1)"
+              class="fa fa-sort-alpha-desc"
+              style="margin: 0"
+              title="Desc"
+            ></i>
+          </ng-container>
+        </th>
+        <th
+          nzWidth="100px"
+          class="center"
+          nzRight="0px"
+          *ngIf="
+            tableConfig.edit ||
+            tableConfig.delete ||
+            tableConfig.view ||
+            tableConfig.rightsize||
+            tableConfig.execute ||
+            tableConfig.accept ||
+            tableConfig.remediation"
+        >
+          Action
+          <ng-template #titleTemplate
+            ><i nz-icon type="close"></i> Columns</ng-template
+          >
+          <ng-template #contentTemplate>
+            <div nz-row style="max-height: 350px; overflow-y: scroll">
+              <div *ngFor="let r of tableHeader" nz-span="6">
+                <label [(ngModel)]="r.isdefault" nz-checkbox>
+                  {{ r.header }}
+                </label>
+              </div>
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="24" class="right-align">
+                <button
+                  (click)="applySelectedColumns()"
+                  nzSize="small"
+                  nz-button
+                  nzType="primary"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </ng-template>
+          <button
+            *ngIf="tableConfig.columnselection"
+            nzSize="small"
+            title="Column Selection"
+            nz-button
+            nzType="primary"
+            nz-popover
+            [nzTitle]="titleTemplate"
+            [nzContent]="contentTemplate"
+            style="margin: 0; background: none; border: none"
+            [disabled]="tableHeader.length == 0"
+          >
+            <i class="anticon anticon-setting"></i>
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of dataTable.data; index as idx">
+        <!-- (nzCheckedChange)="refreshStatus($event)" -->
+        <td
+          *ngIf="tableConfig.selection"
+          nzShowCheckbox
+          [(nzChecked)]="data['checked']"
+          (nzCheckedChange)="tableRowCheckedChanges(dataTable.data, idx)"
+          [nzDisabled]="data['disabled']"
+        ></td>
+        <td
+          *ngFor="let col of selectedcolumns"
+          [ngStyle]="{
+            'max-width': '175px',
+            'text-overflow': 'ellipsis',
+            'white-space': col.isDescription ? 'normal' : 'nowrap',
+            'overflow': 'hidden'
+          }"
+        >
+          <span
+            *ngIf="col.field == 'ordernumber'"
+            class="row-reorder-actionbtn"
+          >
+            <a
+              (click)="
+                startEdit(
+                  {
+                    id: idx,
+                    data: data,
+                    selectedId: r
+                  },
+                  $event
+                )
+              "
+              *ngIf="editSelectId !== idx; else editOrderNumberPanel"
+            >
+              {{ data.ordernumber ? data.ordernumber : "__" }}
+            </a>
+            <ng-template #editOrderNumberPanel>
+              <nz-input-group [nzSuffix]="ordersuffixTemplate">
+                <nz-select
+                  nzShowSearch
+                  [(ngModel)]="data.ordernumber"
+                  nzPlaceHolder="Select"
+                  (ngModelChange)="orderChangeEvent($event, data)"
+                  style="min-width: 50px"
+                >
+                  <nz-option
+                    *ngFor="let p of tableData; index as ordr"
+                    [nzValue]="ordr + 1"
+                    [nzLabel]="ordr + 1"
+                  ></nz-option>
+                </nz-select>
+              </nz-input-group>
+            </ng-template>
+            <ng-template #ordersuffixTemplate>
+              <i
+                class="anticon anticon-close"
+                (click)="cancelOrderEdit(data)"
+              ></i
+              >&nbsp;&nbsp;
+              <i
+                class="anticon anticon-check"
+                (click)="confirmOrderUpdate(data)"
+              ></i>
+            </ng-template>
+            <!-- <a
+          (click)="onOrderChange(data,'up')"
+          title="Up"
+        >
+        <i class="anticon anticon-caret-up" style="color: #ffcc00"></i>
+        </a>
+        <a
+          (click)="onOrderChange(data,'down')"
+          title="Down"
+        >
+        <i class="anticon anticon-caret-down" style="color: #ffcc00"></i>
+        </a> -->
+          </span>
+          <span *ngIf="col.datatype == 'timestamp'" class="left-align">{{
+            data[col.field] | date : col.format
+          }}</span>
+          <span
+            *ngIf="col.datatype == 'html'"
+            class="left-align"
+            [innerHTML]="data[col.field]"
+          ></span>
+          <span
+            *ngIf="col.datatype == 'string' && col.field != 'ordernumber' && !col.compliancestatus"
+            class="left-align"
+            >{{ lodash.get(data, col.field) }}
+          </span>
+          <span *ngIf="col.datatype == 'string' && col.field != 'ordernumber' && col.compliancestatus" class="left-align">
+            <span *ngIf="lodash.get(data, col.field) === 'Passed'">
+              <i class="anticon anticon-check-circle" style="color: #1edc10;"></i> {{ lodash.get(data, col.field) }}
+            </span>
+            <span *ngIf="lodash.get(data, col.field) === 'Failed'">
+              <i class="anticon anticon-close-circle" style="color: red;"></i> {{ lodash.get(data, col.field) }}
+            </span>
+          </span>          
+          <span *ngIf="col.datatype == 'number' && !col.isprogressbar" class="right-align">{{
+            data[col.field]
+          }}</span>
+          <span *ngIf="col.datatype == 'currency'" class="center-align">{{
+            data[col.field] | currency : data[col.format]
+          }}</span>
+          <span *ngIf="col.datatype == 'date'" class="center-align">{{
+            data[col.field] | date : col.format
+          }}</span>
+          <span *ngIf="col.datatype == 'link'" class="center-align">
+            <a
+              (click)="changeLink(data)"
+              target="_blank"
+              style="color: rgb(216, 173, 0) !important; font-weight: bold"
+              >{{ data[col.field] }}</a
+            >
+          </span>
+          <span *ngIf="col.datatype == 'vmstatus'" class="center-align">
+            <nz-tag
+              *ngIf="data[col.field] == 'up'"
+              [nzColor]="'#87d068'"
+              title="Running"
+              >UP</nz-tag
+            >
+            <nz-tag
+              *ngIf="data[col.field] == 'down'"
+              [nzColor]="'#f50'"
+              title="Down"
+              >DOWN</nz-tag
+            >
+            <nz-tag
+              *ngIf="data[col.field] == 'N/A'"
+              [nzColor]="'#808080'"
+              title="Not Available"
+              >NA</nz-tag
+            >
+          </span>
+          <span *ngIf="col.datatype == 'number' && col.isprogressbar" class="center-align">
+            <nz-progress 
+              class="anticon"
+              [nzPercent]="data[col.field]" 
+              nzType="circle" 
+              [nzWidth]="60" 
+              (click)="handleModal(data, col, data[col.field])"
+              [ngClass]="col.header === 'Risk Score' ? getRiskScore(data[col.field]) : getProgressScore(data[col.field])"
+              >
+            </nz-progress>
+          </span>
+        </td>
+        <!-- #OP_T620 -->
+        <td
+          nzWidth="120px"
+          nzRight="0px"
+          *ngIf="
+            tableConfig.edit ||
+            tableConfig.delete ||
+            tableConfig.view ||
+            tableConfig.log ||
+            tableConfig.execute ||
+            tableConfig.rightsize ||
+            tableConfig.rollback ||
+            tableConfig.sync ||
+            tableConfig.progress ||
+            tableConfig.retry ||
+            tableConfig.publish ||
+            tableConfig.accept ||
+            tableConfig.remediation
+          "
+          class="center-align"
+        >
+          <a *ngIf="tableConfig.edit" title="Edit" (click)="editRow(data)"[class.disabled]="data.isEditable">
+            <i class="anticon anticon-edit"></i>&nbsp;
+          </a>
+          <a
+            *ngIf="data.rollback == 'Y'"
+            (click)="rollback(data)"
+            title="Modify Default Baseline"
+          >
+            <i class="anticon anticon-rollback"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.view" title="View" (click)="viewRow(data)"[class.disabled]="data.isViewable">
+            <i class="anticon anticon-eye-o"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.virtual" (click)="virtualRow(data)">
+            <i class="fa fa-desktop" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.log" (click)="showLog(data)" title="Show Log">
+            <i class="anticon anticon-file" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <!-- #OP_T620 -->
+          <a
+            *ngIf="tableConfig.progress"
+            (click)="showTimeLine(data)"
+            title="Show Progress"
+          >
+            <i class="anticon anticon-hourglass" style="color: #ffcc00"></i
+            >&nbsp;
+          </a>
+          <a *ngIf="tableConfig.sync" title="Sync Data" (click)="syncRow(data)">
+            <i class="anticon anticon-sync" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.retry" title="Retry" (click)="retry(data)">
+            <i class="anticon anticon-sync" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.accept" title="Accept" (click)="accept(data)">
+            <i class="anticon anticon-check-circle-o" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.remediation" title="Remediation" (click)="remediation(data)">
+            <i class="anticon anticon-exclamation-circle" style="color: #ffcc00"></i>&nbsp; 
+          </a>
+          <a
+            *ngIf="tableConfig.checkconn"
+            title="Check Connectivity"
+            (click)="checkConn(data)"
+          >
+            <i class="anticon anticon-disconnect" style="color: #ffcc00"></i
+            >&nbsp;
+          </a>
+          <a
+            *ngIf="tableConfig.restore && !data.delete"
+            title="Restore"
+            (click)="restore(data)"
+          >
+            <i class="anticon anticon-reload" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a
+            *ngIf="tableConfig.download"
+            title="Download"
+            (click)="downloadRow(data)"
+          >
+            <i class="anticon anticon-download" style="color: #ffcc00"></i
+            >&nbsp;
+          </a>
+          <a
+            *ngIf="data.download"
+            title="Download"
+            [href]="data.href"
+            target="_blank"
+          >
+            <i class="anticon anticon-download" style="color: #ffcc00"></i
+            >&nbsp;
+          </a>
+          <a
+            *ngIf="tableConfig.showasset"
+            title="View Asset"
+            (click)="showasset(data)"
+          >
+            <i class="anticon anticon-hdd" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.execute" title="Run" (click)="executeRow(data)"[class.disabled]="data.isExecutable">
+            <i class="anticon anticon-caret-right" style="color: #ffcc00"></i
+            >&nbsp;
+          </a>
+          <a
+            *ngIf="tableConfig.cmdbdata"
+            title="View Record"
+            (click)="toCMDB(data)"
+          >
+            <i class="anticon anticon-api" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a
+            *ngIf="
+              tableConfig.linkasset &&
+              (data.providerrefid != null || data.InstanceId != null)
+            "
+            title="View Asset"
+            (click)="toAsset(data)"
+          >
+            <i class="anticon anticon-link" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.totemplate" (click)="toTemplate(data)">
+            <i class="anticon anticon-tags" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.revise" title="Export" (click)="revise(data)">
+            <i class="anticon anticon-export" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a
+            *ngIf="tableConfig.chart"
+            title="Chart View"
+            (click)="showchart(data)"
+          >
+            <i class="anticon anticon-line-chart" style="color: #ffcc00"></i
+            >&nbsp;
+          </a>
+          <a
+            *ngIf="data && data.showdashboard"
+            title="Go to Dashboard"
+            (click)="showchart(data)"
+          >
+            <i class="anticon anticon-line-chart" style="color: #ffcc00"></i
+            >&nbsp;
+          </a>
+          <a
+            *ngIf="
+              tableConfig.rightsize &&
+              data.rightsizeyn &&
+              data.rightsizeyn == 'Y'
+            "
+            (click)="rightSizeAsset(data)"
+            title="Rightsize"
+          >
+            <i class="anticon anticon-swap" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a
+            *ngIf="
+              tableConfig.taggingcompliance &&
+              data.taggingcompliance &&
+              data.taggingcompliance == 'Y'
+            "
+            (click)="taggingCompliance(data)"
+            title="Tags"
+          >
+            <i class="anticon anticon-tags" style="color: #ffcc00"></i>&nbsp;
+          </a>
+          <a *ngIf="tableConfig.clone" (click)="clone(data)" title="Clone">
+            <i class="anticon anticon-copy"></i>&nbsp;
+          </a>
+          <a
+            nz-popconfirm
+            title="Delete"
+            nzTitle="Are you sure?"
+            nzOkText="Ok"
+            nzCancelText="Cancel"
+            *ngIf="tableConfig.delete && !data.delete"
+            (nzOnConfirm)="deleteRow(data)"
+            [class.disabled]="data.isDeletable"
+          >
+            <i class="anticon anticon-delete"></i>
+          </a>
+          <a
+            *ngIf="tableConfig.monitoring"
+            (click)="showMonitoring(data)"
+            title="Monitoring"
+          >
+            <i class="anticon anticon-line-chart"></i>&nbsp;</a
+          >
+          <a
+            *ngIf="tableConfig.publish"
+            (click)="publish(data)"
+            class="publish-button"
+            [title]="
+              data.catalog?.publishstatus === 'Published'
+                ? 'Unpublish'
+                : 'Publish'
+            "
+          >
+            <i
+              *ngIf="data.catalog?.publishstatus === 'Published'"
+              class="fa fa-magic fa-rotate-180" style="color: #ffcc00"
+            ></i>
+            <i
+              *ngIf="
+                !data.catalog || data.catalog?.publishstatus != 'Published'
+              "
+              class="fa fa-magic" style="color: #ffcc00"
+            ></i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <div class="row data-table">
+    <div
+      *ngIf="
+        !tableConfig.loading &&
+        tableConfig.manualpagination &&
+        tableData &&
+        tableData.length > 0
+      "
+      class="card-paginator"
+    >
+      <nz-pagination
+        [(nzPageIndex)]="pageIndex"
+        [nzTotal]="totalCount"
+        [nzSize]="'small'"
+        [nzPageSize]="tableConfig.pageSize"
+        [nzShowTotal]="totalTemplate"
+        nzShowSizeChanger
+        [nzPageSizeOptions]="pageCount"
+        (nzPageIndexChange)="onPageChange($event)"
+        (nzPageSizeChange)="onPageSizeChange($event)"
+      ></nz-pagination>
+
+      <!-- <nz-pagination [nzPageIndex]="1" [nzPageSize]="10" [nzTotal]="totalCount" [nzSize]="'small'" (nzPageIndexChange)="onPageChange($event)" (nzCurrentPageDataChange)="onCurrentPageChange($event)"></nz-pagination> -->
+    </div>
+    <div *ngIf="tableConfig.count" class="count-container">
+      <p style="color: #ffcc00">{{ tableConfig.count }}</p>
+    </div>
+  </div>
+</div>
+<!-- </nz-card> -->

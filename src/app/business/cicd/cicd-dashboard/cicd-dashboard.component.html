@@ -1,0 +1,176 @@
+<app-cloudmatiq-side-nav>
+  <ng-container class="page-body">
+    <div class="dashboard">
+   <div nz-row class="dashboard-row">
+        <div nz-col [nzSpan]="6" class="widgets-box">
+            <nz-card class="card-item" (click)="statusFilter('COMPLETED')">
+                <div class="cardname">
+                    <h4 class="card-title">SUCCESS BUILDS</h4>
+                </div>
+                <div class="card-box">
+                    <span>
+                        <svg width="16" height="13" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0.5" y="0.5" width="15" height="15" rx="8" stroke="#aabb11"/>
+                            <path d="M4.1499 8.18333L6.71657 10.75L11.8499 5.25" stroke="#aabb11" stroke-width="1.5"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <div class="card-title">{{successcount}}</div>
+                </div>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6" class="widgets-box">
+            <nz-card class="card-item" (click)="statusFilter('FAILED')">
+                <div class="cardname">
+                    <h4 class="card-title">FAILED BUILDS</h4>
+                </div>
+                <div class="card-box">
+                    <span>
+                        <svg width="16" height="13" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#aabb11"/>
+                            <path d="M4.1499 8.18333L6.71657 10.75L11.8499 5.25" stroke="#aabb11" stroke-width="1.5"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <div class="card-title">{{failedcount}}</div>
+                </div>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6" class="widgets-box">
+            <nz-card class="card-item">
+                <div class="cardname">
+                    <h4 class="card-title">DEPLOYMENT FREQUENCY(Month)</h4>
+                </div>
+                <div class="card-box">
+                    <span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="6" stroke="#aabb11" stroke-width="1" fill="none"/>
+                            <line x1="12" y1="12" x2="15" y2="12" stroke="#aabb11" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="12" y1="12" x2="12" y2="8" stroke="#aabb11" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <div class="card-title">{{deploymentFrequency}} per day</div>
+                </div>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6" class="widgets-box">
+            <nz-card class="card-item">
+                <div class="cardname">
+                    <h4 class="card-title">SUCCESS RATE</h4>
+                </div>
+                <div class="card-box">
+                    <span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="8" stroke="#aabb11" stroke-width="1" fill="none"/>
+                            <text x="50%" y="50%" text-anchor="middle" alignment-baseline="middle" font-size="12px"
+                                  fill="#aabb11">%
+                            </text>
+                        </svg>
+                    </span>
+                    <div class="card-title">{{successrate}}</div>
+                </div>
+            </nz-card>
+        </div>
+    </div>    
+      <div nz-row  style="margin-top: 6px;" class="pipelienStatusBox">
+        <div nz-col [nzSpan]="16" class="chart-box" style="height: 350px;">
+          <nz-card style="width: 99%;" class="pipeline-chart">
+            <div nz-row style="padding: 0px 18px;">
+              <div nz-col [nzSpan]="5">
+                <h3 style="color: white;">Pipeline</h3>
+              </div>
+              <div nz-col [nzSpan]="14">
+                <button pButton type="button" label="12Months" class='btn' (click)="filterData(12)" [class.selectbtn]="selectedFilter == 12">12 Months</button>
+                <button pButton type="button" label="6Months" class='btn' (click)="filterData(6)" [class.selectbtn]="selectedFilter == 6">6 Months</button>
+                <button pButton type="button" label="30Days" class='btn'  (click)="filterData(30)" [class.selectbtn]="selectedFilter == 30">30 Days</button>
+                <button pButton type="button" label="07Days" class='btn'  (click)="filterData(7)" [class.selectbtn]="selectedFilter == 7">07 Days</button>
+              </div>
+              <div nz-col [nzSpan]="5">
+                <nz-select class="filter" [(ngModel)]="selectedChartFilter" (ngModelChange)="filterData($event)" nzPlaceHolder="Select Filter">
+                  <nz-option *ngFor="let option of filterChartOptions" [nzValue]="option.value"
+                    [nzLabel]="option.label"></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div nz-row>
+              <div id="chart">
+                <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+                  [tooltip]="chartOptions.tooltip" [dataLabels]="chartOptions.dataLabels"></apx-chart>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+        <div nz-col [nzSpan]="8" class="progressbar-box">
+          <nz-card style="width: 99%;" class="pipeline-progress">
+            <div>
+              <div nz-row class="mb-1">
+                <div nz-col [nzSpan]="12">
+                  <h3 style="color: white;">Total pipeline status</h3>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-select class="progressbar-filter" [(ngModel)]="pipelineDefaultDays"
+                    nzPlaceHolder="Select Filter"(ngModelChange)="getpipelinestatus($event)">
+                    <nz-option *ngFor="let option of filterProgressBar" [nzValue]="option.value"
+                      [nzLabel]="option.label"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div nz-row>
+                <div style="margin-top: 5px; cursor: pointer;"(click)="statusFilter('COMPLETED')" >
+                  <div class="progress-info">
+                    <h4 style="color: white;">Success</h4>
+                    <h4 style="color: white;">{{success}}</h4>
+                  </div>
+                  <div>
+                    <nz-progress [nzPercent]= "successcountPercentage" nzSize="small" [nzShowInfo]="false"></nz-progress>
+                  </div>
+                </div>
+                <div style="margin-top: 5px; cursor: pointer;"  (click)="statusFilter('FAILED')">
+                  <div class="progress-info">
+                    <h4 style="color: white;">Failed</h4>
+                    <h4 style="color: white;">{{failed}}</h4>
+                  </div>
+                  <div>
+                    <nz-progress [nzPercent]="failedcountPercentage" nzSize="small" [nzShowInfo]="false"></nz-progress>
+                  </div>
+                </div>
+                <div style="margin-top: 5px; cursor: pointer;"(click)="statusFilter('INPROGRESS')">
+                  <div class="progress-info">
+                    <h4 style="color: white;" >Ongoing</h4>
+                    <h4 style="color: white;">{{inprogress}}</h4>
+                  </div>
+                  <div>
+                    <nz-progress [nzPercent]="inprogresscountPercentage" nzSize="small" [nzShowInfo]="false"></nz-progress>
+                  </div>
+                </div>
+                <div style="margin-top: 5px; cursor: pointer;"(click)="statusFilter('PENDING')">
+                  <div class="progress-info">
+                    <h4 style="color: white;" >Pending</h4>
+                    <h4 style="color: white;">{{pending}}</h4>
+                  </div>
+                  <div>
+                    <nz-progress [nzPercent]="pendingcountPercentage" nzSize="small" [nzShowInfo]="false"></nz-progress>
+                  </div>
+                </div>
+                <div style="margin-top: 5px; cursor: pointer;"(click)="statusFilter('CANCELLED')">
+                  <div class="progress-info">
+                    <h4 style="color: white;" >Cancelled</h4>
+                    <h4 style="color: white;">{{cancelled}}</h4>
+                  </div>
+                  <div>
+                    <nz-progress [nzPercent]="cancelledcountPercentage" nzSize="small" [nzShowInfo]="false"></nz-progress>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+      </div>
+      <div nz-row>
+        <div class="mt-1">
+          <app-releases-transactions></app-releases-transactions>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

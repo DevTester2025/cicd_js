@@ -1,0 +1,274 @@
+<nz-spin [nzSpinning]="loading">
+  <form
+    nz-form
+    [formGroup]="resourceForm"
+    (ngSubmit)="saveOrUpdate(resourceForm.value)"
+  >
+    <div class="row" style="margin-bottom: 0">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="fieldtype"
+          >Attribute Type</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="fieldtype"
+            placeholder="Select Attribute Type"
+            nzPlaceHolder="Select Attribute Type"
+            formControlName="fieldtype"
+          >
+            <nz-option
+              *ngFor="let t of fieldtypes"
+              [nzLabel]="t.label"
+              [nzValue]="t.value"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="fieldname"
+          >Attribute Name</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="fieldname"
+              placeholder="Attribute Name"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="resourceForm.value.fieldtype == 'AUTOGEN'">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="prefix"
+          >Prefix</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="prefix"
+              placeholder="Prefix Value"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="resourceForm.value.fieldtype == 'AUTOGEN'">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="curseq"
+          >Current Sequence</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="curseq"
+              placeholder="Current Sequence"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item *ngIf="resourceForm.value.fieldtype == 'REFERENCE'">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="relation"
+          >Reference CMDB</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="relation"
+            placeholder="Select Reference CMDB"
+            nzPlaceHolder="Select Reference CMDB"
+            formControlName="relation"
+          >
+            <nz-option
+              *ngFor="let t of resourceTypesList"
+              [nzValue]="t.crn"
+              [nzLabel]="t.resource"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="resourceForm.value.fieldtype == 'Reference Asset'">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="referenceasset"
+          >Reference Asset</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="referenceasset"
+            placeholder="Select Reference Asset"
+            nzPlaceHolder="Select Reference Asset"
+            formControlName="referenceasset"
+            (ngModelChange)="setAttribute($event)"
+          >
+            <nz-option-group *ngFor="let g of assetGrps" [nzLabel]="g.provider">
+              <nz-option
+                *ngFor="let t of g.value"
+                [nzValue]="t.value"
+                [nzLabel]="t.title"
+              >
+              </nz-option>
+            </nz-option-group>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="resourceForm.value.fieldtype == 'Reference Asset'">
+        <nz-form-label
+          [nzSm]="24"
+          [nzXs]="12"
+          nzRequired
+          nzFor="referenceassetattr"
+          >Reference Asset Attribute</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            [nzMode]="mode"
+            id="referenceassetattr"
+            placeholder="Select Reference Asset Attribute"
+            nzPlaceHolder="Select Reference Asset Attribute"
+            formControlName="referenceassetattr"
+          >
+            <nz-option
+              *ngFor="let t of attributeList"
+              [nzValue]="t.field"
+              [nzLabel]="t.header"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="resourceForm.value.fieldtype == 'Reference Tag'">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="referencetag"
+          >Reference Tag</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="referencetag"
+            nzMode="multiple"
+            placeholder="Select Reference Tag"
+            nzPlaceHolder="Select Reference Tag"
+            formControlName="referencetag"
+          >
+            <nz-option
+              *ngFor="let t of tagList"
+              [nzValue]="t.tagid"
+              [nzLabel]="t.tagname"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="resourceForm.value.fieldtype == 'Select'">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="defaultval"
+          >Value (s)</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <nz-select
+              id="defaultval"
+              style="width: 100%"
+              nzMode="tags"
+              formControlName="defaultval"
+              nzPlaceHolder="Value (s)"
+            >
+            </nz-select>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <br />
+      <nz-form-item
+        *ngIf="
+          resourceForm.value.fieldtype != 'Reference Tag' &&
+          resourceForm.value.fieldtype != 'Reference Asset'
+        "
+      >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <label nz-checkbox formControlName="isdefaultval"
+              >Show Default?</label
+            >
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <br />
+      <nz-form-item
+        *ngIf="
+          resourceForm.value.fieldtype != 'Select' &&
+          resourceForm.value.fieldtype != 'Boolean' &&
+          resourceForm.value.fieldtype != 'REFERENCE' &&
+          resourceForm.value.fieldtype != 'Reference Tag' &&
+          resourceForm.value.fieldtype != 'Reference Asset' &&
+          resourceForm.value.fieldtype != 'AUTOGEN'
+        "
+      >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <label nz-checkbox formControlName="identifier"
+              >Is Identifier?</label
+            >
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <br />
+      <nz-form-item>
+        <nz-form-control
+          [nzSm]="24"
+          [nzXs]="12"
+          *ngIf="resourceForm.value.fieldtype == 'Password'"
+        >
+          <nz-input-group>
+            <label nz-checkbox formControlName="protected">Is Mask?</label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control
+          [nzSm]="24"
+          [nzXs]="12"
+        >
+          <nz-input-group>
+            <label nz-checkbox formControlName="readonly">Is Readonly?</label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="isEdit">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+          >Status</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <nz-switch
+              [nzDisabled]="resourceForm.value.identifier"
+              class="status"
+              id="status"
+              formControlName="status"
+            ></nz-switch>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <div class="right mr-0">
+        <button
+          class="mt-1 save-button"
+          type="submit"
+          nz-button
+          nzType="primary"
+          [nzLoading]="addingparam"
+        >
+          {{ button }}
+        </button>
+      </div>
+    </div>
+  </form>
+</nz-spin>

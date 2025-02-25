@@ -1,0 +1,359 @@
+<!-- [blockUI]="loading" -->
+<app-cloudmatiq-side-nav [blockUI]="blockUI">
+  <ng-container class="page-body">
+    <nz-tabset>
+      <nz-tab nzTitle="List">
+        <div nz-row nzType="flex" style="margin-top: 13px" nzAlign="middle">
+          <div nz-col nzSpan="12">
+            <form nz-form [formGroup]="filterForm">
+              <div nz-row>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label class="left-align" [nzSm]="24" [nzXs]="12" nzRequired nzFor="rtype">Resource Type
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="24" [nzXs]="12">
+                      <nz-select id="rtype" formControlName="crn" style="width: 90%" nzAllowClear nzPlaceHolder="Choose"
+                        nzShowSearch (ngModelChange)="getResourceDetail($event)">
+                        <nz-option *ngFor="let r of resourceTypesList" [nzValue]="r.crn" [nzLabel]="r.resource"></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="8">
+                  <nz-form-item>
+                    <nz-form-label class="left-align" [nzSm]="24" [nzXs]="12" nzFor="rtag">Tag</nz-form-label>
+                    <nz-form-control [nzSm]="24" [nzXs]="12">
+                      <nz-select id="rtag" formControlName="tag" (ngModelChange)="tagChanged($event)" style="width: 90%"
+                        nzAllowClear nzShowSearch nzPlaceHolder="Choose">
+                        <nz-option *ngFor="let r of tagList" [nzValue]="r.tagid" [nzLabel]="r.tagname"></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="6">
+                  <nz-form-item>
+                    <nz-form-label class="left-align" [nzSm]="24" [nzXs]="12" nzFor="rtag">Tag value</nz-form-label>
+                    <nz-form-control [nzSm]="24" [nzXs]="12">
+                      <input *ngIf="selectedTag == null" nz-input placeholder="Value" disabled />
+                      <nz-select *ngIf="
+                          selectedTag &&
+                          selectedTag.tagtype &&
+                          selectedTag.tagtype == 'list'
+                        " formControlName="tagvalue" nzShowSearch nzAllowClear nzPlaceHolder="Value" style="width: 95%">
+                        <nz-option *ngFor="let t of selectedTag.lookupvalues; index as ti" [nzLabel]="t" [nzValue]="t">
+                        </nz-option>
+                      </nz-select>
+                      <nz-select *ngIf="
+                          selectedTag &&
+                          selectedTag.tagtype &&
+                          selectedTag.tagtype == 'boolean'
+                        " formControlName="tagvalue" nzShowSearch nzAllowClear nzPlaceHolder="Value" style="width: 95%">
+                        <nz-option nzLabel="Yes" nzValue="Yes"> </nz-option>
+                        <nz-option nzLabel="No" nzValue="No"> </nz-option>
+                      </nz-select>
+                      <nz-date-picker *ngIf="
+                          selectedTag &&
+                          selectedTag.tagtype &&
+                          selectedTag.tagtype == 'date'
+                        " formControlName="tagvalue" nzFormat="dd-MMM-yyyy"></nz-date-picker>
+                      <input *ngIf="
+                          selectedTag &&
+                          selectedTag.tagtype &&
+                          selectedTag.tagtype == 'text'
+                        " formControlName="tagvalue" nz-input placeholder="Value" />
+                      <nz-input-number *ngIf="
+                          selectedTag &&
+                          selectedTag.tagtype &&
+                          selectedTag.tagtype == 'number'
+                        " formControlName="tagvalue"></nz-input-number>
+                      <nz-input-number *ngIf="
+                          selectedTag &&
+                          selectedTag.tagtype &&
+                          selectedTag.tagtype == 'range'
+                        " formControlName="tagvalue" [nzMin]="selectedTag.min" [nzMax]="selectedTag.max">
+                      </nz-input-number>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="2">
+                  <button *ngIf="filterForm.value.crn != null" style="margin-top: 35px" nzSize="small" nz-button
+                    (click)="openadvfilter=true" nzType="primary">
+                    <i class="anticon anticon-filter"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div nz-col nzSpan="4" nzOffset="5" class="center">
+            <nz-form-item>
+              <nz-form-label class="left-align" [nzSm]="24" [nzXs]="12" nzFor="rtag">Search</nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="12">
+                <nz-input-group [nzSuffix]="suffixTemplate">
+                  <input type="text" nz-input placeholder="Search"
+                    (keyup.enter)="getResourceDetail(filterForm.get('crn').value)" [(ngModel)]="globalSearchModel" />
+                </nz-input-group>
+                <ng-template #suffixTemplate><i *ngIf="globalSearchModel.length > 0"
+                    (click)="globalSearchModel = ''; pageIndex = 1; getAssets()" class="anticon anticon-close"></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+            <!-- <nz-input-group>
+                <input
+                  type="text"
+                  nz-input
+                  style="border: 1px solid #8d9ba6; width: 50%"
+                  placeholder="Search"
+                  [(ngModel)]="globalSearchModel"
+                />
+              </nz-input-group> -->
+          </div>
+          <div nz-col nzSpan="3" class="right-align">
+            <button nzSize="small" title="Submit" nz-button (click)="pageIndex = 1; getAssets()" nzType="primary"
+              [disabled]="!selectedResource || selectedResource.length == 0" style="margin: 0">
+              <i class="anticon anticon-search"></i>
+            </button>
+            &nbsp;&nbsp;
+            <button *ngIf="add" nzSize="small" nz-button title="Add new" (click)="openAddView()" nzType="primary"
+              [disabled]="!selectedResource || selectedResource.length == 0" style="margin: 0">
+              <i class="anticon anticon-plus"></i>
+            </button>
+            <button
+            nz-button
+            (click)="refresh()"
+            class="publish-button right right-align"
+            title="Reload"
+          >
+            <i class="anticon anticon-reload"></i>
+          </button>
+          </div>
+        </div>
+        <div nz-row style="margin-top: 17px">
+          <div nz-col nzSpan="24">
+            <button *ngIf="download && assets.length > 0" nz-button title="Download as CSV" style="position: relative"
+              (click)="downloadAssets()">
+              <i class="anticon anticon-download"></i>
+            </button>
+            <div *ngFor="let item of filterValues | keyvalue" style="color: white; margin-bottom: 13px">
+              <b style="margin-right: 13px">{{ item.key }}:</b>
+              <span *ngFor="let j of item.value | keyvalue">
+                <nz-tag nzMode="closeable" (nzOnClose)="removeFilter(item.key, j.key)">{{ j.key }}</nz-tag>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div nz-row style="margin-top: 17px">
+          <div nz-span="24" id="assetdetails-table">
+            <nz-table #nzTable [nzData]="assets" [nzFrontPagination]="false" [nzShowPagination]="false" 
+            [nzLoading]="gettingAssets" [nzScroll]="{ x: '1300px' }" >
+              <thead>
+                <tr>
+                  <th nzWidth="175px" *ngFor="let r of selectedFields">
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: start;
+                      ">
+                      <div *ngIf="
+                          r.fieldtype == 'Text' ||
+                          r.fieldtype == 'Boolean' ||
+                          r.fieldtype == 'STATUS' ||
+                          r.fieldtype == 'Float' ||
+                          r.fieldtype == 'Integer'
+                        ">
+                        <i title="Filter" (click)="openFilterFor(r)" class="anticon anticon-filter" style="margin: 0"></i>
+                      </div>
+                      <div>
+                        {{ r.fieldname }}
+                      </div>
+                      <div *ngIf="
+                          r.fieldtype == 'Text' ||
+                          r.fieldtype == 'Boolean' ||
+                          r.fieldtype == 'STATUS' ||
+                          r.fieldtype == 'Float' ||
+                          r.fieldtype == 'Integer'
+                        ">
+                        <i *ngIf="currentSortColumn != r.fieldname" (click)="sortByColumn(r, 'ASC')" class="fa fa-sort"
+                          style="margin: 0"></i>
+                        <i *ngIf="
+                            currentSortColumn == r.fieldname &&
+                            currentSortColumnOrder == 'ASC'
+                          " (click)="sortByColumn(r, 'DESC')" class="fa fa-sort-alpha-asc" style="margin: 0"></i>
+                        <i *ngIf="
+                            currentSortColumn == r.fieldname &&
+                            currentSortColumnOrder == 'DESC'
+                          " (click)="sortByColumn(r, 'ASC')" class="fa fa-sort-alpha-desc" style="margin: 0"></i>
+                      </div>
+                    </div>
+                  </th>
+                  <th nzWidth="100px" nzRight="0px" class="center">
+                    Actions
+                    <ng-template #titleTemplate><i nz-icon type="close"></i> Columns</ng-template>
+                    <ng-template #contentTemplate>
+                      <div nz-row style="max-height: 350px; overflow-y: scroll">
+                        <div *ngFor="let r of filteredColumns" nz-span="6">
+                          <label [(ngModel)]="r.isSelected" nz-checkbox>
+                            {{ r.fieldname }}
+                          </label>
+                        </div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="24" class="right-align">
+                          <button (click)="getAssets()" nzSize="small" nz-button nzType="primary">
+                            Apply
+                          </button>
+                        </div>
+                      </div>
+                    </ng-template>
+                    <button nzSize="small" title="Column Selection" nz-button nzType="primary" nz-popover
+                      [nzTitle]="titleTemplate" [nzContent]="contentTemplate"
+                      style="margin: 0; background: none; border: none" [disabled]="selectedResource.length == 0">
+                      <i class="anticon anticon-setting"></i>
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of nzTable.data">
+                  <td style="
+                      max-width: 175px;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                      overflow: hidden;
+                    " nzWidth="175px" *ngFor="let r of selectedFields">
+                    <app-cloudmatiq-mask-text [maskable]="r.protected || false">
+                      <div *ngIf="
+                          r.fieldtype != 'REFERENCE' &&
+                          r.fieldtype != 'Reference Asset'
+                        ">
+                        <span [innerHTML]="data[r['fieldname']]"></span>
+                      </div>
+                      <div *ngIf="r.fieldtype == 'Reference Asset'">
+                        <span [innerHTML]="data[r['referencekey']]"></span>
+                      </div>
+                      <div *ngIf="r.fieldtype == 'REFERENCE'">
+                        <ng-container *ngFor="let obj of parseJSON(data[r['fieldname']])">
+                          {{ obj["name"] }}
+                        </ng-container>
+                      </div>
+                    </app-cloudmatiq-mask-text>
+                  </td>
+                  <td nzWidth="100px" nzRight="0px" class="center">
+                    <a title="View">
+                      <i (click)="viewResourceDetail(data)" class="anticon anticon-eye-o"></i>
+                    </a>
+                    <a *ngIf="delete" title="Delete" nz-popconfirm nzTitle="Are you sure?" nzOkText="Ok"
+                      nzCancelText="Cancel" (nzOnConfirm)="deleteRecord(data)" style="padding-left: 5px">
+                      <i class="anticon anticon-delete"></i>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+            <div *ngIf="
+            assets &&
+            assets.length > 0" 
+              class="card-paginator"
+            >
+              <nz-pagination
+                [(nzPageIndex)]="pageIndex"
+                [nzSize]="'small'"
+                [(nzPageSize)]="pageSize"
+                [nzTotal]="assetsCount"
+                [nzShowTotal]="totalTemplate"
+                nzShowSizeChanger
+                [nzPageSizeOptions]="pageCount"
+                (nzPageIndexChange)="getAssets()"
+                (nzPageSizeChange)="onPageSizeChange($event)"
+              ></nz-pagination>
+            </div>
+            <div class="count-container" *ngIf ="assets.length > 0">
+              <p style="color: #ffcc00">Total Records :{{ assetsCount }}</p>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Report Builder">
+        <app-query-builder></app-query-builder>
+      </nz-tab>
+    </nz-tabset>
+   
+  </ng-container>
+
+  <!--Side Bars-->
+
+  <app-cloudmatiq-side-bar (dataChanged)="filterDrawerClose(true)" [(isVisible)]="filterMenuVisible" title="Filter">
+    <ng-container class="modal-content">
+      <div style="position: sticky; top: 60px; background: #1c2e3c; z-index: 9999" nz-row>
+        <div nz-col nzSpan="20">
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input type="text" nz-input placeholder="Search Options" [(ngModel)]="filterSearchModel" />
+          </nz-input-group>
+          <ng-template #suffixTemplate>
+            <i (click)="filterSearchModel = ''; getFieldValues()" *ngIf="filterSearchModel"
+              class="anticon anticon-close-circle"></i>
+          </ng-template>
+        </div>
+        <div nz-col nzSpan="4" class="right-align">
+          <button [disabled]="filterSearchModel.length <= 0" (click)="getFieldValues()" nzSize="small" nz-button
+            nzType="primary">
+            <i class="anticon anticon-search"></i>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="filterMenuVisible" style="height: 84vh; overflow-y: scroll" nz-row>
+        <div *ngIf="gettingFilterableValues" style="margin-top: 13px" nz-col nzSpan="24" class="center">
+          <nz-spin></nz-spin>
+        </div>
+        <div *ngFor="let v of filterableValues" nz-col nzSpan="24">
+          <label style="color: white; padding: 13px 0" nz-checkbox
+            [(ngModel)]="filterValuesClone[filterFieldName][v.fieldvalue]">{{ v.fieldvalue }}</label>
+        </div>
+      </div>
+      <div class="right-align" nz-row>
+        <button style="position: absolute; bottom: -57px; right: 0px" nzSize="small" nz-button
+          (click)="filterDrawerClose(false)" nzType="primary" [disabled]="
+            (filterValuesClone | json) == '{}' ||
+            (filterValuesClone[filterFieldName] | json) == '{}'
+          ">
+          Apply Filter
+        </button>
+      </div>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar (dataChanged)="resourceDetailMenuVisible = !resourceDetailMenuVisible"
+    [(isVisible)]="resourceDetailMenuVisible" [width]="920" [title]="title">
+    <ng-container *ngIf="resourceDetailMenuVisible" class="modal-content">
+      <app-cloudmatiq-asset-parent [resourceId]="selectedResourceID" [(selectedResource)]="selectedResource"
+        [(resourceDetails)]="resourceDetails" [inboundDetails]="inboudResourceDetails"
+        [referringAssetDetails]="referringAssetDetails" [highlight]="globalSearchModel"
+        (onEmitTagClick)="onSideBarTagClick(true)" [(isAddForm)]="isAddForm" [recordData]="selectedResource"
+        (notifyNewEntry)="notifyNewEntry($event)">
+      </app-cloudmatiq-asset-parent>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar (dataChanged)="updateTagVisible = !updateTagVisible" [(isVisible)]="updateTagVisible"
+    [width]="520" title="Update Tag">
+    <ng-container *ngIf="updateTagVisible" class="modal-content">
+      <app-cloudmatiq-tag-picker [currentTags]="tags" [cloudProvider]="null" [pickermode]="'combined'" [mode]="'picker'"
+        [validateInputs]="true" [disableParams]="true" [tagGroupType]="'SOLUTION_ASSET'" [resourceId]="null"
+        [resourceType]="'ASSET_RECORD'" (tagChanges)="onTagChangeEmit($event)">
+      </app-cloudmatiq-tag-picker>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+
+  <app-cloudmatiq-side-bar (dataChanged)="openadvfilter = !openadvfilter" [(isVisible)]="openadvfilter" [width]="820"
+    title="Filters">
+    <ng-container class="modal-content">
+      <app-attributefilters *ngIf="openadvfilter" [querybuilder]="false" [crn]="filterForm.value.crn" [selectedFilters]="attrFilters" (applyAttrFilter)="applyAttrFilter($event)">
+      </app-attributefilters>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+
+  <!-- <app-additionalfilters *ngIf="openadvfilter" [reporttype]="'CMDB'" [crn]="filterForm.value.crn" [attributemenu]="true"
+  (applyFilters)="applyFilters($event)">
+</app-additionalfilters> -->
+  <!-- <app-cloudmatiq-side-bar *ngIf="openadvfilter" (dataChanged)="openadvfilter = false" [(isVisible)]="openadvfilter" [width]="750"
+    title="Advanced Filters">
+   
+  </app-cloudmatiq-side-bar> -->
+</app-cloudmatiq-side-nav>

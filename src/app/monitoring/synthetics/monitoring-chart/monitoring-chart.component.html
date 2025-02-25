@@ -1,0 +1,65 @@
+<div>
+  <nz-range-picker style="width: 35%; padding: 20px" [(ngModel)]="daterange"
+    (ngModelChange)="getSyntheticReport($event);getURLUptime($event)" [nzAllowClear]="false" nzFormat="dd-MMM-yyyy">
+  </nz-range-picker>
+  <nz-select style="width: 40%; padding: 20px" [(ngModel)]="region" nzPlaceHolder="Choose region"
+    (ngModelChange)="getSyntheticReport();getURLUptime($event)" nzMode="multiple" nzShowSearch nzAllowClear>
+    <nz-option *ngFor="let option of availableregions" [nzLabel]="option" [nzValue]="option">
+    </nz-option>
+  </nz-select>
+</div>
+<span style="align-items: center; justify-content: space-between" class="card-toggle-btn">
+  <nz-button-group>
+    <button title="Chart view" [ngClass]="{ 'active-btn': currentTab == 0 }" nz-button (click)="onChangeView(0)"
+      class="button" [nzType]="currentTab == 0 ? 'primary' : 'default'">
+      <i class="anticon anticon-line-chart"></i>
+    </button>
+    <button title="List view" [ngClass]="{ 'active-btn': currentTab == 1 }" nz-button (click)="onChangeView(1)"
+      class="button" [nzType]="currentTab == 1 ? 'primary' : 'default'">
+      <i class="anticon anticon-table"></i>
+    </button>
+  </nz-button-group>
+</span>
+<div *ngIf="loading" class="col s12 text-xs-center center mt-15">
+  <nz-spin [nzSpinning]="loading" nzSize="small" nzTip="Loading..."></nz-spin>
+</div>
+<div *ngIf="!loading && uptimepercent" class="row">
+  <p style="color: rgb(216, 173, 0) !important;">Uptime Percent : {{uptimepercent ? uptimepercent : ''}} </p>
+  <button style="float: right;" nzSize="small" nz-button nzType="primary" (click)="downloadCSV()">
+    <i class="anticon anticon-download"></i>
+  </button>
+</div>
+<div *ngIf="currentTab == 0 && !loading" class="row">
+  <div *ngIf="chartdata && chartdata.series.length > 0">
+    <apx-chart [series]="chartdata.series" [chart]="chartdata.chart" [dataLabels]="chartdata.dataLabels"
+      [plotOptions]="chartdata.plotOptions" [xaxis]="chartdata.xaxis" [yaxis]="chartdata.yaxis"
+      [stroke]="chartdata.stroke" [labels]="chartdata.labels" [fill]="chartdata.fill" [legend]="chartdata.legend"
+      [tooltip]="chartdata.tooltip"></apx-chart>
+  </div>
+  <div *ngIf="chartdata && chartdata.series.length == 0" class="row">
+    <nz-card style="width: 100%; background: rgba(102, 107, 122, 0.7); color: white">
+      <div [ngStyle]="{
+          textAlign: 'center'
+        }">
+        No records found
+      </div>
+    </nz-card>
+  </div>
+</div>
+<div *ngIf="currentTab == 1 && !loading && syntheticsummary.length > 0" class="row"
+  style="width: 98%; padding-right: 64px">
+  <div *ngIf="syntheticsummary.length > 0" nz-row>
+    <app-cloudmatiq-data-table *ngIf="syntheticHeader && syntheticHeader.length > 0" [tableData]="syntheticsummary"
+      [tableHeader]="syntheticHeader" [selectedcolumns]="syntheticHeader" [tableConfig]="tableConfig">
+    </app-cloudmatiq-data-table>
+  </div>
+</div>
+<div *ngIf="currentTab == 1 && !loading && syntheticsummary.length == 0" class="row">
+  <nz-card style="width: 100%; background: rgba(102, 107, 122, 0.7); color: white">
+    <div [ngStyle]="{
+        textAlign: 'center'
+      }">
+      No records found
+    </div>
+  </nz-card>
+</div>

@@ -1,0 +1,32 @@
+<nz-spin
+  [nzSpinning]="loading"
+  [nzSize]="'small'"
+  class="col s12 text-xs-center center"
+>
+  <div *ngIf="historyRecords && historyRecords.length > 0 && !loading">
+    <div
+      *ngFor="let h of historyRecords; let i = index"
+      style="background: #ffffff1f; padding: 14px 15px; margin-bottom: 13px"
+    >
+      <div
+        style="display: flex; justify-content: space-between; font-size: 12px"
+      >
+        <p><b>Modified by : </b> {{ h.createdby }}</p>
+        <p style="color: gold">
+          <b>Date : </b>{{ h.createddt | date: "dd-MMM-yyyy hh:mm a" }}
+        </p>
+      </div>
+      <div>
+        <div>
+          <span>{{ h.notes }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="historyRecords.length == 0 && !loading"
+    style="text-align: center; color: white"
+  >
+    <p class="mt-5">No Data Found</p>
+  </div>
+</nz-spin>

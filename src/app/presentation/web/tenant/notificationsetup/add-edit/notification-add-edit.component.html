@@ -1,0 +1,193 @@
+<nz-spin [nzSpinning]="loading">
+  <form nz-form [formGroup]="notificationForm">
+    <div class="row">
+      <div class="col s12 m12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="module"
+            >Module</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              formControlName="module"
+              (ngModelChange)="moduleChanges($event)"
+              style="width: 95%"
+              nzAllowClear
+              nzShowSearch
+              nzPlaceHolder="Module"
+            >
+              <nz-option
+                *ngFor="let t of moduleList; index as t"
+                [nzLabel]="t.screenname"
+                [nzValue]="t.screenname"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="event"
+            >Event</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              formControlName="event"
+              style="width: 95%"
+              nzAllowClear
+              nzShowSearch
+              nzPlaceHolder="Event"
+              (ngModelChange)="eventChanges()"
+            >
+              <nz-option
+                *ngFor="let data of eventList"
+                [nzLabel]="data.keyname"
+                [nzValue]="data.keyvalue"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="12"
+            nzRequired
+            nzFor="Notification Type"
+            >Notification Type</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              formControlName="ntftype"
+              style="width: 95%"
+              nzAllowClear
+              nzShowSearch
+              nzPlaceHolder="Notification Type"
+              (ngModelChange)="eventChanges()"
+            >
+              <nz-option
+                *ngFor="let n of ntfList; index as ni"
+                [nzLabel]="n.label"
+                [nzValue]="n.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="template"
+            >Template</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              formControlName="templateid"
+              style="width: 95%"
+              nzAllowClear
+              nzShowSearch
+              nzPlaceHolder="Select Template"
+              (ngModelChange)="eventChanges()"
+            >
+              <nz-option
+                *ngFor="let n of templateList; index as ni"
+                [nzLabel]="n.title"
+                [nzValue]="n.templateid"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+
+          <a class="show-button" (click)="showPreview()"> Preview </a>
+        </nz-form-item>
+      </div>
+      <nz-modal
+        [(nzVisible)]="isPreviewVisible"
+        nzTitle="Template Preview"
+        (nzOnCancel)="handleCancel()"
+        [nzFooter]="null"
+      >
+        <div>
+          <app-cloudmatiq-html-render
+            *ngIf="selectedTemplate && selectedTemplate.html"
+            [html]="selectedTemplate.html"
+          >
+          </app-cloudmatiq-html-render>
+        </div>
+      </nz-modal>
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="receivers"
+            >Receivers</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              formControlName="receivers"
+              style="width: 95%"
+              nzAllowClear
+              nzShowSearch
+              nzMode="multiple"
+              nzPlaceHolder="Receivers"
+            >
+              <nz-option
+                *ngFor="let n of usersList; index as u"
+                [nzLabel]="n.label"
+                [nzValue]="n.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="col s12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="notes"
+          >Notes</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <textarea
+            rows="4"
+            id="notes"
+            formControlName="notes"
+            placeholder="Notes"
+            type="text"
+            nz-input
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s6" *ngIf="isEdit">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+          >Status</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <nz-switch
+              class="status"
+              id="status"
+              formControlName="status"
+            ></nz-switch>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </form>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      (click)="saveUpdateScript(notificationForm.value)"
+      type="submit"
+      class="mt-1 save-button"
+      nz-button
+      [nzLoading]="disabled"
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

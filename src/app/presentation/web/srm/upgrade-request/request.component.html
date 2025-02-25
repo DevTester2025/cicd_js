@@ -1,0 +1,33 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <nz-tabset>
+      <nz-tab nzTitle="Active" (nzClick)="onTabChange(1)">
+        <div class="param-table" style="margin-top: 0px">
+          <app-upgrade-request-list
+            [showStatus]="showTab"
+            (notifyEntry)="notifyEntry($event)"
+          >
+          </app-upgrade-request-list>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Pending" (nzClick)="onTabChange(2)">
+        <div class="param-table" style="margin-top: 0px">
+          <app-upgrade-request-list
+            [showStatus]="showTab"
+            (notifyEntry)="notifyEntry($event)"
+          >
+          </app-upgrade-request-list>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Completed" (nzClick)="onTabChange(3)">
+        <div class="param-table" style="margin-top: 0px">
+          <app-upgrade-request-list
+            [showStatus]="showTab"
+            (notifyEntry)="notifyEntry($event)"
+          >
+          </app-upgrade-request-list>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </ng-container>
+</app-cloudmatiq-side-nav>

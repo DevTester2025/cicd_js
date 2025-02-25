@@ -1,0 +1,70 @@
+<ng-container class="modal-content">
+  <div
+    style="position: sticky; top: 60px; background: #1c2e3c; z-index: 9999"
+    nz-row
+  >
+    <div nz-col nzSpan="20">
+      <nz-input-group [nzSuffix]="suffixTemplate">
+        <input
+          type="text"
+          nz-input
+          placeholder="Search Options"
+          [(ngModel)]="filterSearchModel"
+        />
+      </nz-input-group>
+      <ng-template #suffixTemplate>
+        <i
+          (click)="filterSearchModel = ''; getFieldValues()"
+          *ngIf="filterSearchModel"
+          class="anticon anticon-close-circle"
+        ></i>
+      </ng-template>
+    </div>
+    <div nz-col nzSpan="4" class="right-align">
+      <button
+        [disabled]="filterSearchModel?.length <= 0"
+        (click)="getFieldValues()"
+        nzSize="small"
+        nz-button
+        nzType="primary"
+      >
+        <i class="anticon anticon-search"></i>
+      </button>
+    </div>
+  </div>
+  <div
+    *ngIf="!filterMenuVisible"
+    style="height: 79vh; overflow-y: scroll"
+    nz-row
+  >
+    <div
+      *ngIf="gettingFilterableValues"
+      style="margin-top: 13px"
+      nz-col
+      nzSpan="24"
+      class="center"
+    >
+      <nz-spin></nz-spin>
+    </div>
+    <div *ngFor="let v of filterableValues; index as vi" nz-col nzSpan="24">
+      <label
+        style="color: white; padding: 13px 0"
+        nz-checkbox
+        [(ngModel)]="selectedValues[v[filterKey]]"
+        (click)="valueSelected(vi)"
+        >{{ v[filterKey] }}</label
+      >
+    </div>
+  </div>
+  <div class="right-align" nz-row>
+    <button
+      style="position: absolute; bottom: -57px; right: 0px"
+      nzSize="small"
+      nz-button
+      (click)="filterDrawerClose(false)"
+      nzType="primary"
+    >
+      Apply Filter
+    </button>
+  </div>
+</ng-container>

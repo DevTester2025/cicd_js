@@ -1,0 +1,473 @@
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'" *ngIf="!edit">
+  <form nz-form [formGroup]="interconnecitivityForm" *ngIf="!edit">
+    <h3 class="solution-title mb-0">Basic Details</h3>
+    <div class="row">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="name"
+            >Name</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <input
+              nz-input
+              formControlName="name"
+              type="text"
+              placeholder="Name"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="description"
+            >Description</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-input-group>
+              <textarea
+                id="description"
+                formControlName="description"
+                placeholder="Description"
+                type="text"
+                nz-input
+              ></textarea>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <h3 class="solution-title mb-0">Destination Information</h3>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="ecl2tenantidother"
+            nzRequired
+            >{{ subtenantLable }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <!-- <nz-select nzShowSearch nzAllowClear id="sourcecustomerid" placeholder="Select Subtenant" nzPlaceHolder="Select Subtenant"
+              formControlName="sourcecustomerid" (ngModelChange)="onCustomerChange($event)">
+              <nz-option *ngFor="let data of customerList" [nzLabel]="data.customername" [nzValue]="data"></nz-option>
+            </nz-select> -->
+            <input
+              nz-input
+              formControlName="ecl2tenantidother"
+              type="text"
+              placeholder="ECL2 Tenant ID"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="ecl2networkid"
+            nzRequired
+            >Network
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <!-- <nz-select nzShowSearch nzAllowClear id="networkid" placeholder="Select Network" nzPlaceHolder="Select Network" formControlName="networkid">
+                            <nz-option *ngFor="let data of networkList" [nzLabel]="data.networkname" [nzValue]="data"></nz-option>
+                        </nz-select> -->
+            <input
+              nz-input
+              formControlName="ecl2networkid"
+              type="text"
+              placeholder="ECL2 Network ID"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      &nbsp; &nbsp;
+      <div class="row">
+        <div class="col s8">
+          <h3 class="solution-title mb-0">Tags</h3>
+        </div>
+        <div class="col s4 tag-button">
+          <i
+            [style.margin-top.px]="i == 0 ? '50' : '10'"
+            (click)="addItem()"
+            class="anticon hover-pointer amber-text anticon-plus-circle-o"
+          ></i>
+        </div>
+      </div>
+      <div formArrayName="ecl2tags">
+        <div
+          *ngFor="
+            let item of interconnecitivityForm.controls.ecl2tags.controls;
+            let i = index
+          "
+        >
+          <div [formGroupName]="i">
+            <div class="row">
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    style="text-align: left"
+                    [nzSm]="22"
+                    [nzXs]="12"
+                    nzFor="tagkey"
+                    >Key</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="22" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        id="key"
+                        formControlName="tagkey"
+                        nz-input
+                        type="text"
+                        placeholder="Key"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    style="text-align: left"
+                    [nzSm]="22"
+                    [nzXs]="12"
+                    nzFor="tagvalue"
+                    >Value</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="22" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        id="value"
+                        formControlName="tagvalue"
+                        nz-input
+                        type="text"
+                        placeholder="Value"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s12 m3">
+                <i
+                  [style.margin-top.px]="i == 0 ? '50' : '10'"
+                  (click)="removeItem(i)"
+                  class="anticon hover-pointer amber-text anticon-delete"
+                ></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</nz-spin>
+<div class="row right" *ngIf="!edit">
+  <div class="row">
+    <div class="col s12 md4">
+      <nz-dropdown nzPlacement="topCenter">
+        <button
+          [disabled]="formDisabled"
+          style="width: 115px"
+          class="server-button"
+          nz-button
+          nz-dropdown
+        >
+          <span>Save</span>
+          <i class="anticon anticon-down"></i>
+        </button>
+        <ul nz-menu>
+          <li
+            (click)="beforeSaveOrUpdate('')"
+            [nzDisabled]="formDisabled"
+            nz-menu-item
+          >
+            <a>Request</a>
+          </li>
+          <li
+            (click)="beforeSaveOrUpdate('APPROVAL')"
+            [nzDisabled]="formDisabled"
+            nz-menu-item
+          >
+            <a>Request and Approval</a>
+          </li>
+        </ul>
+      </nz-dropdown>
+    </div>
+  </div>
+</div>
+<nz-tabset
+  [(nzSelectedIndex)]="selectedIndex"
+  class="networking-tab"
+  *ngIf="edit"
+>
+  <nz-tab nzTitle="Basic Details">
+    <nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+      <form nz-form [formGroup]="interconnecitivityForm">
+        <h3 class="solution-title mb-0">Basic Details</h3>
+        <div class="row">
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="name"
+                >Name</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="12">
+                <input
+                  nz-input
+                  formControlName="name"
+                  type="text"
+                  placeholder="Name"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="description"
+                >Description</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="12">
+                <nz-input-group>
+                  <textarea
+                    id="description"
+                    formControlName="description"
+                    type="text"
+                    placeholder="Description"
+                    nz-input
+                  ></textarea>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <h3 class="solution-title mb-0">Destination Information</h3>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzFor="ecl2tenantidother"
+                nzRequired
+                >{{ subtenantLable }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <!-- <nz-select nzShowSearch [nzDisabled]="edit" nzAllowClear id="sourcecustomerid" placeholder="Select Subtenant" nzPlaceHolder="Select Subtenant" formControlName="sourcecustomerid" (ngModelChange)="onCustomerChange($event)">
+                                    <nz-option *ngFor="let data of customerList" [nzLabel]="data.customername" [nzValue]="data"></nz-option>
+                                </nz-select> -->
+                <input
+                  nz-input
+                  formControlName="ecl2tenantidother"
+                  type="text"
+                  placeholder="ECL2 Tenant ID"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzFor="ecl2networkid"
+                nzRequired
+                >Network
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <!-- <nz-select nzShowSearch nzAllowClear [nzDisabled]="edit" id="networkid" placeholder="Select Network" nzPlaceHolder="Select Network" formControlName="networkid">
+                                    <nz-option *ngFor="let data of networkList" [nzLabel]="data?.networkname" [nzValue]="data"></nz-option>
+                                </nz-select> -->
+                <input
+                  nz-input
+                  formControlName="ecl2networkid"
+                  type="text"
+                  placeholder="ECL2 Network ID"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          &nbsp; &nbsp;
+          <div class="row">
+            <div class="col s8">
+              <h3 class="solution-title mb-0">Tags</h3>
+            </div>
+            <div class="col s4 tag-button">
+              <i
+                [style.margin-top.px]="i == 0 ? '50' : '10'"
+                (click)="addItem()"
+                class="anticon hover-pointer amber-text anticon-plus-circle-o"
+              ></i>
+            </div>
+          </div>
+          <div formArrayName="ecl2tags">
+            <div
+              *ngFor="
+                let item of interconnecitivityForm.controls.ecl2tags.controls;
+                let i = index
+              "
+            >
+              <div [formGroupName]="i">
+                <div class="row">
+                  <div class="col s4">
+                    <nz-form-item>
+                      <nz-form-label
+                        *ngIf="i == 0"
+                        style="text-align: left"
+                        [nzSm]="22"
+                        [nzXs]="12"
+                        nzFor="tagkey"
+                        >Key</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="22" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="key"
+                            formControlName="tagkey"
+                            nz-input
+                            type="text"
+                            placeholder="Key"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="col s4">
+                    <nz-form-item>
+                      <nz-form-label
+                        *ngIf="i == 0"
+                        style="text-align: left"
+                        [nzSm]="22"
+                        [nzXs]="12"
+                        nzFor="tagvalue"
+                        >Value</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="22" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="value"
+                            formControlName="tagvalue"
+                            nz-input
+                            type="text"
+                            placeholder="Value"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="col s12 m3">
+                    <i
+                      [style.margin-top.px]="i == 0 ? '50' : '10'"
+                      (click)="removeItem(i)"
+                      class="anticon hover-pointer amber-text anticon-delete"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </nz-spin>
+    <div class="row">
+      <div class="col s12 md4">
+        <nz-dropdown nzPlacement="topCenter">
+          <button
+            [disabled]="disabled"
+            style="width: 115px"
+            class="server-button"
+            nz-button
+            nz-dropdown
+          >
+            <span>Save</span>
+            <i class="anticon anticon-down"></i>
+          </button>
+          <ul nz-menu>
+            <li
+              (click)="beforeSaveOrUpdate('')"
+              [nzDisabled]="disabled"
+              nz-menu-item
+            >
+              <a>Request</a>
+            </li>
+            <li
+              (click)="beforeSaveOrUpdate('APPROVAL')"
+              [nzDisabled]="disabled"
+              nz-menu-item
+            >
+              <a>Request and Approval</a>
+            </li>
+          </ul>
+        </nz-dropdown>
+      </div>
+    </div>
+    <!-- <div class="row right">
+      <div class="col s12 md4">
+        <button [disabled]="disabled" (click)="saveOrUpdate(interconnecitivityForm.value)" class="save-button" type="submit"
+          nz-button nzType="primary" [nzLoading]="addingparam">{{buttonText}}</button>
+      </div>
+    </div> -->
+  </nz-tab>
+  <nz-tab nzTitle="Tenant Connection" (nzSelect)="SelectedValue()">
+    <app-tenantconnection
+      [tenantconnectionObj]="tenantconnectionObj"
+    ></app-tenantconnection>
+  </nz-tab>
+</nz-tabset>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Approval Details"
+  [nzContent]="modalContent"
+  (nzOnOk)="handleOk()"
+  (nzOnCancel)="handleCancel()"
+>
+  <ng-template #modalContent>
+    <div>
+      <form nz-form [formGroup]="approvalForm">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="accesskey"
+            >Access Key</nz-form-label
+          >
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <input
+              nz-input
+              placeholder=""
+              formControlName="accesskey"
+              type="text"
+              placeholder="Access Key"
+            />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="secretkey"
+            >Secret Key</nz-form-label
+          >
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <input
+              nz-input
+              placeholder=""
+              formControlName="secretkey"
+              type="text"
+              placeholder="Secret Key"
+            />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="admintenantid"
+            >Tenant ID</nz-form-label
+          >
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <input
+              nz-input
+              placeholder=""
+              formControlName="admintenantid"
+              type="text"
+              placeholder="Tenant ID"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+  </ng-template>
+</nz-modal>

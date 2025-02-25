@@ -1,0 +1,27 @@
+<app-cloudmatiq-side-bar
+  *ngIf="createAlert"
+  [width]="700"
+  (dataChanged)="onChanged($event)"
+  [(isVisible)]="createAlert"
+  [title]="formTitle"
+>
+  <ng-container class="modal-content">
+    <app-create-alerts> </app-create-alerts>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+<div class="row">
+  <div class="col s12 m7 right right-align mt-1">
+    <button class="mr-1" nz-button nzType="primary" (click)="showModal()">
+      <i class="anticon anticon-plus"></i>Add Alert
+    </button>
+  </div>
+</div>
+<div class="row param-table">
+  <app-cloudmatiq-data-table
+    (dataChanged)="dataChanged($event)"
+    [tableData]="alertList"
+    [tableHeader]="alertTableHeader"
+    [tableConfig]="alertTableConfig"
+  >
+  </app-cloudmatiq-data-table>
+</div>

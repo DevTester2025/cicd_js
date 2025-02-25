@@ -1,0 +1,76 @@
+<div nz-row style="height: 49%; margin-top: 13px">
+  <div nz-col nzSpan="24" style="height: 100%">
+    <div class="chartSection">
+      <div nz-col nzSpan="16">
+        <h4 style="color: #ffbf00">Potential Savings</h4>
+      </div>
+      <nz-select
+        *ngIf="potentialSave && potentialSave.length > 0"
+        [(ngModel)]="cloudprovider"
+        style="width: 15%; padding: 7px"
+        nzPlaceHolder="Provider"
+        (ngModelChange)="onPotentialChange()"
+      >
+        <nz-option
+          *ngFor="let t of providerList; index as ti"
+          [nzLabel]="t.label"
+          [nzValue]="t.value"
+        >
+        </nz-option>
+      </nz-select>
+      <nz-select
+        *ngIf="potentialSave && potentialSave.length > 0"
+        [(ngModel)]="selectedpotentialperiod"
+        style="width: 15%"
+        nzPlaceHolder="Provider"
+        (ngModelChange)="onPotentialChange()"
+      >
+        <nz-option
+          *ngFor="let t of potentialduration; index as ti"
+          [nzLabel]="t.label"
+          [nzValue]="t.value"
+        >
+        </nz-option>
+      </nz-select>
+      <div id="pwsg" style="height: 90%"></div>
+    </div>
+  </div>
+</div>
+<div nz-row style="height: 49%; margin-top: 13px">
+  <div nz-col nzSpan="24" style="height: 100%">
+    <div class="chartSection">
+      <div nz-col nzSpan="16">
+        <h4 style="color: #ffbf00">Savings Lost</h4>
+      </div>
+      <nz-select
+        *ngIf="savingslost && savingslost.length > 0"
+        [(ngModel)]="cloudprovider1"
+        style="width: 15%; padding: 7px"
+        nzPlaceHolder="Provider"
+        (ngModelChange)="onSavingsChange()"
+      >
+        <nz-option
+          *ngFor="let t of providerLists; index as ti"
+          [nzLabel]="t.label"
+          [nzValue]="t.value"
+        >
+        </nz-option>
+      </nz-select>
+      <nz-select
+        *ngIf="savingslost && savingslost.length > 0"
+        [(ngModel)]="selectedlostperoid"
+        style="width: 15%"
+        nzPlaceHolder="Provider"
+        (ngModelChange)="onSavingsChange()"
+      >
+        <nz-option
+          *ngFor="let t of savingLostduration; index as ti"
+          [nzLabel]="t.label"
+          [nzValue]="t.value"
+        >
+        </nz-option>
+      </nz-select>
+      <div id="swac" style="height: 90%"></div>
+    </div>
+  </div>
+</div>

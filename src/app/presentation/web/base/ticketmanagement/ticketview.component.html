@@ -1,0 +1,61 @@
+
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Incident Date</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">
+          {{ selectedObj?.incidentdate | date: "dd-MMM-yyyy" }}
+        </div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Incident Number</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">
+          {{ selectedObj?.incidentno }}
+        </div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Title</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">
+          {{ selectedObj?.title }}
+        </div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Category</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">{{ selectedObj?.category }}</div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Severity</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">{{ selectedObj?.severity }}</div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Status</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">{{ selectedObj?.incidentstatus }}</div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Incident Close Date</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">
+          {{ selectedObj?.incidentclosedt | date: "dd-MMM-yyyy" }}
+        </div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Created by</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">{{ selectedObj?.createdby }}</div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Created date</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8">
+          {{ selectedObj?.createddt | date: "dd-MMM-yyyy" }}
+        </div>
+      </div>
+      <div class="row" id="eventdetail">
+        <div class="col s2 m2">Notes</div>
+        <div class="col s1 m1">:</div>
+        <div class="col s8 m8" [innerHTML]="selectedObj?.notes"></div>
+      </div>

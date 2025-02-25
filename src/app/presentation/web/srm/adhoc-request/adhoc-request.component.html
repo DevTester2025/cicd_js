@@ -1,0 +1,162 @@
+<nz-modal
+  [nzWidth]="750"
+  [(nzVisible)]="adhocResize"
+  [nzTitle]="'Instant Resize'"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="onCancel()"
+>
+  <ng-template #modalContent>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+      <div class="ant-col-md-24 ant-col-lg-8">Tenant Name</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        {{ selectedInstance?.tenantname }}
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+      <div class="ant-col-md-24 ant-col-lg-8">Requested Date</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        {{ selectedInstance?.createddt | date: "dd-MMM-yyyy" }}
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+      <div class="ant-col-md-24 ant-col-lg-8">Instance Name</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        {{ selectedInstance?.instancename }}
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+      <div class="ant-col-md-24 ant-col-lg-8">Current Plan</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        {{ selectedInstance?.currentplan }}
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+      <div class="ant-col-md-24 ant-col-lg-8">Current Cost</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        {{ selectedInstance?.currentplanccy }}
+        {{ selectedInstance?.currentplancost }}
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+      <div class="ant-col-md-24 ant-col-lg-8">New Plan</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        <nz-select
+          [(ngModel)]="newplan"
+          [nzDisabled]="configs && configs.disable"
+          style="width: 50%"
+          nzAllowClear
+          nzPlaceHolder="Plan"
+          (ngModelChange)="onPlanChanges($event)"
+        >
+          <nz-option
+            *ngFor="let t of planList; index as ti"
+            [nzLabel]="t.instancetypename"
+            [nzValue]="t"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+      <div class="ant-col-md-24 ant-col-lg-8">New Cost</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        <!-- <nz-input-group>
+                    <input id="newcost" placeholder="New Cost" formControlName="newcost" nz-input type="number">
+                </nz-input-group> -->
+        {{ newcost }}
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 m-t-20">
+      <div class="ant-col-md-24 ant-col-lg-24">
+        <label nz-checkbox [(ngModel)]="autoImplementation"
+          >Auto Implementation ?</label
+        >
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 m-t-10" *ngIf="autoImplementation">
+      <div class="ant-col-md-24 ant-col-lg-8">Maintenance window</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          id="maintwindowid"
+          (ngModelChange)="windowChanged($event)"
+          style="width: 50%"
+          nzPlaceHolder="Maintenance window"
+          [(ngModel)]="maintenancewindow"
+        >
+          <nz-option
+            *ngFor="let c of mainWindowList"
+            [nzLabel]="c.windowname"
+            [nzValue]="c"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="ant-col-md-24 ant-col-lg-24 p-t-3" *ngIf="autoImplementation">
+      <div class="ant-col-md-24 ant-col-lg-8">Week Days</div>
+      <div class="ant-col-md-24 ant-col-lg-2">:</div>
+      <div class="ant-col-md-24 ant-col-lg-14">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          id="weekdays"
+          nzPlaceHolder="Week Days"
+          [(ngModel)]="reqday"
+          style="width: 50%"
+        >
+          <nz-option
+            *ngFor="let c of windowDays"
+            [nzLabel]="c.label"
+            [nzValue]="c.value"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div
+      *ngIf="newplan != null"
+      class="ant-col-md-24 ant-col-lg-24 m-t-35 materialize-red-text text-lighten-2"
+    >
+      <div class="ant-col-md-24 ant-col-lg-24">
+        The Instance will be resized to '{{ newplan?.instancetypename }}' and
+        the server require a restart. Please Confirm !
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #modalFooter>
+    <button class="m-t-20" nz-button nzType="default" (click)="onCancel()">
+      Cancel
+    </button>
+    <button
+      class="m-t-20"
+      *ngIf="!autoImplementation"
+      nz-button
+      nzType="primary"
+      [nzLoading]="resizing"
+      (click)="beforeSave()"
+    >
+      Resize
+    </button>
+    <button
+      class="m-t-20"
+      *ngIf="autoImplementation"
+      nz-button
+      nzType="primary"
+      [nzLoading]="resizing"
+      (click)="update()"
+    >
+      {{ btnText }}
+    </button>
+  </ng-template>
+</nz-modal>

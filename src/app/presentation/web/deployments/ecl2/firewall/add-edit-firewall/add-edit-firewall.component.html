@@ -1,0 +1,294 @@
+<nz-spin [nzSpinning]="loading" *ngIf="!edit">
+  <form nz-form [formGroup]="firewallForm" *ngIf="!edit">
+    <div class="row" style="margin-bottom: 0">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="firewallname"
+          >Name</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input
+            nz-input
+            placeholder="Name"
+            formControlName="firewallname"
+            type="text"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="zoneid" nzRequired
+          >Select Zone/Group
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            [nzDisabled]="firewallObj.firewallid"
+            nzShowSearch
+            nzAllowClear
+            id="zoneid"
+            placeholder="Select Zone/Group"
+            formControlName="zoneid"
+            (ngModelChange)="onRegionChange($event)"
+          >
+            <nz-option
+              *ngFor="let data of ecl2zoneList"
+              [nzLabel]="data.zonename"
+              [nzValue]="data"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="customerid" nzRequired
+          >Select
+          {{ subtenantLable }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            [nzDisabled]="firewallObj.firewallid"
+            nzShowSearch
+            nzAllowClear
+            id="customerid"
+            placeholder="Select"
+            formControlName="customerid"
+            (ngModelChange)="onCustomerChange($event)"
+          >
+            <nz-option
+              *ngFor="let data of customerList"
+              [nzLabel]="data.customername"
+              [nzValue]="data"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="firewallplanid"
+          >Firewall Plan</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            [nzDisabled]="firewallObj.firewallid"
+            nzShowSearch
+            nzAllowClear
+            id="firewallplanid"
+            placeholder="Select Firewall Plan"
+            nzPlaceHolder="Select Firewall Plan"
+            formControlName="firewallplanid"
+          >
+            <nz-option
+              *ngFor="let data of firewallplanList"
+              [nzLabel]="data.firewallplanname"
+              [nzValue]="data"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label
+          [nzSm]="24"
+          [nzXs]="12"
+          nzFor="description"
+          class="description"
+          >Description</nz-form-label
+        >
+
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Description"
+              type="text"
+              nz-input
+            ></textarea>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </form>
+</nz-spin>
+<div *ngIf="!edit" class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="disabled"
+      (click)="saveOrUpdate(firewallForm.value)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+      [nzLoading]="addingparam"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>
+<nz-tabset
+  [(nzSelectedIndex)]="selectedIndex"
+  class="networking-tab"
+  *ngIf="edit"
+>
+  <nz-tab nzTitle="Firewall">
+    <nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+      <form nz-form [formGroup]="ecl2firewallForm" *ngIf="edit">
+        <div class="row">
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzRequired
+                nzFor="firewallname"
+                >Name</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <input
+                  nz-input
+                  placeholder="Name"
+                  formControlName="firewallname"
+                  type="text"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="zoneid" nzRequired
+                >Select Zone/Group
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-select
+                  [nzDisabled]="firewallObj.firewallid"
+                  nzShowSearch
+                  nzAllowClear
+                  id="zoneid"
+                  placeholder="Select Zone/Group"
+                  formControlName="zoneid"
+                  (ngModelChange)="onRegionChange($event)"
+                >
+                  <nz-option
+                    *ngFor="let data of ecl2zoneList"
+                    [nzLabel]="data.zonename"
+                    [nzValue]="data"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzFor="customerid"
+                nzRequired
+                >Select
+                {{ subtenantLable }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-select
+                  [nzDisabled]="firewallObj.firewallid"
+                  nzShowSearch
+                  nzAllowClear
+                  id="customerid"
+                  placeholder="Select"
+                  formControlName="customerid"
+                >
+                  <nz-option
+                    *ngFor="let data of customerList"
+                    [nzLabel]="data.customername"
+                    [nzValue]="data"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzRequired
+                nzFor="firewallplanid"
+                >Firewall Plan</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-select
+                  [nzDisabled]="firewallObj.firewallid"
+                  nzShowSearch
+                  nzAllowClear
+                  id="firewallplanid"
+                  placeholder="Select Firewall Plan"
+                  nzPlaceHolder="Select Firewall Plan"
+                  formControlName="firewallplanid"
+                >
+                  <nz-option
+                    *ngFor="let data of firewallplanList"
+                    [nzLabel]="data.firewallplanname"
+                    [nzValue]="data"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzFor="description"
+                class="description"
+                >Description</nz-form-label
+              >
+
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-input-group>
+                  <textarea
+                    id="description"
+                    formControlName="description"
+                    placeholder="Description"
+                    type="text"
+                    nz-input
+                  ></textarea>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+                >Status</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-input-group>
+                  <nz-switch
+                    class="status"
+                    id="status"
+                    formControlName="status"
+                  ></nz-switch>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </nz-spin>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button
+          [disabled]="disabled"
+          (click)="saveOrUpdate(ecl2firewallForm.value)"
+          class="save-button"
+          type="submit"
+          nz-button
+          nzType="primary"
+          [nzLoading]="addingparam"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </nz-tab>
+  <nz-tab nzTitle="Interface">
+    <app-firewallinterface
+      [firewallInterfaceObj]="firewallInterfaceObj"
+    ></app-firewallinterface>
+  </nz-tab>
+</nz-tabset>

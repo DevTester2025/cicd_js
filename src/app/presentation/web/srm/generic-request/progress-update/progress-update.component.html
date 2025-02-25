@@ -1,0 +1,258 @@
+<app-cloudmatiq-side-nav>
+  <ng-container class="page-body">
+    <form nz-form class="serviceform" [formGroup]="genericReqForm">
+      <div class="col s12 m12 service-edit">
+        <h3 class="white-text mb-0">Basic Details</h3>
+        <div class="serviceform">
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-label [nzSm]="6" [nzXs]="12"
+                >Title</nz-form-label
+              >
+              <nz-form-control [nzSm]="8" [nzXs]="12">
+                <span>{{ genericObj.subject }}</span>
+              </nz-form-control>
+            </div>
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Budget Available</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.budgetyn == "Y" ? "Yes" : "No" }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Internal or Customer Project</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{
+                    genericObj.custmorprjyn == "Y"
+                      ? "Customer Project"
+                      : "Internal Project"
+                  }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Priority</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.priority }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Assignee</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.assignee?.fullname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24" *ngIf="genericObj.environment">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Environment</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.environment }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Reporter</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.reportee?.fullname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="6"
+                  nzRequired
+                  [nzXs]="12"
+                  nzFor="progresspercent"
+                  >Deployment Progress</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-number
+                    placeholder="1"
+                    [nzMin]="1"
+                    formControlName="progresspercent"
+                    [nzMax]="100"
+                    [nzStep]="10"
+                    id="progresspercent"
+                  ></nz-input-number>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="6"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="srstatus"
+                  >Change Status
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-select
+                    nzPlaceHolder="Select Status"
+                    nzAllowClear
+                    nzShowSearch
+                    id="srstatus"
+                    formControlName="srstatus"
+                  >
+                    <nz-option
+                      *ngFor="let s of statusList"
+                      [nzLabel]="s.keyname"
+                      [nzValue]="s.keyvalue"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Customer</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.customer?.customername }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Internal Reference Number</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.referenceno }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Department Name</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.departments?.keyname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Automated Deployment</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{
+                    genericObj.autodeployyn == "Y" ? "Yes" : "No"
+                  }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Start Date of Deployment</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{
+                    genericObj.deploystdate | date: "dd-MMM-yyyy"
+                  }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Decommissioning Date</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.decommdate | date: "dd-MMM-yyyy" }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Workflow</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ genericObj.workflow?.wrkflowname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12"
+                  >Customer notes</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <p class="desc">{{ genericObj.description }}</p>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="12" nzRequired nzFor="notes"
+                  >Notes to the User
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-group>
+                    <textarea
+                      id="notes"
+                      placeholder=""
+                      [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                      formControlName="notes"
+                      type="text"
+                      nz-input
+                    ></textarea>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m12 right-align clear save-button">
+        <button
+          nz-button
+          (click)="updateDetails(genericReqForm.value)"
+          class="service-button mt-1 mr-1"
+          nzType="primary"
+        >
+          <span>Update</span>
+        </button>
+        <button
+          nz-button
+          (click)="close()"
+          class="service-button mt-1 mr-1"
+          nzType="primary"
+        >
+          <span>Close</span>
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</app-cloudmatiq-side-nav>

@@ -1,0 +1,245 @@
+<div class="row data-table">
+  <div class="col s12 m3 left">
+    <nz-select
+      [(ngModel)]="provider"
+      style="width: 95%"
+      nzAllowClear
+      nzPlaceHolder="Provider"
+      (ngModelChange)="providerChanges()"
+    >
+      <nz-option nzValue="all" nzLabel="All"></nz-option>
+      <nz-option nzValue="ECL2" nzLabel="ECL2"></nz-option>
+      <nz-option nzValue="AWS" nzLabel="AWS"></nz-option>
+      <nz-option nzValue="Alicloud" nzLabel="Alicloud" nzDisabled></nz-option>
+      <nz-option
+        nzValue="Google Cloud"
+        nzLabel="Google Cloud"
+        nzDisabled
+      ></nz-option>
+    </nz-select>
+  </div>
+  <div class="col s12 m3 left">
+    <nz-select
+      [(ngModel)]="requestType"
+      style="width: 95%"
+      nzAllowClear
+      nzPlaceHolder="Request Type"
+      (ngModelChange)="gerRequestList()"
+    >
+      <nz-option nzValue="resize" nzLabel="Resize Requests"></nz-option>
+      <nz-option nzValue="scheduled" nzLabel="Scheduled Requests"></nz-option>
+    </nz-select>
+  </div>
+  <div class="col s12 m6 right" *ngIf="currentValue == 1 && provider !== 'all'">
+    <button
+      nz-button
+      [disabled]="disabledButton"
+      [nzType]="'primary'"
+      [nzLoading]="operating"
+      (click)="operateData()"
+    >
+      Request for approval
+    </button>
+    <span style="margin-left: 8px" *ngIf="checkedNumber"
+      >Selected {{ checkedNumber }} items</span
+    >
+  </div>
+  <div class="col s12 m12">
+    <div class="col s12 m3 right mr-0">
+      <nz-input-group nzAddOnAfterIcon="anticon anticon-search">
+        <input
+          type="search"
+          nz-input
+          [(ngModel)]="searchText"
+          (ngModelChange)="globalSearch($event)"
+          placeholder="Search"
+        />
+      </nz-input-group>
+    </div>
+  </div>
+</div>
+<div class="row table-section">
+  <nz-table
+    #InboxTable
+    [nzData]="srmInboxList"
+    [nzWidthConfig]="widthConfig"
+    nzSize="middle"
+    [nzScroll]="{ x: '1300px' }"
+    (nzCurrentPageDataChange)="currentPageDataChange($event)"
+    (nzPageIndexChange)="refreshStatus()"
+    (nzPageSizeChange)="refreshStatus()"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th
+          width="2%"
+          nzWidth="10px"
+          nzLeft="0px"
+          nzShowCheckbox
+          [(nzChecked)]="allChecked"
+          *ngIf="currentValue == 1 && provider !== 'all'"
+          [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"
+        ></th>
+        <th
+          width="12%"
+          class="left-align"
+          nzShowSort
+          nzSortKey="tenant?.tenantname"
+        >
+          Tenant
+        </th>
+        <th width="9%" class="left-align" nzShowSort nzSortKey="cloudprovider">
+          Cloud Provider
+        </th>
+        <th
+          width="12%"
+          class="center-align"
+          nzShowSort
+          nzSortKey="instance?.instancename"
+        >
+          Instance Name
+        </th>
+        <th width="8%" class="center-align" nzShowSort nzSortKey="createddt">
+          Requested Date
+        </th>
+        <th
+          width="16%"
+          class="left-align"
+          nzShowSort
+          nzSortKey="maintwindow?.enddate"
+          *ngIf="requestType != 'scheduled'"
+        >
+          Maintenance Window
+        </th>
+        <th width="10%" class="left-align" nzShowSort nzSortKey="lastupdatedby">
+          Updated By
+        </th>
+        <th width="8%" class="left-align" nzShowSort nzSortKey="lastupdateddt">
+          Updated On
+        </th>
+        <!-- <th *ngIf="editFlag||viewFlag||progressFlag" class="center" nzWidth="80px" nzRight="0px">Action</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of InboxTable.data">
+        <td
+          width="2%"
+          nzLeft="0px"
+          nzShowCheckbox
+          *ngIf="currentValue == 1 && provider !== 'all'"
+          [(nzChecked)]="data.checked"
+          (nzCheckedChange)="refreshStatus()"
+        ></td>
+        <td width="12%" class="left-align">
+          <span>{{ data.tenant.tenantname }}</span>
+        </td>
+        <td class="left-align">{{ data.cloudprovider }}</td>
+        <td class="center-align">{{ data.instance?.instancename }}</td>
+        <td class="center-align">{{ data.createddt | date: "dd-MMM-yyyy" }}</td>
+        <td class="left-align" *ngIf="requestType != 'scheduled'">
+          {{ data?.maintwindow?.startdate | date: "dd-MMM-yyyy hh:mm" }} to
+          {{ data.maintwindow?.enddate | date: "dd-MMM-yyyy hh:mm" }}
+        </td>
+        <td class="left-align">{{ data.lastupdatedby }}</td>
+        <td class="left-align">
+          {{ data.lastupdateddt | date: "dd-MMM-yyyy hh:mm:ss" }}
+        </td>
+        <!-- <td class="center-align" nzRight="0px" *ngIf="editFlag||viewFlag||progressFlag">
+                    <a *ngIf="showStatus == '3' && editFlag" (click)="edit(data)">
+                        <i class="anticon anticon-edit"></i>
+                    </a>&nbsp;
+                    <a (click)="view(data)" *ngIf="viewFlag">
+                        <i class="anticon anticon-eye-o"></i>
+                    </a>&nbsp;
+                    <a *ngIf="showStatus == '1' && progressFlag" title="Progress update" (click)="updateProgress(data)">
+                        <i class="anticon anticon-solution"></i>
+                    </a>
+                    <a *ngIf="showStatus == '3' " nz-popconfirm nzTitle="Are you sure?" nzOkText="Ok"
+                        nzCancelText="Cancel" (nzOnConfirm)="deleteGenericService(data)">
+                        <i class="anticon anticon-delete"></i>
+                    </a>
+                </td> -->
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+<app-cloudmatiq-side-bar
+  (dataChanged)="onChanged($event)"
+  [(isVisible)]="isVisible"
+  [title]="formTitle"
+>
+  <ng-container class="modal-content">
+    <nz-spin [nzSpinning]="loading">
+      <form nz-form [formGroup]="scriptForm">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="scripttype"
+            >Approver Workflow
+            <div class="col s12 m2 right right-align">
+              <button
+                (click)="viewWorkflowAdd = true"
+                nz-button
+                nzType="primary"
+              >
+                <i class="anticon anticon-plus"></i>
+              </button>
+            </div>
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              placeholder="Select Approver"
+              (ngModelChange)="onValueChange(scriptForm.value.approvername)"
+              nzPlaceHolder="Select Approver"
+              formControlName="approvername"
+            >
+              <nz-option
+                *ngFor="let data of workflowList"
+                [nzLabel]="data.aprvalwrkflowname"
+                [nzValue]="data.aprvalwrkflowid"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <div *ngIf="approverList.length > 0" class="p-t-20">
+          <div
+            *ngFor="let approver of approverList; let i = index"
+            class="p-10 ant-tabs"
+          >
+            <span>
+              <p>Approver {{ i + 1 }} : {{ approver?.user?.fullname }}</p>
+            </span>
+          </div>
+        </div>
+      </form>
+      <div class="row right">
+        <div class="col s12 md4">
+          <button
+            (click)="saveUpdate(scriptForm.value)"
+            class="save-button"
+            nz-button
+            nzType="primary"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </nz-spin>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+<app-cloudmatiq-side-bar
+  (dataChanged)="onAddChanged($event)"
+  [(isVisible)]="viewWorkflowAdd"
+  [title]="workflowTitle"
+>
+  <ng-container class="modal-content" *ngIf="viewWorkflowAdd">
+    <nz-spin [nzSpinning]="loading">
+      <app-add-edit-workflow
+        (notifyWorkflowEntry)="notifyWorkflowEntry($event)"
+      >
+      </app-add-edit-workflow>
+    </nz-spin>
+  </ng-container>
+</app-cloudmatiq-side-bar>

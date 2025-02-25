@@ -1,0 +1,82 @@
+<div class="row param-table">
+    <div class="col s12 m2" *ngIf="!instanceObj && !headerData">
+        <nz-date-picker nzFormat="dd-MMM-yyyy" nzPlaceHolder="Start Date" [(ngModel)]="logstartdt">
+        </nz-date-picker>
+    </div>
+    <div class="col s12 m2" *ngIf="!instanceObj && !headerData">
+        <nz-date-picker nzFormat="dd-MMM-yyyy" nzPlaceHolder="End Date" [(ngModel)]="logenddt">
+        </nz-date-picker>
+    </div>
+    <div class="col s12 m2">
+        <nz-select style="width: 95%" [(ngModel)]="logstatus" nzShowSearch nzPlaceHolder="Select">
+            <nz-option nzValue="" nzLabel="All Status"></nz-option>
+            <nz-option nzValue="Pending" nzLabel="Pending"></nz-option>
+            <nz-option nzValue="Inprogress" nzLabel="Inprogress"></nz-option>
+            <nz-option nzValue="Failed" nzLabel="Failed"></nz-option>
+            <nz-option nzValue="Completed" nzLabel="Completed"></nz-option>
+        </nz-select>
+    </div>
+    <div class="col s12 m2" *ngIf="!instanceObj && !headerData">
+        <nz-select style="width: 95%" [(ngModel)]="logorch" nzShowSearch nzPlaceHolder="Select">
+            <nz-option nzValue="" nzLabel="All Orchestration"></nz-option>
+            <nz-option *ngFor="let data of orchestrationList" [nzLabel]="data.orchname"
+                [nzValue]="data.orchid"></nz-option>
+        </nz-select>
+    </div>
+    <div class="col s12 m1">
+        <button nzSize="small" nz-button (click)="getAllExptrs()" nzType="primary" title="Search">
+            <i class="anticon anticon-search"></i>
+        </button>
+    </div>
+
+    <app-cloudmatiq-data-table (dataChanged)="dataChangedScheduleLog($event)" [tableData]="orchestrationLogList"
+        [tableHeader]="orchestrationLogHeaders" [tableConfig]="orchestrationLogTableConfig"
+        [widthConfig]="orchestrationLogTableConfig.widthConfig" [totalCount]="totalCount"></app-cloudmatiq-data-table>
+</div>
+<app-cloudmatiq-side-bar (dataChanged)="isLifecycleVisible = false" [(isVisible)]="isLifecycleVisible"
+    [title]="'Progress'">
+    <ng-container class="modal-content">
+        <nz-timeline>
+            <nz-timeline-item [nzColor]="
+  l['status'] == 'Completed'
+    ? 'green'
+    : l['status'] == 'Inprogress'
+    ? 'red'
+    : 'grey'
+" *ngFor="let l of orchLifeCycle">
+                <span style="color: white">
+                    {{ l["title"] }}
+                </span>
+                <br />
+                <span style="color: white; font-size: 11px">
+                    {{ l["timestamp"] | date : "dd-MMM-yyyy hh:mm:ss" }}
+                </span>
+            </nz-timeline-item>
+        </nz-timeline>
+    </ng-container>
+</app-cloudmatiq-side-bar>
+<nz-drawer id="sidebar-modal" [nzBodyStyle]="{
+    'padding-bottom': '55px',
+    height: 'calc(100% - 55px)',
+    overflow: 'auto'
+  }" [nzMaskClosable]="true" [nzWidth]="750" [nzVisible]="isLogVisible" nzTitle="Log"
+    (nzOnClose)="isLogVisible = !isLogVisible">
+    <pre style="
+      color: white;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      white-space: -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+    ">{{ file }}</pre>
+    <div class="footer">
+        <button *ngIf="islocal" type="button" (click)="getLog()" class="ant-btn ant-btn-primary">
+            <span>Refresh</span>
+        </button>
+        &nbsp;&nbsp;
+        <button type="button" (click)="isLogVisible = !isLogVisible" class="ant-btn ant-btn-primary">
+            <span>Close</span>
+        </button>
+    </div>
+</nz-drawer>

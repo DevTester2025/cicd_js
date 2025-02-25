@@ -1,0 +1,84 @@
+<nz-spin [nzSpinning]="loading" [nzTip]="" [nzSize]="'large'">
+  <div>
+    <div>
+      <table id="grouptable" aria-label="KPI Reporting Details">
+        <thead>
+          <th width="20%">Report Name</th>
+          <th width="10%">Start Date</th>
+          <th width="10%">End Date</th>
+          <th width="7%">Customer Dashboard?</th>
+          <th width="3%">
+            <span style="float: right"
+              ><i
+                class="anticon anticon-plus"
+                (click)="addRow()"
+                style="color: #ffcc00"
+              ></i
+            ></span>
+          </th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of customerkpireports; let i = index">
+            <td>
+              <nz-select
+                style="width: 100%"
+                [(ngModel)]="t.title"
+                (ngModelChange)="onSelectReport($event, i)"
+                nzShowSearch
+                nzPlaceHolder="Select KPI report"
+              >
+                <nz-option
+                  *ngFor="let option of kpireportList"
+                  [nzLabel]="option.title"
+                  [nzValue]="option"
+                >
+                </nz-option>
+              </nz-select>
+            </td>
+            <td>
+              <nz-date-picker
+                [(ngModel)]="t.startdt"
+                [nzFormat]="'dd-MMM-yyyy'"
+              ></nz-date-picker>
+            </td>
+            <td>
+              <nz-date-picker
+                [(ngModel)]="t.enddt"
+                [nzFormat]="'dd-MMM-yyyy'"
+              ></nz-date-picker>
+            </td>
+            <td>
+              <label
+                style="margin-left: 50px"
+                nz-checkbox
+                [(ngModel)]="t.publishyn"
+              ></label>
+            </td>
+            <td>
+              <span style="float: right"
+                ><i
+                  class="anticon anticon-delete"
+                  (click)="deleteRow(i)"
+                  style="color: #ffcc00; padding-top: 12px"
+                ></i
+              ></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+      <div class="right mr-0">
+        <button
+          (click)="saveOrUpdate()"
+          class="mt-1 save-button"
+          type="submit"
+          nz-button
+          nzType="primary"
+          [nzLoading]="addingparam"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-spin>

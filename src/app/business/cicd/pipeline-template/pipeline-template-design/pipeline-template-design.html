@@ -1,0 +1,364 @@
+<app-cloudmatiq-side-nav>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="closeSideBar($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+    [width]="920"
+  >
+    <ng-container class="modal-content">
+      <!-- <app-pipeline-settings
+        [propertiesobj]="propertiesobj"
+        (propertiesChange)="onPropertiesChange($event)"
+        [templateNodeId]="templateNodeId"
+        [isUpdate]="isUpdate"
+        (propertiesTabChange)="onPropertiesTabChange($event)"
+        [templateTabIndex]="templateTabIndex"
+        (tabChange)="tabChange($event)"
+      ></app-pipeline-settings> -->
+      <nz-tabset
+      [nzSelectedIndex]="templateTabIndex"
+      (nzSelectChange)="templateChange($event)"
+      [nzTabBarExtraContent]="extraTemplate"
+    >
+    <nz-tab nzTitle="Properties">
+      <app-prop-basic
+        [propertiesobj]="propertiesobj"
+        *ngIf="templateTabIndex==0"
+        [viewMode]="options.viewMode"
+      ></app-prop-basic>
+    </nz-tab>
+    <nz-tab
+      nzTitle="CMDB"
+      *ngIf="propertiesobj?.selectedNode?._data?.type !== 'OTHERS'"
+    >
+      <app-prop-cmdb
+        *ngIf="templateTabTitle=='CMDB'"
+        [nodeObj]="propertiesobj"
+        [nodeDetails]="nodeDetails"
+        [activeTab]="currentTab"
+        (formDataChange)="onTabDataChange($event)"
+      ></app-prop-cmdb>
+    </nz-tab>
+    <nz-tab
+      nzTitle="Notifications"
+      *ngIf="propertiesobj?.selectedNode?._data?.type !== 'OTHERS'"
+    >
+      <app-prop-notification
+        *ngIf="templateTabTitle=='Notifications'"
+        [nodeObj]="propertiesobj"
+        [nodeDetails]="nodeDetails"
+        [activeTab]="currentTab"
+        (formDataChange)="onTabDataChange($event)"
+      ></app-prop-notification>
+    </nz-tab>
+    <nz-tab
+      nzTitle="Integrations"
+      *ngIf="propertiesobj?.selectedNode?.name === 'TESTING_TOOL'"
+    >
+      <app-prop-integration
+        *ngIf="templateTabTitle=='Integrations'"
+        [nodeObj]="propertiesobj"
+        [nodeDetails]="nodeDetails"
+        [activeTab]="currentTab"
+        (formDataChange)="onTabDataChange($event)"
+      ></app-prop-integration>
+    </nz-tab>
+    <nz-tab
+      nzTitle="Compliances"
+      *ngIf="propertiesobj?.selectedNode?._data?.type === 'BUILD_SCRIPT' || propertiesobj?.selectedNode?.name === 'CONTAINER_REGISTRY'"
+    >
+      <app-alert-notification
+        *ngIf="templateTabTitle=='Compliances'"
+        [nodeObj]="propertiesobj"
+        [nodeDetails]="nodeDetails"
+        [activeTab]="currentTab"
+        (formDataChange)="onTabDataChange($event)"
+      ></app-alert-notification>
+    </nz-tab>
+    <nz-tab
+      nzTitle="Rollback & Retries"
+      *ngIf="propertiesobj?.selectedNode?._data?.type === 'BUILD_SCRIPT' || propertiesobj?.selectedNode?.name === 'CONTAINER_REGISTRY'"
+    >
+      <app-prop-rollback
+        *ngIf="templateTabTitle=='Rollback & Retries'"
+        [nodeDetails]="nodeDetails"
+        [nodeObj]="propertiesobj"
+        [activeTab]="currentTab"
+        (formDataChange)="onTabDataChange($event)"
+      ></app-prop-rollback>
+    </nz-tab>
+    <nz-tab
+      nzTitle="Settings"
+      *ngIf="propertiesobj?.selectedNode?._data?.type === 'BUILD_SCRIPT' || propertiesobj?.selectedNode?.name === 'CONTAINER_REGISTRY'"
+    >
+      <app-prop-envnode
+        *ngIf="templateTabTitle=='Settings'"
+        [nodeDetails]="nodeDetails"
+        [nodeObj]="propertiesobj"
+        [activeTab]="currentTab"
+        (formDataChange)="onTabDataChange($event)"
+      ></app-prop-envnode>
+    </nz-tab>
+  </nz-tabset>
+  <ng-template #extraTemplate>
+    <div nz-row nzType="flex" nzAlign="middle">
+      <div nz-col nzSpan="24">
+        <div class="right-align">
+          <button
+            *ngIf="isUpdate"
+            nz-button
+            nzType="primary"
+            (click)="updateNodeDetails()"
+          >
+            <i class="anticon anticon-save"></i>
+          </button>
+          &nbsp;&nbsp;
+        </div>
+      </div>
+    </div>
+  </ng-template>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <nz-spin [nzSpinning]="loading" [nzSize]="'large'" nzTip="Loading...">
+      <div style="margin-bottom: 2px; margin-top: -10px !important">
+        <div class="pipelineTemplateForm">
+          <form nz-form [formGroup]="pipelineTemplateForm">
+            <div nz-row class="pipeline-template-design">
+              <div nz-row nzGutter="16">
+                <div nz-col nzSpan="24" nzMd="8" nzXl="6">
+                  <nz-form-item>
+                    <nz-form-label
+                      nzRequired
+                      style="text-align: left"
+                      nzFor="name"
+                      nzSpan="6"
+                      >Name</nz-form-label
+                    >
+                    <nz-form-control nzSpan="18">
+                      <input
+                        nz-input
+                        formControlName="name"
+                        type="text"
+                        [readonly]="isView"
+                        [class.view-cursor]="isView"
+                        placeholder="Template name"
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="24" nzMd="8" nzXl="7">
+                  <nz-form-item>
+                    <nz-form-label nzSpan="6" style="text-align: left" nzFor=""
+                      >Watchlist</nz-form-label
+                    >
+                    <nz-form-control nzSpan="18">
+                      <nz-select
+                        formControlName="watchlist"
+                        nzPlaceHolder="Select Watchlist"
+                        nzShowSearch
+                        [(ngModel)]="selectedValue"
+                        nzMode="multiple"
+                        nzAllowClear
+                        [nzDisabled]="isView"
+                        style="max-height: 70px; overflow-y: auto"
+                      >
+                        <nz-option
+                          *ngFor="let option of watchList"
+                          [nzValue]="option.value"
+                          [nzLabel]="option.label"
+                        ></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col nzSpan="24" nzMd="8" nzXl="7">
+                  <nz-form-item>
+                    <nz-form-label nzFor="workpack"
+                    nzSpan="6">Workpack </nz-form-label>
+                    <nz-form-control nzSpan="18">
+                        <input
+                          id="priority"
+                          nz-input
+                          (click)="isTreeVisible = true"
+                          placeholder="Select workpack"
+                          value="{{ treeTableSearchbox }}"
+                          formControlName="workpackid"
+                          type="text"
+                        />
+                    </nz-form-control>
+                  </nz-form-item>
+              </div>
+                <div nz-col nzSpan="24" nzMd="8" nzXl="4">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: end;
+                    "
+                  >
+                    <div *ngIf="!isView">
+                      <button
+                        class="cancel-pipeline-btn"
+                        nz-button
+                        nzType="primary"
+                        (click)="validate()"
+                        title="Validate"
+                      >
+                        <i class="anticon anticon-check-circle-o"></i>
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        class="cancel-pipeline-btn"
+                        [class.add-btn]="isView"
+                        nz-button
+                        nzType="primary"
+                        (click)="createPipelineTemplate()"
+                        type="submit"
+                        [title]="isUpdate ? 'Update' : 'Save'"
+                      >
+                        <i *ngIf="!isView" class="anticon anticon-save"></i>
+                        <i *ngIf="isView" class="anticon anticon-close"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="!isView">
+                      <button
+                        class="cancel-pipeline-btn"
+                        nz-button
+                        nzType="primary"
+                        (click)="cancel()"
+                        title="Close"
+                      >
+                        <i class="anticon anticon-close"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div nz-row nzGutter="16">
+              <div nz-col nzSpan="24" nzMd="8" nzXl="6">
+                <nz-form-item>
+                  <nz-form-label
+                    nzSpan="6"
+                    style="text-align: left"
+                    nzFor="runner"
+                    >Runner</nz-form-label
+                  >
+                  <nz-form-control nzSpan="18">
+                    <nz-select
+                      formControlName="runner"
+                      nzPlaceHolder="Select Runner"
+                      nzShowSearch
+                      [nzDisabled]="isView"
+                    >
+                      <nz-option
+                        *ngFor="let option of runnerList"
+                        [nzValue]="option.value"
+                        [nzLabel]="option.label"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>             
+          </div>
+            </div>
+            <!-- <hr style="margin: 0px" /> -->
+          </form>
+        </div>
+      </div>
+      <nz-tabset
+        [nzSelectedIndex]="tabIndex"
+        (nzSelectChange)="templateTabChange($event)"
+      >
+        <nz-tab
+          [nzTitle]="isUpdate ? 'Designer' : isView ? 'Designer View' : 'Designer'"
+        >
+          <div id="flowrigami" style="height: 83vh"></div>
+        </nz-tab>
+        <nz-tab nzTitle="Notifications" *ngIf="(isUpdate || isView) && isNotifications">
+          <p class="mt-5 center">No Data Found</p>
+        </nz-tab>
+        <nz-tab nzTitle="Comments" *ngIf="(isUpdate || isView) && isComments">
+          <app-comments
+            *ngIf="tabIndex == 2"
+            [resourceDetails]="pipelineObj"
+            [resourceId]="this.pipelineObj.refid"
+            [refType]="'documents'"
+          ></app-comments>
+        </nz-tab>
+        <nz-tab nzTitle="Documents" *ngIf="(isUpdate || isView) && isDocuments">
+          <app-comments
+            *ngIf="tabIndex == 3"
+            [resourceDetails]="pipelineObj"
+            [resourceId]="this.pipelineObj.refid"
+            [documentType]="true"
+            [refType]="'documents'"
+          ></app-comments>
+        </nz-tab>
+        <nz-tab nzTitle="Change Logs" *ngIf="(isUpdate || isView) && isChangelogs">
+          <app-comments
+            *ngIf="tabIndex == 4"
+            [resourceDetails]="pipelineObj"
+            [resourceId]="this.pipelineObj.refid"
+            [refType]="'history'"
+          ></app-comments>
+        </nz-tab>
+      </nz-tabset>
+    </nz-spin>
+  </ng-container>
+  <app-cloudmatiq-side-bar
+    [(isVisible)]="showValidateDrawer"
+    [title]="'Validate'"
+    [width]="520"
+    (dataChanged)="onChanged($event)"
+  >
+    <ng-container class="modal-content">
+      <div class="modal-container">
+        <app-pipeline-validator
+        [exportObj]="exportObj"  
+        [defaultPipelineTemplateObj]="pipelineflowObj"   
+        [nodeValidation]="nodes"
+        (openSidebar)="handleOpenSidebar($event)"
+        (closeDrawer)="onChanged($event)"
+      ></app-pipeline-validator>
+      </div>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+  (dataChanged)="isTreeVisible=false"
+    [(isVisible)]="isTreeVisible"
+    title="Workpack Selection"
+    [width]="820"
+  >
+    <ng-container class="modal-content" *ngIf="isTreeVisible">
+      <div class="example-wrapper">
+        <div class="row">
+        <!-- <div nz-col nzSpan="12" class="m-r-15" >
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input id="filter-text-box" [(ngModel)]="treeTableSearchbox" type="text" nz-input (input)="onFilterTextBoxChanged()" placeholder="Select Template" />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button (click)="selectTreeTableNode($event)" class="ant-btn ng-star-inserted ant-btn-primary" nz-button nz-dropdown>
+              <span>Select</span> 
+            </button>
+          </ng-template>
+        </div> -->
+      </div>
+        <div class="row">
+          <ag-grid-angular style="width: 100%; height: 550px" class="ag-theme-balham-dark"
+         #grid [gridOptions]="gridOptions" [columnDefs]="columnDefs"
+        [rowData]="templateTreeList"
+        [cacheQuickFilter]="true"
+        [autoGroupColumnDef]="autoGroupColumnDef"
+        [rowSelection]="'single'"
+        (firstDataRendered)="onFirstDataRendered($event)"
+        (gridReady)="onGridReady($event)"
+        [suppressRowClickSelection]="true"
+        (selectionChanged)="onTreeSelectionChanged($event)"
+        (onCellClicked)="onGridClick($event)" ></ag-grid-angular>
+        </div>
+      </div> 
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+</app-cloudmatiq-side-nav>

@@ -1,0 +1,63 @@
+<form nz-form [formGroup]="igwForm">
+  <nz-form-item>
+    <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="gatewayname"
+      >Gateway Name</nz-form-label
+    >
+    <nz-form-control [nzSm]="24" [nzXs]="12">
+      <nz-input-group>
+        <input
+          [attr.disabled]="noEdit"
+          id="gatewayname"
+          formControlName="gatewayname"
+          nz-input
+          type="text"
+        />
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="awsinternetgatewayid"
+      >AWS Gateway id</nz-form-label
+    >
+    <nz-form-control [nzSm]="24" [nzXs]="12">
+      <nz-input-group>
+        <input
+          [attr.disabled]="noEdit"
+          id="awsinternetgatewayid"
+          formControlName="awsinternetgatewayid"
+          nz-input
+          type="text"
+        />
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vpc">VPC</nz-form-label>
+    <nz-form-control [nzSm]="24" [nzXs]="12">
+      <nz-input-group>
+        <input
+          [attr.disabled]="noEdit"
+          id="vpc"
+          formControlName="vpc"
+          nz-input
+          type="text"
+        />
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="notes">Notes</nz-form-label>
+    <nz-form-control [nzSm]="24" [nzXs]="12">
+      <nz-input-group>
+        <textarea
+          [attr.disabled]="noEdit"
+          id="notes"
+          formControlName="notes"
+          placeholder="Notes"
+          type="text"
+          nz-input
+        ></textarea>
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+</form>

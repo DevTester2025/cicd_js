@@ -1,0 +1,47 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <div class="row data-table">
+      <div class="col s12 m3 right mr-0">
+        <nz-input-group nzAddOnAfterIcon="anticon anticon-search">
+          <input
+            type="search"
+            nz-input
+            [(ngModel)]="searchText"
+            (ngModelChange)="globalSearch($event)"
+            placeholder="Search"
+          />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="row table-section">
+      <nz-table #NotificaionTable [nzData]="notificationList">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+          <tr>
+            <th nzShowSort nzSortKey="srmsr?.requesttype">Request Type</th>
+            <th nzShowSort nzSortKey="srmsr?.subject">Subject</th>
+            <th nzShowSort nzSortKey="notes">Notes</th>
+            <th nzShowSort nzSortKey="lastupdatedby">Updated By</th>
+            <th nzShowSort nzSortKey="lastupdateddt">Updated On</th>
+            <th class="center-align">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of NotificaionTable.data">
+            <td class="left-align">{{ data.srmsr?.requesttype }}</td>
+            <td class="left-align">{{ data.srmsr?.subject }}</td>
+            <td class="left-align">{{ data.notes }}</td>
+            <td class="left-align">{{ data.lastupdatedby }}</td>
+            <td class="left-align">
+              {{ data.lastupdateddt | date: "dd-MMM-yyyy hh:mm:ss" }}
+            </td>
+            <td class="center-align" nzRight="0px">
+              <a (click)="view(data)">
+                <i class="anticon anticon-eye-o"></i> </a
+              >&nbsp;
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

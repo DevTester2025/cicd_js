@@ -1,0 +1,22 @@
+.workpack-tree .angular-tree-component .node-wrapper {
+  background: #1c2e3c;
+}
+.workpack-tree .angular-tree-component .tree-node-level-1 {
+  background: #1c2e3c;
+}
+.tree-node-p{
+  padding: 8px;
+}
+.action-icon {
+  text-align: end;
+  padding-right: 20px;
+  color: #ffcc00;
+}
+:host ::ng-deep .node-content-wrapper {
+  width: 100%;
+}
+:host ::ng-deep .node-wrapper {
+  border-bottom: 1px solid #5c6773;
+  padding: 3px;
+}
+

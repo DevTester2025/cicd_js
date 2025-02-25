@@ -1,0 +1,244 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="closeDrawer()"
+    [(isVisible)]="addEditVisible"
+    [width]="360"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-addedit-recordtype
+        [resourceObj]="selectedAsset"
+        [resourceId]="selectedId"
+        [selectedRefId]="selectedRefId"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      >
+      </app-addedit-recordtype>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="closeDrawer()"
+    [(isVisible)]="isVisible"
+    [width]="360"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <nz-spin [nzSpinning]="loading">
+        <form
+          nz-form
+          [formGroup]="resourceForm"
+          (ngSubmit)="saveOrUpdate(resourceForm.value)"
+        >
+          <div class="row" style="margin-bottom: 0">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzRequired
+                nzFor="resourcetype"
+                >Resource Type</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-input-group>
+                  <input
+                    type="text"
+                    nz-input
+                    formControlName="resourcetype"
+                    placeholder="Resource Type"
+                  />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzRequired
+                nzFor="parentcrn"
+                >Parent Resource Type</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-input-group>
+                  <nz-select
+                    id="parentcrn"
+                    style="width: 100%"
+                    formControlName="parentcrn"
+                    nzPlaceHolder="Choose"
+                    nzAllowClear
+                    nzShowSearch
+                  >
+                    <nz-option
+                      *ngFor="let r of resourceTypesList"
+                      [nzValue]="r.crn"
+                      [nzLabel]="r.resource"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="module"
+                >Module</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-input-group>
+                  <nz-select
+                    id="module"
+                    style="width: 100%"
+                    formControlName="module"
+                    nzPlaceHolder="Choose"
+                    nzAllowClear
+                    nzShowSearch
+                  >
+                    <nz-option
+                      *ngFor="let r of resourceModuleList"
+                      [nzValue]="r"
+                      [nzLabel]="r"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+            <div *ngIf="recordTypeObj.id">
+              <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+                  >Status</nz-form-label
+                >
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <nz-input-group>
+                    <nz-switch
+                      class="status"
+                      id="status"
+                      formControlName="status"
+                    ></nz-switch>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="right mr-0">
+              <button
+                class="mt-1 save-button"
+                type="submit"
+                nz-button
+                nzType="primary"
+                [nzLoading]="addingparam"
+              >
+                {{ button }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </nz-spin>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+
+  <ng-container class="page-body">
+    <div nz-row nzType="flex" nzAlign="middle">
+      <div nz-col nzSpan="24">
+        <form nz-form [formGroup]="filterForm">
+          <div nz-row>
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="resourcetype"
+                  >Resource Type
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <nz-select
+                    id="resourcetype"
+                    formControlName="resourcetype"
+                    style="width: 90%"
+                    nzAllowClear
+                    nzPlaceHolder="Choose"
+                    nzShowSearch
+                    (ngModelChange)="getAssetHdr('', $event)"
+                  >
+                    <nz-option
+                      *ngFor="let r of resourceTypesList"
+                      [nzValue]="r.crn"
+                      [nzLabel]="r.resource"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="2" class="right-align">
+              <!-- #OP_T620 -->
+              <button
+                *ngIf="filterForm.value.resourcetype == null && visibleadd"
+                nzSize="small"
+                nz-button
+                nzType="primary"
+                style="margin-top: 40px"
+                (click)="showrecordData()"
+                title="Add"
+              >
+                <i class="anticon anticon-plus"></i>
+              </button>
+              <!-- #OP_T620 -->
+              <button
+                *ngIf="filterForm.value.resourcetype != null && visibleedit"
+                nzSize="small"
+                nz-button
+                nzType="primary"
+                style="margin-top: 40px"
+                (click)="showrecordData()"
+                title="Edit"
+              >
+                <i class="anticon anticon-edit"></i>
+              </button>
+              &nbsp; &nbsp;
+              <button
+                nzSize="small"
+                nz-button
+                nzType="primary"
+                style="margin-top: 40px"
+                nz-popconfirm
+                nzTitle="Are you sure?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="deleteRecordType()"
+                *ngIf="visibledelete"
+                title="Delete"
+              >
+                <i class="anticon anticon-delete"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row param-table">
+      <div class="col s12 m2 left left-align">
+        <!-- #OP_T620 -->
+        <button nz-button nzType="primary" *ngIf="add" (click)="showAddEditForm()">
+          <i class="anticon anticon-plus"></i>Add
+        </button>
+      </div>
+      <!-- <button
+        *ngIf="assetList.length > 0 && edit"
+        [disabled]="selectedRows.length == 0"
+        title="Delete Selected Attributes"
+        style="position: relative; bottom: -43px; margin-left: 13px"
+        nz-button
+        (click)="bulkDelete()"
+      >
+        Delete Attributes
+      </button> -->
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="assetList"
+        [tableHeader]="tableHeader"
+        [selectedcolumns]="selectedcolumns"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+      <div>
+        <p style="color:#ffcc00;">Total Records : {{totalCount}}</p>
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

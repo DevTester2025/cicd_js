@@ -1,0 +1,56 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="rightbarChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-add-edit-user
+        [userObj]="userObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      >
+      </app-add-edit-user>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <div class="row param-table">
+    <div class="row">
+      <div class="col s12 m2 left left-align ">
+        <button
+          *ngIf="visibleadd"
+          nz-button
+          nzType="primary"
+          (click)="showModal()"
+        >
+          <i class="anticon anticon-plus"></i>{{ buttonText }}
+        </button>
+      </div>
+   
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="usersList"
+        [tableHeader]="userListHeaders"
+        [selectedcolumns]="selectedcolumns"
+        [tableConfig]="userTableConfig"
+        [totalCount]= "totalCount"
+      ></app-cloudmatiq-data-table>
+    </div>
+  </div>
+</ng-container>
+<app-cloudmatiq-side-bar
+    (dataChanged)="showFilter = false"
+    [(isVisible)]="showFilter"
+    title="Filter"
+  >
+  <ng-container *ngIf="showFilter" class="modal-content">
+    <app-filters
+      (getFilterValue)="getFilterValue($event)"
+      (setFilterValue)="setFilterValue($event)"
+      [filterableValues]="filterableValues"
+      [existValues]="filteredValues[filterKey]"
+      [filterKey]="filterKey"
+      filterValue="roleid"
+    ></app-filters
+  ></ng-container>
+</app-cloudmatiq-side-bar>
+</app-cloudmatiq-side-nav>

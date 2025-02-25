@@ -1,0 +1,83 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+    [width]="modalWidth"
+  >
+    <ng-container class="modal-content">
+      <app-add-edit-firewall
+        *ngIf="modalname == 'Firewall'"
+        [firewallObj]="firewallObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      >
+      </app-add-edit-firewall>
+      <app-firewallvsrx
+        *ngIf="modalname == 'VSRX'"
+        [vsrxObj]="vsrxObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      >
+      </app-firewallvsrx>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <div class="row">
+      <div class="col s6 m3 mt-1">
+        <nz-select
+          nzShowSearch
+          placeholder="Select Provider"
+          nzPlaceHolder="Select Provider"
+          [(ngModel)]="provider"
+          style="width: 93%"
+          (ngModelChange)="onChangeProvider($event)"
+        >
+          <nz-option
+            *ngFor="let i of providerList"
+            [nzLabel]="i.keyname"
+            [nzValue]="i.keyvalue"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div *ngIf="typeselect" class="col s6 m3 mt-1">
+        <nz-select
+          nzShowSearch
+          placeholder="Select"
+          nzPlaceHolder="Select"
+          [(ngModel)]="type"
+          style="width: 93%"
+          (ngModelChange)="onChangeType($event)"
+        >
+          <nz-option nzLabel="Firewall" nzValue="Firewall"></nz-option>
+          <nz-option nzLabel="VSRX" nzValue="VSRX"></nz-option>
+        </nz-select>
+      </div>
+      <!-- <div class="col s12"> -->
+      <div class="col s6 m3 right right-align mt-1">
+        <button
+          *ngIf="visibleadd && firewall && provider != 'AWS'"
+          nz-button
+          nzType="primary"
+          (click)="showModal('Firewall')"
+        >
+          <i class="anticon anticon-plus"></i>{{ buttonText }}
+        </button>
+        <button
+          *ngIf="visibleadd && vsrx && provider != 'AWS'"
+          nz-button
+          nzType="primary"
+          (click)="showModal('VSRX')"
+        >
+          <i class="anticon anticon-plus"></i>{{ buttonText }}
+        </button>
+      </div>
+    </div>
+    <div class="param-table" style="margin-top: 0px">
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="firewallList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

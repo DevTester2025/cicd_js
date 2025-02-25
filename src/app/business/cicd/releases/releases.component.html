@@ -1,0 +1,27 @@
+<app-cloudmatiq-side-nav>
+  <ng-container class="page-body">
+    <nz-tabset
+      class="releases-component-container"
+      [(nzSelectedIndex)]="tabIndex"
+      [nzTabBarExtraContent]="extraTemplate"
+      (nzSelectedIndexChange)="onTabChange($event)"
+    >
+      <nz-tab nzTitle="Releases Transactions"
+        ><app-releases-transactions></app-releases-transactions
+      ></nz-tab>
+      <nz-tab nzTitle="Releases List"
+        ><app-releases-list></app-releases-list
+      ></nz-tab>
+    </nz-tabset>
+    <ng-template #extraTemplate>
+      <button
+        nz-button
+        nzType="primary"
+        class="right-align mt-3"
+        (click)="addReleases()"
+      >
+        {{ buttonText }}
+      </button>
+    </ng-template>
+  </ng-container>
+</app-cloudmatiq-side-nav>

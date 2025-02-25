@@ -1,0 +1,14 @@
+<div *ngIf="loading" class="row">
+  <div class="col s12 text-xs-center center mt-15">
+    <nz-spin nzSize="large" nzTip="Loading..."></nz-spin>
+  </div>
+</div>
+
+<div class="row param-table" *ngIf="!loading">
+  <nz-tabset [nzSelectedIndex]="sectabIndex" (nzSelectChange)="sectabChange($event)">
+    <nz-tab nzTitle="Integrity Monitoring">
+      
+    </nz-tab>
+  </nz-tabset>
+</div>
+<div *ngIf="!agentID && !loading" class="no-data-txt">No data found</div>

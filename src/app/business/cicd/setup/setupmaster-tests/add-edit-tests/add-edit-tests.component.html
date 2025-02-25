@@ -1,0 +1,380 @@
+<app-cloudmatiq-side-nav>
+  <ng-container class="page-body">
+    <div *ngIf="type ==='SONARQUBE'" class="testtoolTitle mt-3">
+      <div class="m-r-20">
+        <svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="58" height="58" fill="white" />
+          <path
+            d="M41.9692 45.33H40.0813C40.0813 30.1319 27.5405 17.7673 12.1265 17.7673V15.8794C28.5824 15.8794 41.9692 29.09 41.9692 45.33ZM43.2748 35.195C41.008 25.6636 33.2828 17.6985 23.6003 14.9195L24.0345 13.4075C34.2546 16.3427 42.4115 24.7515 44.8044 34.8309L43.2748 35.195ZM44.7258 26.2463C42.3915 21.1554 38.413 16.7163 33.5262 13.7461L34.1803 12.67C39.2804 15.7696 43.4324 20.4046 45.8738 25.7192L44.7258 26.2463Z"
+            fill="#549DD0" />
+        </svg>
+      </div>
+      <div class="info">
+        <h3 class="white-text">Sonarqube</h3>
+        <p class="text-light-gray">Code Quality Assurance tool that collects and analyzes source code, and provides reports for the code quality</p>
+      </div>
+    </div>
+    <nz-spin [nzSpinning]="loading" [nzSize]="'large'" nzTip="Loading...">
+      <nz-tabset 
+    [nzTabBarExtraContent]="extraTemplate" 
+    [nzSelectedIndex]="tabIndex"
+    (nzSelectChange)="tabChanged($event)" >
+    <ng-template #extraTemplate>
+      <div nz-col nzSpan="12" nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+        <button  *ngIf="tabIndex == 0" nz-button nzType="primary" style="float: right" (click)="createTesttool()" [nzLoading]="isLoading" class="publish-button">
+          {{ isUpdate ? "Update" : "Save" }}
+        </button>
+        <button nz-button nzType="primary" class="discard" style="float: right; margin-right: 3px"
+          (click)="discard()">
+          Cancel
+        </button>
+      </div>
+</ng-template>
+    <nz-tab nzTitle="Basic Info">
+      <div nz-col nzSpan="24" nzXs="24" nzMd="24" nzLg="16" nzXl="16" style="margin: 15px" class="add-testtool">
+        <form nz-form [formGroup]="testtoolForm">
+          <ng-container *ngIf="type === 'SONARQUBE'">
+            <nz-form-item class="form-field">
+              <nz-form-label style="text-align: left" nzSpan="6">Name</nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <input nz-input placeholder="Name" formControlName="name" />
+                <nz-form-explain *ngIf="
+                  testtoolForm.get('name').dirty &&
+                  testtoolForm.get('name').errors
+                ">
+                  {{
+                  testtoolForm.get("name").errors.required
+                  ? "Testing Tool Name is required "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("name").errors.minlength
+                  ? "Minimum length is 3 characters "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("name").errors.maxlength
+                  ? "Maximum length is 50 characters "
+                  : ""
+                  }}
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="form-field">
+              <nz-form-label style="text-align: left" nzSpan="6"> {{ urlIsVariable ? 'URL Variable' : 'URL' }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <input nz-input placeholder="Url" *ngIf="!urlIsVariable" formControlName="url" />
+                <nz-select formControlName="urlvariable" *ngIf="urlIsVariable" nzShowSearch nzAllowClear>
+                  <nz-option *ngFor="let option of variableList" [nzValue]="option.value"
+                    [nzLabel]="option.label"></nz-option>
+                </nz-select>
+                <nz-form-explain *ngIf="
+                  testtoolForm.get('url').dirty &&
+                  testtoolForm.get('url').errors
+                ">
+                  {{
+                  testtoolForm.get("url").errors.required
+                  ? "URL is required "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("url").errors.minlength
+                  ? "Minimum length is 10 characters "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("url").errors.maxlength
+                  ? "Maximum length is 500 characters "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("url").errors.pattern
+                  ? "Enter a valid URL"
+                  : ""
+                  }}
+                </nz-form-explain>
+                <nz-form-explain *ngIf="
+                testtoolForm.get('urlvariable').dirty &&
+                testtoolForm.get('urlvariable').errors
+                ">
+                  {{
+                  testtoolForm.get("urlvariable").errors.required
+                  ? "urlvariable is required "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("urlvariable").errors.minlength
+                  ? "Minimum length is 3 characters "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("urlvariable").errors.maxlength
+                  ? "Maximum length is 45 characters "
+                  : ""
+                  }}
+                </nz-form-explain>
+              </nz-form-control>
+              <div>
+                <nz-switch nz-tooltip [nzTitle]="urlIsVariable?'Switch to input':'Switch to variable'" nzSize="small"
+                  formControlName="urlisvariable" (ngModelChange)="isVariable('urlIsVariable')">
+                </nz-switch>
+              </div>
+            </nz-form-item>
+            <nz-form-item class="form-field">
+              <nz-form-label style="text-align: left" nzSpan="6">Organization</nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <input nz-input placeholder="Organization" formControlName="organization" />
+                <nz-form-explain *ngIf="
+                  testtoolForm.get('organization').dirty &&
+                  testtoolForm.get('organization').errors
+                ">
+                  {{
+                  testtoolForm.get("organization").errors.required
+                  ? "Organization is required "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("organization").errors.minlength
+                  ? "Minimum length is 3 characters "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("organization").errors.maxlength
+                  ? "Maximum length is 45 characters "
+                  : ""
+                  }}
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="form-field">
+              <nz-form-label style="text-align: left" nzSpan="6"> {{ accesstokenIsVariable ? 'Access Token Variable' :
+                'Access Token' }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <input nz-input placeholder="Accesstoken" *ngIf="!accesstokenIsVariable"
+                  formControlName="accesstoken" />
+                <nz-select formControlName="accesstokenvariable" *ngIf="accesstokenIsVariable"
+                  nzPlaceHolder="Select accesstoken variable" nzShowSearch nzAllowClear>
+                  <nz-option *ngFor="let option of variableList" [nzValue]="option.value"
+                    [nzLabel]="option.label"></nz-option>
+                </nz-select>
+                <nz-form-explain *ngIf="
+                  testtoolForm.get('accesstoken').dirty &&
+                  testtoolForm.get('accesstoken').errors
+                ">
+                  {{
+                  testtoolForm.get("accesstoken").errors.required
+                  ? "Accesstoken is required "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("accesstoken").errors.minlength
+                  ? "Minimum length is 10 characters "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("accesstoken").errors.maxlength
+                  ? "Maximum length is 200 characters "
+                  : ""
+                  }}
+                </nz-form-explain>
+                <nz-form-explain *ngIf="
+                testtoolForm.get('accesstokenvariable').dirty &&
+                testtoolForm.get('accesstokenvariable').errors
+              ">
+                  {{
+                  testtoolForm.get("accesstokenvariable").errors.required
+                  ? "Accesstoken variable is required "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("accesstokenvariable").errors.minlength
+                  ? "Minimum length is 3 characters "
+                  : ""
+                  }}
+                  {{
+                  testtoolForm.get("accesstokenvariable").errors.maxlength
+                  ? "Maximum length is 45 characters "
+                  : ""
+                  }}
+                </nz-form-explain>
+              </nz-form-control>
+              <div>
+                <nz-switch nz-tooltip [nzTitle]="accesstokenIsVariable?'Switch to input':'Switch to variable'"
+                  nzSize="small" formControlName="accesstokenisvariable"
+                  (ngModelChange)="isVariable('accesstokenIsVariable')">
+                </nz-switch>
+              </div>
+            </nz-form-item>
+            <nz-form-item class="m-b-14">
+              <nz-form-label style="text-align: left" nzSpan="6">Description</nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <nz-input-group>
+                  <p-editor
+                    formControlName="description"
+                    [style]="{ height: '220px',
+                    width: '95%'
+                     }"
+                  ></p-editor>
+                </nz-input-group>
+                <nz-form-explain *ngIf="
+                  testtoolForm.get('description').dirty &&
+                  testtoolForm.get('description').errors
+                ">
+                  {{
+                  testtoolForm.get("description").errors.maxlength
+                  ? "Maximum length is 500 characters "
+                  : ""
+                  }}
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+            <h3 class="node-title-color">CMDB Integrations</h3>
+          <h3 nz-col nzSpan="24" class="solution-title mb-0">Incoming Resource</h3>
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <table id="tableContent" class="width-100">
+              <thead>
+                <tr>
+                  <th class="width-50">Resource Type</th>
+                  <th class="width-50">Attributes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <nz-form-item>
+                      <nz-form-control>
+                        <nz-select
+                          formControlName="resourcetype"
+                          nzPlaceHolder="Select Resource type"
+                          nzShowSearch
+                          nzAllowClear
+                          (ngModelChange)="getResourceDetail($event,'input')"
+                        >
+                          <nz-option
+                            *ngFor="let option of resourceTypesList"
+                            [nzValue]="option.crn"
+                            [nzLabel]="option.resource"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </td>
+                  <td>
+                    <nz-form-item>
+                      <nz-form-control>
+                        <nz-select
+                          formControlName="attributes"
+                          nzPlaceHolder="Select Attributes"
+                          nzShowSearch
+                          nzMode="multiple"
+                          nzAllowClear
+                        >
+                          <nz-option
+                            *ngFor="let option of filteredColumns"
+                            [nzValue]="option.fieldname"
+                            [nzLabel]="option.fieldname"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <h3 nz-col nzSpan="24" class="solution-title mb-0">Outgoing Resources</h3>
+            <div nz-row>
+              <div nz-col nzSpan="24" style="margin-bottom: 10px;">
+                <table id="tableContent">
+                  <thead>
+                    <tr>
+                      <th class="width-50">Resource Type</th>
+                      <th class="width-50">Attributes</th>
+                      <th class="width-3">
+                        <span style="float: right"
+                          ><i
+                            class="anticon anticon-plus yellow-icon"
+                            (click)="addRow()"
+                          ></i
+                        ></span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="outgoingResources">
+                    <tr
+                      *ngFor="let t of outgoingResources.controls; let i = index"
+                      [formGroupName]="i"
+                    >
+                      <td>
+                        <nz-select
+                          formControlName="outgoingResourcetype"
+                          nzPlaceHolder="Select Resource type"
+                          nzShowSearch
+                          nzAllowClear
+                          (ngModelChange)="getResourceDetail($event,'output', i)"
+                        >
+                          <nz-option
+                            *ngFor="let option of resourceTypesList"
+                            [nzValue]="option.crn"
+                            [nzLabel]="option.resource"
+                          ></nz-option>
+                        </nz-select>
+                      </td>
+                      <td>
+                        <nz-select
+                          formControlName="outgoingattributes"
+                          nzPlaceHolder="Select Attributes"
+                          nzShowSearch
+                          nzMode="multiple"
+                          nzAllowClear
+                        >
+                          <nz-option
+                            *ngFor="let option of filteredColumns"
+                            [nzValue]="option.fieldname"
+                            [nzLabel]="option.fieldname"
+                          ></nz-option>
+                        </nz-select>
+                      </td>
+                      <td>
+                        <span class="right"
+                          ><i
+                            class="anticon anticon-delete yellow-icon p-t-12"
+                            (click)="deleteRow(i)"
+                          ></i
+                        ></span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+          </ng-container>
+
+        </form>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="Comments" *ngIf="id !== undefined && isComments">
+      <app-comments
+        *ngIf="tabIndex == 1"
+        [resourceDetails]="testObj"
+        [resourceId]="this.testObj.refid"
+        [refType]="'comments'"
+      ></app-comments>
+    </nz-tab>
+    <nz-tab nzTitle="Change Logs" *ngIf="id !== undefined && isChangelogs">
+      <app-comments
+        *ngIf="tabIndex == 2"
+        [resourceDetails]="testObj"
+        [resourceId]="testObj.refid"
+        [refType]="'history'"
+      ></app-comments>
+    </nz-tab>
+  </nz-tabset>
+    </nz-spin>
+  </ng-container>
+</app-cloudmatiq-side-nav>

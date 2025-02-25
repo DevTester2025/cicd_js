@@ -1,0 +1,23 @@
+#grouptable th {
+    border: 1px solid #dddddd30;
+    padding: 8px;
+    border-style: none;
+}
+
+#grouptable td {
+    border: 1px solid #dddddd30;
+    /* padding: 6px; */
+    border-style: none;
+}
+
+#grouptable tr {
+    padding: 5px;
+}
+
+#grouptable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #1c2e3cb3;
+    color: white;
+}

@@ -1,0 +1,74 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="rightbarChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+    [width]="820"
+  >
+    <ng-container class="modal-content">
+      <app-addeditticket
+        [incidentObj]="incidentObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      >
+      </app-addeditticket>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+
+  <ng-container class="page-body">
+    <div class="row">
+      <div class="col s12 m2">
+        <nz-date-picker
+          style="margin-top: 15px"
+          nzFormat="dd-MMM-yyyy"
+          nzPlaceHolder="Incident Start Date"
+          [(ngModel)]="incidentstartdt"
+        >
+        </nz-date-picker>
+      </div>
+      <div class="col s12 m2">
+        <nz-date-picker
+          style="margin-top: 15px"
+          nzFormat="dd-MMM-yyyy"
+          nzPlaceHolder="Incident End Date"
+          [(ngModel)]="incidentenddt"
+        >
+        </nz-date-picker>
+      </div>
+      <div class="col s12 m2">
+        <button
+          nzSize="small"
+          nz-button
+          (click)="getAllList()"
+          nzType="primary"
+          style="margin-top: 15px"
+          title="Search"
+        >
+          <i class="anticon anticon-search"></i>
+        </button>
+      </div>
+    </div>
+    <!-- #OP_B628 -->
+    <div class="row param-table">
+      <div class="col s12 m2 left left-align">
+        <button
+          *ngIf="visibleadd"
+          nz-button
+          nzType="primary"
+          (click)="showModal()"
+        >
+          <i class="anticon anticon-plus"></i>{{ buttonText }}
+        </button>
+      </div>
+
+      <app-cloudmatiq-data-table
+        *ngIf="selectedcolumns && selectedcolumns.length > 0"
+        (dataChanged)="dataChanged($event)"
+        [tableData]="incidentList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableconfig"
+        [selectedcolumns]="selectedcolumns"
+        [totalCount]="totalCount"
+      ></app-cloudmatiq-data-table>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

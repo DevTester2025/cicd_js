@@ -1,0 +1,229 @@
+.dashboard {
+
+    .cardname {
+        color: rgba(223, 221, 221, 0.653);
+    }
+
+    .widgets-box {
+        .ant-card-body {
+            padding: 18px 12px;
+        }
+    }
+
+    .widgets-box-deployment,
+    .widgets-box-success {
+        .ant-card-body {
+            padding: 15px 12px;
+        }
+    }
+
+    .card-box {
+        display: flex;
+    }
+
+    .ant-card {
+        margin-top: 0px !important;
+        width: 98%;
+        background: #5c6773;
+        border-radius: 10px;
+        border: none;
+    }
+
+    .card-title {
+        color: white;
+        font-size: 15px;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .chart-box {
+        .ant-card-body {
+            padding: 02.1px;
+        }
+
+        .filter {
+            width: 60%;
+            float: right;
+        }
+
+        .ant-select-selection {
+            background: transparent;
+            border: none;
+        }
+
+        .ant-select-arrow:before {
+            margin-top: 4px;
+        }
+    }
+
+    .progressbar-box {
+        .ant-card-body {
+            padding: 25px 18px;
+            font-size: 13.5px;
+        }
+
+        .progressbar-filter {
+            float: right;
+        }
+
+        .ant-select-selection {
+            background: transparent;
+            border: none;
+        }
+    }
+
+    .ant-progress-bg {
+        background-color: #aabb11 !important;
+    }
+
+    .chartjs-render-monitor {
+        height: 232px !important;
+    }
+
+    .btn {
+        width: 83px;
+        height: 24px;
+        background-color: transparent;
+        border: #FFFFFF80;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 6px;
+        color: #FFFFFF80;
+        margin-left: 5px;
+        margin-top: 3px;
+    }
+
+    .btn.selected {
+        width: 85px;
+        height: 24px;
+        background-color: transparent;
+        border: #aabb11;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 6px;
+        color: #FFFFFF80;
+        margin-left: 7px;
+        padding-left: 0px
+    }
+
+    .active-button {
+        border: 2px solid #aabb11 !important;
+    }
+
+    .selectbtn {
+        border: 2px solid #aabb11 !important;
+    }
+
+    .mt-1 {
+        cursor: pointer;
+    }
+}
+
+.dashboard-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.widgets-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #5c6773;
+    border-radius: 10px;
+    border: none;
+    min-height: 100%;
+    width: 98%;
+}
+
+.card-box {
+    display: flex;
+    align-items: center;
+}
+
+.cardname {
+    color: rgba(223, 221, 221, 0.653);
+}
+
+.card-title {
+    color: white;
+    font-size: 15px;
+}
+
+@media only screen and (min-width: 1154px) {
+
+    .dashboard {
+        .pipelienStatusBox {
+            .ant-card {
+                height: 370px !important;
+            }
+        }
+
+        .widgets-box {
+            .ant-card-body {
+                padding: 16px 10px;
+            }
+        }
+    }
+
+}
+
+.pipeline-chart {
+    background: #5c6773;
+    border-radius: 10px;
+    border: none;
+    padding: 16px 10px 4px 10px;
+}
+
+.pipeline-progress {
+    background: #5c6773;
+    border-radius: 10px;
+    border: none;
+    height: 350px;
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+
+    .pipeline-chart {
+        padding: 0px 10px 4px 10px;
+    }
+
+    .filter {
+        width: 100% !important;
+        float: right !important;
+    }
+
+    .progressbar-box {
+        .ant-card-body {
+            padding: 9px !important;
+            font-size: 12.5px !important;
+        }
+    }
+    .pipeline-progress {
+        height: 356px !important;
+    }
+    .progressbar-filter {
+        width: 108% !important;
+    }
+    ::ng-deep .ant-select-dropdown-menu-item {
+        font-size: 11px !important;
+    }
+    ::ng-deep .ant-select-selection-selected-value {
+        font-size: 11px !important;
+    }
+}
+::ng-deep .apexcharts-legend-text {
+    color: white !important;
+}
+::ng-deep .apexcharts-xaxis text,
+::ng-deep .apexcharts-yaxis text {
+  fill: white !important;
+}

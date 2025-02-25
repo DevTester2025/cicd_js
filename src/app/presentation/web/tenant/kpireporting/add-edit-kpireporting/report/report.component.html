@@ -1,0 +1,118 @@
+<nz-card [nzBordered]="false" class="width-100 report" [ngClass]="cardstyle" [nzTitle]="title" [nzExtra]="extraTemplate">
+  <form nz-form [formGroup]="reportForm">
+    <div nz-col nzSpan="24">
+      <div nz-col nzSpan="7">
+        <input *ngIf="addnew == true || reportList.length == 0" nz-input formControlName="seriesname"
+          placeholder="Series Name" />
+        <nz-select *ngIf="addnew == false && reporthdrid != null && reportList.length > 0" nzShowSearch
+          nzPlaceHolder="Select series" style="width: 98%;padding: 1px;" formControlName="configdtlid"
+          (ngModelChange)="getReport($event)">
+          <nz-option *ngFor="let data of reportList" [nzLabel]="data.seriesname" [nzValue]="data"></nz-option>
+        </nz-select>
+      </div>
+      <div *ngIf="selectedfeature.value == 'CMDB_SAVEDQUERY' && addnew == true" nz-col nzSpan="6">
+        <nz-select nzShowSearch nzPlaceHolder="Select query" style="width: 98%;padding: 1px;" formControlName="query"
+          (ngModelChange)="onQueryChange($event)">
+          <nz-option *ngFor="let data of savedqueries" [nzLabel]="data.title" [nzValue]="data"></nz-option>
+        </nz-select>
+      </div>
+      <div *ngIf="selectedfeature.value != 'CMDB_SAVEDQUERY'" nz-col nzSpan="6">
+        <nz-range-picker formControlName="reportdate" (ngModelChange)="initiateReports()" [nzAllowClear]="false"
+          nzFormat="dd-MMM-yyyy">
+        </nz-range-picker>
+      </div>
+      <div *ngIf="selectedfeature.value != 'CMDB_SAVEDQUERY' && selectedfeature.value != 'SYNTHETICS'" nz-col
+        nzSpan="3">
+        <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose" formControlName="duration"
+          (ngModelChange)="initiateReports()">
+          <nz-option nzValue="Daily" nzLabel="Daily"></nz-option>
+          <nz-option nzValue="Weekly" nzLabel="Weekly"></nz-option>
+          <nz-option nzValue="Monthly" nzLabel="Monthly"></nz-option>
+        </nz-select>
+      </div>
+      <div *ngIf="selectedfeature.value == 'CMDB'" nz-col nzSpan="5">
+        <nz-select style="width: 200px;margin-left: 8px;" [nzAllowClear]="false" [nzShowSearch]="true"
+          nzPlaceHolder="Resource Type" formControlName="resourcetype" (ngModelChange)="initiateReports($event)">
+          <nz-option *ngFor="let option of resourceTypes" [nzValue]="option.crn" [nzLabel]="option.resource">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+       <ng-template #extraTemplate>
+          <div class="white-text">
+              <i class="anticon anticon-setting" (click)="opensettingmenu=true"
+                style="color: #ffcc00;margin-top: 15px;" title="Settings"></i>
+              &nbsp;
+                <i class="anticon anticon-check" style="color: #ffcc00;margin-top: 15px;" title="Save"
+                (click)="SaveReport()"></i>
+              &nbsp;
+              <i class="anticon anticon-plus" style="color: #ffcc00;margin-top: 15px;" title="Add new"
+                (click)="AddnewReport()"></i>
+              &nbsp;
+              <i class="anticon anticon-delete" style="color: #ffcc00;margin-top: 15px;" title="Delete"
+                (click)="deleteReport()"></i>
+          </div>
+      </ng-template>
+  </form>
+  <div nz-col nzSpan="24" style="margin-top: 22px;">
+    <div nz-row>
+      <div nz-col nzSpan="2" style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      " class="card-toggle-btn mt-1">
+
+        <nz-button-group>
+          <button [ngClass]="{ 'active-btn': currentTab == 0 }" nz-button (click)="onchangeTab(0)" class="button"
+            [nzType]="currentTab == 0 ? 'primary' : 'default'">
+            <i class="anticon anticon-line-chart"></i>
+          </button>
+          <button [ngClass]="{ 'active-btn': currentTab == 1 }" nz-button (click)="onchangeTab(1)" class="button"
+            [nzType]="currentTab == 1 ? 'primary' : 'default'">
+            <i class="anticon anticon-table"></i>
+          </button>
+        </nz-button-group>
+      </div>
+    </div>
+    <nz-spin [nzSpinning]="loading">
+      <div *ngIf="currentTab == 0" id="report-chart" style="height: 425px" class="mt-1"></div>
+    </nz-spin>
+    <!-- <div *ngIf="currentTab == 0" id="chart" class="mt-1">
+      <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis" [stroke]="chartOptions.stroke" [labels]="chartOptions.labels"
+        [title]="chartOptions.title" [legend]="chartOptions.legend" [tooltip]="chartOptions.tooltip"
+        [colors]="chartOptions.colors"></apx-chart>
+    </div> -->
+    <div *ngIf="currentTab == 1" class="row" class="mt-1">
+      <div *ngIf="currentTab == 1" nz-col nzSpan="24" class="right-align">
+        <button nzSize="small" nz-button nzType="primary" (click)="downloadCSV()">
+          <i class="anticon anticon-download"></i>Download CSV
+        </button>
+      </div>
+      <app-cloudmatiq-data-table *ngIf="currentTab == 1" [tableData]="reportData" [tableHeader]="reportHdr"
+        [tableConfig]="tableconfig">
+      </app-cloudmatiq-data-table>
+    </div>
+  </div>
+</nz-card>
+
+
+<app-cloudmatiq-side-bar *ngIf="opensettingmenu" (dataChanged)="opensettingmenu = false" [(isVisible)]="opensettingmenu"
+  [width]="750" title="Configuration">
+  <ng-container class="modal-content">
+    <nz-tabset>
+      <nz-tab nzTitle="Settings">
+        <app-report-settings *ngIf="opensettingmenu" [reporttype]="selectedfeature.value"
+          [assetquery]="reportForm.value.query" [reportsettings]="settings" [charttype]="reportForm.value.charttype"
+          [crn]="reportForm.value.resourcetype" [groupOptions]="groupandFilterByOptions"
+          (applySettings)="applySettings($event)">
+        </app-report-settings>
+      </nz-tab>
+      <nz-tab *ngIf="selectedfeature.value != 'CMDB_SAVEDQUERY'" nzTitle="Filters">
+        <app-additionalfilters [reporttype]="selectedfeature.value" [crn]="reportForm.value.resourcetype"
+          [possibleFilters]="groupandFilterByOptions" (applyFilters)="applyFilters($event)">
+        </app-additionalfilters>
+      </nz-tab>
+    </nz-tabset>
+  </ng-container>
+</app-cloudmatiq-side-bar>

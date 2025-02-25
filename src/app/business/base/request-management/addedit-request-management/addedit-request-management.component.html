@@ -1,0 +1,357 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="rightbarChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <nz-tabset
+      [nzTabBarExtraContent]="extraTemplate"
+      [nzSelectedIndex]="temptabIndex"
+      (nzSelectChange)="tabChanged($event)"
+    >
+      <ng-template #extraTemplate>
+        <div nz-col nzSpan="24" *ngIf="!ExecuteTemplate">
+          <div class="right-align">
+            <button nzSize="small" nz-button (click)="close()" nzType="primary">
+              <i class="anticon anticon-close"></i>
+            </button>
+            &nbsp;&nbsp;
+          </div>
+        </div>
+      </ng-template>
+      <nz-tab nzTitle="Info">
+        <div style="height: 100%; width: 100%">
+          <form nz-form [formGroup]="requestForm">
+            <div nz-row>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="type">Request Type </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      id="type"
+                      placeholder="Request Type"
+                      nzPlaceHolder="Request Type"
+                      formControlName="type"
+                    >
+                      <nz-option
+                        *ngFor="let r of request_type"
+                        [nzLabel]="r.title"
+                        [nzValue]="r.value"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzFor="labels">Labels </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        id="labels"
+                        placeholder="Labels"
+                        formControlName="labels"
+                        nz-input
+                        type="text"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="priority"
+                    >Priority
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      id="priority"
+                      placeholder="Priority"
+                      nzPlaceHolder="Priority"
+                      formControlName="priority"
+                    >
+                      <nz-option
+                        *ngFor="let p of priority"
+                        [nzLabel]="p.title"
+                        [nzValue]="p.value"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="environment"
+                    >Assignee
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      id="assignee"
+                      placeholder="Assignee"
+                      nzPlaceHolder="Assignee"
+                      formControlName="assignee"
+                    >
+                      <nz-option
+                        *ngFor="let p of usersList"
+                        [nzValue]="p.userid"
+                        [nzLabel]="p.fullname"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="environment"
+                    >Environment
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      id="environment"
+                      placeholder="Environment"
+                      nzPlaceHolder="Environment"
+                      formControlName="environment"
+                    >
+                      <nz-option
+                        *ngFor="let r of resourceTypesList"
+                        [nzValue]="r.crn"
+                        [nzLabel]="r.resource"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="environment"
+                    >Reporter
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      id="reporter"
+                      placeholder="Reporter"
+                      nzPlaceHolder="Reporter"
+                      formControlName="reporter"
+                    >
+                      <nz-option
+                        *ngFor="let p of usersList"
+                        [nzValue]="p.userid"
+                        [nzLabel]="p.fullname"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="customernotes"
+                    >Customer Notes
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-input-group>
+                      <textarea
+                        id="customer_notes"
+                        formControlName="customer_notes"
+                        placeholder="Customer Notes"
+                        type="text"
+                        nz-input
+                      ></textarea>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label nzFor="description"
+                    >Description
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-input-group>
+                      <textarea
+                        id="description"
+                        formControlName="description"
+                        placeholder="Description"
+                        type="text"
+                        nz-input
+                      ></textarea>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8" 
+              *ngIf="this.id == null && this.id == undefined">
+                <nz-form-item>
+                  <nz-form-label
+                    [nzSm]="12"
+                    [nzXs]="20"
+                    nzRequired
+                    nzFor="noofapprovers"
+                    >No. of Levels of Approval</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="12" [nzXs]="20">
+                    <nz-input-number
+                      placeholder="1"
+                      formControlName="noofapprovers"
+                      (ngModelChange)="approvalLvlChange($event)"
+                      id="noofapprovers"
+                    ></nz-input-number>
+                  </nz-form-control>
+                </nz-form-item>
+
+                <div
+                  formArrayName="approversArray"
+                  *ngFor="let control of labelParams; let i = index"
+                >
+                  <div [formGroupName]="i">
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        [nzFor]="control.label"
+                      >
+                        Approver {{ control.index + 1 }}
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="20">
+                        <nz-select
+                          nzShowSearch
+                          nzPlaceHolder=""
+                          nzAllowClear
+                          [formControlName]="control.label"
+                        >
+                          <ng-container *ngFor="let obj of usersList">
+                            <nz-option
+                              [nzValue]="obj.userid"
+                              [nzLabel]="obj.fullname"
+                            >
+                            </nz-option>
+                          </ng-container>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </div>
+              <div nz-col nzSpan="8"  *ngIf="this.id == null && this.id == undefined">
+                <nz-form-item>
+                  <nz-form-label nzFor="labels">Execution type</nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-input-group>
+                      <nz-radio-group [(ngModel)]="radioValue">
+                        <label nz-radio nzValue="Workpack">Workpack</label>
+                        <label nz-radio nzValue="Service Catalog">Service Catalog</label>
+                      </nz-radio-group>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              
+              </div>
+            
+              <div
+                nz-col
+                nzSpan="24"
+                *ngIf="this.id != null && this.id != undefined"
+              >
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="resolutionnotes"
+                    >Resolution Notes
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-input-group>
+                      <textarea
+                        id="resolution_notes"
+                        formControlName="resolution_notes"
+                        placeholder="Resolution Notes"
+                        type="text"
+                        nz-input
+                      ></textarea>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div
+                nz-col
+                nzSpan="8"
+                *ngIf="this.id != null && this.id != undefined"
+              >
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="approvalStatus"
+                    >Approval Status
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      id="status"
+                      placeholder="Approval status"
+                      formControlName="ApprovalStatus"
+                    >
+                      <nz-option
+                        *ngFor="let p of status"
+                        [nzLabel]="p.title"
+                        [nzValue]="p.value"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </form>
+          <div class="row right">
+            <div class="col s12 md4">
+              <button
+                class="save-button"
+                nz-button
+                nzType="primary"
+                (click)="saveRequest()"
+              >
+                save
+              </button>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Comments" *ngIf="id !== undefined">
+        <app-comments
+          *ngIf="temptabIndex == 1"
+          [resourceDetails]="requestObj"
+          [resourceId]="requestObj.refid"
+        ></app-comments>
+      </nz-tab>
+     
+      <!-- <nz-tab nzTitle="Documents" *ngIf="id !== undefined">
+        <app-cloudmatiq-asset-docs
+          *ngIf="temptabIndex == 2"
+          [resourceDetails]="requestObj"
+          [resourceId]="requestObj.refid"
+        ></app-cloudmatiq-asset-docs
+      ></nz-tab> -->
+      <!-- <nz-tab nzTitle="History" *ngIf="id !== undefined">
+        <app-cloudmatiq-asset-history
+          *ngIf="temptabIndex == 3"
+          [resourceDetails]="requestObj"
+          [resourceId]="requestObj.refid"
+        ></app-cloudmatiq-asset-history>
+      </nz-tab> -->
+    </nz-tabset>
+  </ng-container>
+</app-cloudmatiq-side-nav>

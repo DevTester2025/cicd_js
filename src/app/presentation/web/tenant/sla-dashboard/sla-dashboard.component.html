@@ -1,0 +1,403 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <div nz-row nzType="flex" style="margin-top: 13px" nzAlign="middle">
+      <div nz-col nzSpan="24">
+        <form nz-form [formGroup]="filterForm">
+          <div nz-row>
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="customerid"
+                  >Customer
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <nz-select
+                    id="customerid"
+                    formControlName="customerid"
+                    style="width: 90%"
+                    nzAllowClear
+                    nzPlaceHolder="Choose"
+                    nzShowSearch
+                  >
+                    <nz-option
+                      *ngFor="let t of customerList; index as t"
+                      [nzLabel]="t.customername"
+                      [nzValue]="t.customerid"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="tagid"
+                  >Tag
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <nz-select
+                    id="tagid"
+                    formControlName="tagid"
+                    style="width: 90%"
+                    nzAllowClear
+                    nzPlaceHolder="Choose"
+                    nzShowSearch
+                  >
+                    <nz-option
+                      *ngFor="let t of tagList; index as t"
+                      [nzLabel]="t.tagname"
+                      [nzValue]="t.tagid"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="tagvalue"
+                  >Value
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <input nz-input formControlName="tagvalue" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="clearfix"></div>
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="instanceid"
+                  >Instance ID
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <input nz-input formControlName="instanceid" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="6">
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="duration"
+                  >Duration
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <nz-range-picker
+                    formControlName="duration"
+                    [nzFormat]="'dd/MM/yyyy'"
+                    [nzPlaceHolder]="['Start Time', 'End Time']"
+                  ></nz-range-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="2" class="right-align">
+              <button
+                nzSize="small"
+                nz-button
+                (click)="search()"
+                nzType="primary"
+                style="margin-top: 40px"
+              >
+                <i class="anticon anticon-search"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div>
+      <div style="padding: 30px">
+        <div nz-row [nzGutter]="6">
+          <div nz-col [nzSpan]="4">
+            <nz-card
+              class="dashboard-card1"
+              nzHoverable
+              [nzTitle]="sysTemplate"
+            >
+              <div *ngFor="let e of system.severity">
+                <span style="float: left">{{ e.title }} </span>
+                <span style="float: right"> {{ e.count }} </span><br />
+              </div>
+              <ng-template #sysTemplate>
+                <span style="font-size: 24px">{{ system.value }}</span
+                ><br />
+                <span style="font-size: 14px">{{ system.label }}</span>
+              </ng-template>
+            </nz-card>
+          </div>
+          <div nz-col [nzSpan]="4">
+            <nz-card class="dashboard-card2" nzHoverable [nzTitle]="sTemplate">
+              <div *ngFor="let e of security.severity">
+                <span style="float: left">{{ e.title }} </span>
+                <span style="float: right"> {{ e.count }} </span><br />
+              </div>
+              <ng-template #sTemplate>
+                <span style="font-size: 24px">{{ security.value }}</span>
+                <br />
+                <span style="font-size: 14px">{{ security.label }}</span>
+              </ng-template>
+            </nz-card>
+          </div>
+          <div nz-col [nzSpan]="4">
+            <nz-card
+              class="dashboard-card5"
+              nzHoverable
+              [nzTitle]="sslTemplate"
+            >
+              <div *ngFor="let e of ssl.severity">
+                <span style="float: left">{{ e.title }} </span>
+                <span style="float: right"> {{ e.count }} </span><br />
+              </div>
+              <ng-template #sslTemplate>
+                <span style="font-size: 24px">{{ ssl.value }}</span
+                ><br />
+                <span style="font-size: 14px">{{ ssl.label }}</span>
+              </ng-template>
+            </nz-card>
+          </div>
+          <div nz-col [nzSpan]="4">
+            <nz-card
+              class="dashboard-card6"
+              nzHoverable
+              [nzTitle]="syntheticsTemplate"
+            >
+              <div *ngFor="let e of synthetics.severity">
+                <span style="float: left">{{ e.title }} </span>
+                <span style="float: right"> {{ e.count }} </span><br />
+              </div>
+              <ng-template #syntheticsTemplate>
+                <span style="font-size: 24px">{{ synthetics.value }}</span
+                ><br />
+                <span style="font-size: 14px">{{ synthetics.label }}</span>
+              </ng-template>
+            </nz-card>
+          </div>
+          <div nz-col [nzSpan]="4">
+            <nz-card class="dashboard-card3" nzHoverable [nzTitle]="tTemplate">
+              <div *ngFor="let e of tickets.severity">
+                <span style="float: left">{{ e.keyname }} </span>
+                <span style="float: right"> {{ e.count }} </span><br />
+              </div>
+              <ng-template #tTemplate>
+                <span style="font-size: 24px">{{ tickets.value }}</span>
+                <br />
+                <span style="font-size: 14px">{{ tickets.label }}</span>
+              </ng-template>
+            </nz-card>
+          </div>
+          <div nz-col [nzSpan]="4">
+            <nz-card
+              class="dashboard-card4"
+              nzHoverable
+              [nzTitle]="eventsTemplate"
+            >
+              <div *ngFor="let e of events.severity">
+                <span style="float: left">{{ e.title }} </span>
+                <span style="float: right"> {{ e.count }} </span><br />
+              </div>
+              <ng-template #eventsTemplate>
+                <span style="font-size: 24px">{{ events.value }}</span>
+                <br />
+                <span style="font-size: 14px">{{ events.label }}</span>
+              </ng-template>
+            </nz-card>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nz-select
+      style="width: 25%"
+      nzShowSearch
+      nzAllowClear
+      nzPlaceHolder="Select Chart"
+      [(ngModel)]="chartType"
+      (ngModelChange)="initChart()"
+    >
+      <nz-option nzCustomContent nzLabel="Line" nzValue="line"> Line</nz-option>
+      <nz-option nzCustomContent nzLabel="Scatter" nzValue="scatter">
+        Scatter</nz-option
+      >
+    </nz-select>
+    <div id="chart">
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis"
+        [stroke]="chartOptions.stroke"
+        [labels]="chartOptions.labels"
+        [title]="chartOptions.title"
+        [legend]="chartOptions.legend"
+        [tooltip]="chartOptions.tooltip"
+        [colors]="chartOptions.colors"
+      ></apx-chart>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+      <h4 class="col s2 m2 amber-text">Summary</h4>
+    </div>
+    <nz-tabset
+      [nzSelectedIndex]="tabIndex"
+      (nzSelectChange)="tabChange($event)"
+    >
+      <nz-tab nzTitle="System Alerts">
+        <div class="row">
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="systemList"
+            [tableHeader]="tableHeader"
+            [tableConfig]="tableconfig"
+            [widthConfig]="tableconfig.widthConfig"
+            [totalCount]="totalCount"
+          ></app-cloudmatiq-data-table>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Security Alerts">
+        <div class="row">
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="securityList"
+            [tableHeader]="tableHeader"
+            [tableConfig]="tableconfig"
+            [widthConfig]="tableconfig.widthConfig"
+            [totalCount]="totalCount"
+          ></app-cloudmatiq-data-table>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="SSL Alerts">
+        <div class="row">
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="sslList"
+            [tableHeader]="tableHeader"
+            [tableConfig]="tableconfig"
+            [widthConfig]="tableconfig.widthConfig"
+            [totalCount]="totalCount"
+          ></app-cloudmatiq-data-table>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Synthetics Alerts">
+        <div class="row">
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="syntheticsList"
+            [tableHeader]="tableHeader"
+            [tableConfig]="tableconfig"
+            [widthConfig]="tableconfig.widthConfig"
+            [totalCount]="totalCount"
+          ></app-cloudmatiq-data-table>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Tickets">
+        <div class="row">
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="ticketList"
+            [tableHeader]="tableHeader"
+            [tableConfig]="ticketstableconfig"
+            [widthConfig]="ticketstableconfig.widthConfig"
+            [totalCount]="totalCount"
+          ></app-cloudmatiq-data-table>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Events">
+        <div class="row">
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="eventsList"
+            [tableHeader]="tableHeader"
+            [tableConfig]="tableconfig"
+            [totalCount]="totalCount"
+            [widthConfig]="tableconfig.widthConfig"
+          ></app-cloudmatiq-data-table>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </ng-container>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="closeDrawer()"
+    [(isVisible)]="isVisible"
+    [width]="680"
+    title="Details"
+  >
+    <ng-container
+      class="modal-content"
+      *ngIf="selectedEvent.label != 'Tickets' && isVisible"
+    >
+      <app-cloudmatiq-eventlog-view
+        isReference="false"
+        [id]="selectedEvent?.id"
+      ></app-cloudmatiq-eventlog-view>
+    </ng-container>
+
+    <ng-container
+      class="modal-content"
+      *ngIf="selectedEvent.label == 'Tickets'"
+    >
+      <app-cloudmatiq-ticket-view
+        [id]="selectedEvent?.id"
+      ></app-cloudmatiq-ticket-view>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+
+  <app-cloudmatiq-side-bar
+    [(isVisible)]="viewServerDetail"
+    (dataChanged)="viewServerDetail = false"
+    [title]="metaSideBarTitle"
+    [width]="950"
+  >
+    <ng-container class="modal-content" *ngIf="viewServerDetail">
+      <app-cloudmatiq-server-detail
+        [instanceref]="serverDetail"
+        (showDrillDown)="viewServerDetail = false"
+      >
+      </app-cloudmatiq-server-detail>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="editTicket = false"
+    [(isVisible)]="editTicket"
+    title="Edit Ticket"
+    [width]="820"
+  >
+    <ng-container class="modal-content">
+      <app-addeditticket
+        [incidentObj]="incidentObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      >
+      </app-addeditticket>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="showFilter = false"
+    [(isVisible)]="showFilter"
+    title="Filter"
+  >
+    <ng-container *ngIf="showFilter" class="modal-content">
+      <app-filters
+        (getFilterValue)="getFilterValue($event)"
+        (setFilterValue)="setFilterValue($event)"
+        [filterableValues]="filterableValues"
+        [existValues]="filteredValues[filterKey]"
+        [filterKey]="filterKey"
+      ></app-filters
+    ></ng-container>
+  </app-cloudmatiq-side-bar>
+</app-cloudmatiq-side-nav>

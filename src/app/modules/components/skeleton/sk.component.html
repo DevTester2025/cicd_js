@@ -1,0 +1,13 @@
+<div *ngIf="loading" class="card">
+  <!-- <img src="assets/loader.gif" style="height: 35px;margin-top: 53px;" alt="">
+    <p style="color: #ffcc00 !important;">Loading...</p> -->
+  <nz-spin nzSize="large" nzTip="Loading..."></nz-spin>
+</div>
+<div *ngIf="!loading" class="card">
+  <img
+    src="assets/images/no_analytics.svg"
+    style="height: 237px; margin-top: 23px"
+    alt=""
+  />
+  <p style="margin-top: 51px">{{ message || "" }}</p>
+</div>

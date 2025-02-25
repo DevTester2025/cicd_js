@@ -1,0 +1,169 @@
+<nz-spin [nzSpinning]="loading">
+  <div>
+    <form nz-form [formGroup]="alertForm">
+      <div class="row">
+        <div class="col s12 m12">
+          <nz-form-item>
+            <nz-form-label
+              nzRequired
+              [nzSm]="24"
+              [nzXs]="24"
+              nzFor="policyname"
+            >
+              Policy Name</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="policyname"
+                  placeholder="Policy Name"
+                  formControlName="policyname"
+                  nz-input
+                  type="text"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <h4 _ngcontent-c22="" class="amber-text">
+          Select Metric & set threshold
+        </h4>
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="24" [nzXs]="24" nzFor="metric"
+              >Metric
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                formControlName="metric"
+                style="width: 95%"
+                nzPlaceHolder="Select Metric"
+                nzShowSearch
+              >
+                <nz-option
+                  *ngFor="let t of metricList; index as ti"
+                  [nzLabel]="t.label"
+                  [nzValue]="t.value"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="24" [nzXs]="24" nzFor="util"
+              >Utilization (%)
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="util"
+                  placeholder="Utilization"
+                  formControlName="util"
+                  nz-input
+                  type="number"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="24" [nzXs]="24" nzFor="range"
+              >Above/Below
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                formControlName="range"
+                style="width: 95%"
+                nzPlaceHolder="Select"
+              >
+                <nz-option nzValue="above" nzLabel="is above"></nz-option>
+                <nz-option nzValue="below" nzLabel="is below"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label nzRequired [nzSm]="24" [nzXs]="24" nzFor="duration">
+              Duration
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                formControlName="duration"
+                style="width: 95%"
+                nzAllowClear
+                nzPlaceHolder="Duration"
+                nzShowSearch
+              >
+                <nz-option
+                  *ngFor="let t of durationList; index as ti"
+                  [nzLabel]="t.label"
+                  [nzValue]="t.value"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <h4 _ngcontent-c22="" class="amber-text">Notification</h4>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSm]="24" [nzXs]="24" nzFor="userids">
+          Users to be notified
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            formControlName="userids"
+            nzMode="multiple"
+            style="width: 95%"
+            nzAllowClear
+            nzPlaceHolder="User's"
+            nzShowSearch
+          >
+            <nz-option
+              *ngFor="let t of usersList; index as ti"
+              [nzLabel]="t.label"
+              [nzValue]="t.value"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <div *ngIf="edit">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="status"
+            >Status</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-input-group>
+              <nz-switch
+                class="status"
+                id="status"
+                formControlName="status"
+              ></nz-switch>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </form>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button
+          (click)="saveUpdate(alertForm.value)"
+          class="save-button"
+          nz-button
+          nzType="primary"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-spin>

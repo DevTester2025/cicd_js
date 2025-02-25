@@ -1,0 +1,46 @@
+<div nz-row nzType="flex" nzAlign="middle">
+  <div nz-col nzSpan="24">
+    <div class="right-align">
+      <span class="right" *ngIf="totalCount > 0">
+        <nz-pagination
+          [nzPageIndex]="1"
+          [nzTotal]="totalCount"
+          [nzPageSize]="5"
+          (nzPageIndexChange)="onPageChange($event)"
+        ></nz-pagination>
+      </span>
+      <span class="right">
+        <button nz-button nzType="primary" (click)="getLogsList()">
+          <i class="anticon anticon-reload"></i>
+        </button>
+      </span>
+      <span class="left">
+        <p style="color:#ffcc00;">Total Record: {{totalCount}}</p>
+      </span>
+    </div>
+  </div>
+</div>
+<div *ngIf="logsList && logsList.length > 0">
+  <div
+    *ngFor="let h of logsList; let i = index"
+    style="background: #ffffff1f; padding: 14px 15px; margin-bottom: 13px"
+  >
+    <div style="display: flex; justify-content: space-between; font-size: 12px">
+      <p style="color: gold">{{ h.type }} : {{ h.reference }}<br>Instances: {{h.instances}}</p>
+      
+      <p style="color: gold">
+        <b>Created On: </b>{{ h.createddt | date: "dd-MMM-yyyy hh:mm a" }} by
+        <b>{{ h.createdby }}</b>
+      </p>
+    </div>
+    <div>
+      <p>{{ h.notes }}</p>
+    </div>
+  </div>
+</div>
+<div
+  *ngIf="logsList && logsList.length <= 0"
+  style="text-align: center; color: white"
+>
+  <p class="mt-5">No Data Found</p>
+</div>

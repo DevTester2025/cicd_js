@@ -1,0 +1,116 @@
+<nz-tabset
+  [nzSelectedIndex]="opstabIndex"
+  (nzSelectChange)="opstabChange($event)"
+>
+  <!-- <nz-tab nzTitle="Backup">
+    <app-cloudmatiq-history></app-cloudmatiq-history>
+  </nz-tab> -->
+  <nz-tab nzTitle="Snapshots">
+    <app-cloudmatiq-snapshots
+      [assetData]="instancemeta"
+      *ngIf="opstabTitle == 'Snapshots'"
+    ></app-cloudmatiq-snapshots>
+  </nz-tab>
+  <nz-tab nzTitle="Resize">
+    <div nz-row nzSpan="2" *ngIf="resize">
+      <nz-select
+        nzShowSearch
+        nzAllowClear
+        id="instancetypeid"
+        placeholder="Select Instance Type"
+        nzPlaceHolder="Select Instance Type"
+        [(ngModel)]="instancetyperefid"
+        (ngModelChange)="performVmaction('resize')"
+        style="width: 25%"
+      >
+        <nz-option
+          *ngFor="let data of instanceTypeList"
+          [nzLabel]="data.instancetypename"
+          [nzValue]="data.instancetypename"
+        ></nz-option>
+      </nz-select>
+      <br />
+      <span class="red-text">
+        <i class="anticon anticon-info-circle-o"></i>&nbsp;Stop the instance before
+        resize</span
+      >
+    </div>
+    <div class="clearfix"></div>
+    <br />
+    <app-cloudmatiq-history
+      [vmaction]="action"
+      [assetData]="instancemeta"
+      [refresh]="refresh"
+      *ngIf="opstabTitle == 'Resize'"
+    ></app-cloudmatiq-history>
+  </nz-tab>
+  <nz-tab nzTitle="Start">
+    <div nz-row nzSpan="2" class="right-align pull-right" *ngIf="start">
+      <button
+        nzSize="small"
+        nz-button
+        title="Start Instance"
+        (click)="performVmaction('start')"
+        nzType="primary"
+        style="margin: 0"
+        [nzLoading]="processing"
+      >
+        Start
+      </button>
+    </div>
+    <div class="clearfix"></div>
+    <br />
+    <app-cloudmatiq-history
+      [vmaction]="action"
+      [assetData]="instancemeta"
+      [refresh]="refresh"
+      *ngIf="opstabTitle == 'Start'"
+    ></app-cloudmatiq-history>
+  </nz-tab>
+  <nz-tab nzTitle="Stop">
+    <div nz-row nzSpan="2" class="right-align pull-right" *ngIf="stop">
+      <button
+        nzSize="small"
+        nz-button
+        title="Stop Instance"
+        (click)="performVmaction('stop')"
+        nzType="primary"
+        style="margin: 0"
+        [nzLoading]="processing"
+      >
+        Stop
+      </button>
+    </div>
+    <div class="clearfix"></div>
+    <br />
+    <app-cloudmatiq-history
+      [vmaction]="action"
+      [assetData]="instancemeta"
+      [refresh]="refresh"
+      *ngIf="opstabTitle == 'Stop'"
+    ></app-cloudmatiq-history>
+  </nz-tab>
+  <nz-tab nzTitle="Reboot">
+    <div nz-row nzSpan="2" class="right-align pull-right" *ngIf="reboot">
+      <button
+        nzSize="small"
+        nz-button
+        title="Reboot Instance"
+        (click)="performVmaction('reboot')"
+        nzType="primary"
+        style="margin: 0"
+        [nzLoading]="processing"
+      >
+        Reboot
+      </button>
+    </div>
+    <div class="clearfix"></div>
+    <br />
+    <app-cloudmatiq-history
+      [vmaction]="action"
+      [assetData]="instancemeta"
+      [refresh]="refresh"
+      *ngIf="opstabTitle == 'Reboot'"
+    ></app-cloudmatiq-history>
+  </nz-tab>
+</nz-tabset>

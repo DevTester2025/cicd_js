@@ -1,0 +1,167 @@
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+  <form nz-form [formGroup]="staticIpForm">
+    <div class="row">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="staticipname"
+            >Name</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <input
+              [attr.disabled]="inputdisabled"
+              nz-input
+              formControlName="staticipname"
+              type="text"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="destination"
+            ><span
+              >Destination
+              <nz-tooltip
+                nzTitle="Routing destination in CIDR format (eg.192.168.0.0/24)"
+              >
+                <i
+                  nz-tooltip
+                  class="anticon anticon-question-circle-o"
+                ></i> </nz-tooltip
+            ></span>
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <input
+              [attr.disabled]="inputdisabled"
+              nz-input
+              formControlName="destination"
+              type="text"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="nexthop"
+            ><span
+              >Next Hop
+              <nz-tooltip nzTitle="Routing next-hop address (eg.192.168.0.1)">
+                <i
+                  nz-tooltip
+                  class="anticon anticon-question-circle-o"
+                ></i> </nz-tooltip
+            ></span>
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <input
+              [attr.disabled]="inputdisabled"
+              nz-input
+              formControlName="nexthop"
+              type="text"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="servicetype"
+            >Service Type</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              [nzDisabled]="staticipEditObj.igstaticipid || inputdisabled"
+              nzShowSearch
+              nzAllowClear
+              id="servicetype"
+              placeholder="Select Service Type"
+              nzPlaceHolder="Select Service Type"
+              formControlName="servicetype"
+            >
+              <nz-option
+                *ngFor="let data of servicetypeList"
+                [nzLabel]="data.keyname"
+                [nzValue]="data.keyvalue"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="description"
+            class="description"
+            >Description</nz-form-label
+          >
+
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-input-group>
+              <textarea
+                [attr.disabled]="inputdisabled"
+                id="description"
+                formControlName="description"
+                placeholder="Description"
+                type="text"
+                nz-input
+              ></textarea>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div></div>
+    <div class="col s12">
+      <nz-table #nzTable [nzData]="staticIpList" [nzPageSize]="10">
+        <thead>
+          <tr>
+            <th nzWidth="25px">Name</th>
+            <th nzWidth="30px">Destination</th>
+            <th nzWidth="30px">Next Hop</th>
+            <th nzWidth="15px">Status</th>
+            <th class="center-align" nzWidth="15px" nzRight="0px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of nzTable.data">
+            <td>{{ data.staticipname }}</td>
+            <td>{{ data.destination }}</td>
+            <td>{{ data.nexthop }}</td>
+            <td>{{ data.status }}</td>
+            <td nzWidth="15px" class="center-align" nzRight="0px">
+              &nbsp;
+              <a (click)="editInterface(data)">
+                <i class="anticon anticon-edit"></i> </a
+              >&nbsp;
+              <a
+                nz-popconfirm
+                nzTitle="Are you sure?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="deleteInterface(data)"
+              >
+                <i class="anticon anticon-delete"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </form>
+</nz-spin>
+
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="disabled || inputdisabled"
+      (click)="saveOrUpdate(staticIpForm.value)"
+      class="save-button"
+      nz-button
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

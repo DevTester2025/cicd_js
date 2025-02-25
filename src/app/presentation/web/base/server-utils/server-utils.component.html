@@ -1,0 +1,377 @@
+<div nz-row style="height: 7%; padding-left: 5px; padding-top: 5px">
+  <nz-button-group>
+    <button
+      [nzSize]="'small'"
+      [ngClass]="{ active: current == 'CPU' }"
+      (click)="changeView('CPU')"
+      nz-button
+      nzType="default"
+    >
+      <i class="anticon anticon-dashboard"></i> CPU
+    </button>
+    <button
+      [nzSize]="'small'"
+      [ngClass]="{ active: current == 'MEMORY' }"
+      (click)="changeView('MEMORY')"
+      nz-button
+      nzType="default"
+    >
+      <i class="anticon anticon-database"></i> Memory
+    </button>
+    <button
+      [nzSize]="'small'"
+      [ngClass]="{ active: current == 'DISK' }"
+      (click)="changeView('DISK')"
+      nz-button
+      nzType="default"
+    >
+      <i class="anticon anticon-hdd"></i> Disc
+    </button>
+    <button
+      [nzSize]="'small'"
+      [ngClass]="{ active: current == 'ETHERNET' }"
+      (click)="changeView('ETHERNET')"
+      nz-button
+      nzType="default"
+    >
+      <i class="anticon anticon-share-alt"></i> Network
+    </button>
+  </nz-button-group>
+  <div class="right m-t-5">
+    <button
+      [disabled]="
+        !filters.instancerefid ||
+        !this.filters.provider ||
+        !this.filters.customerid
+      "
+      nzSize="small"
+      nz-button
+      (click)="openServerDetails()"
+      [nzLoading]="loading"
+      nzType="primary"
+    >
+      <i class="anticon anticon-eye-o"></i>Show Details
+    </button>
+  </div>
+</div>
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <div nz-row style="margin-top: 13px">
+      <div nz-col nzSpan="6" style="margin-bottom: 7px">
+        <!-- <nz-range-picker nzShowTime nzAllowClear style="width: 95%;" [(ngModel)]="filters.date"
+              nzPlaceHolder="Date"></nz-range-picker> -->
+        <!-- <nz-range-picker nzFormat="dd-MM-yyyy HH:mm" [(ngModel)]="filters.daterange" (ngModelChange)="onChange($event)"
+        [nzShowTime]="{ nzHideDisabledOptions: false,nzFormat: 'HH:mm', nzDefaultOpenValue: timeDefaultValue }"
+        [nzDisabledDate]="disabledDate" nzShowTime>
+      </nz-range-picker> -->
+        <nz-select
+          [(ngModel)]="filters.range"
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Range"
+        >
+          <nz-option nzLabel="Last 7" nzValue="7"> </nz-option>
+          <nz-option nzLabel="Last 15" nzValue="15"> </nz-option>
+          <nz-option nzLabel="Last 30" nzValue="30"> </nz-option>
+          <nz-option nzLabel="Last 90" nzValue="90"> </nz-option>
+          <nz-option nzLabel="Last 180" nzValue="180"> </nz-option>
+        </nz-select>
+      </div>
+      <div nz-col nzSpan="6" style="margin-bottom: 7px">
+        <nz-select
+          [(ngModel)]="filters.groupby"
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Range"
+        >
+          <nz-option nzLabel="Days" nzValue="daily"> </nz-option>
+          <nz-option
+            [nzDisabled]="
+              filters.range == '30' ||
+              filters.range == '90' ||
+              filters.range == '180'
+            "
+            nzLabel="Week"
+            nzValue="weekly"
+          >
+          </nz-option>
+          <nz-option
+            [nzDisabled]="filters.range != '7'"
+            nzLabel="Month"
+            nzValue="monthly"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+
+      <div nz-col nzSpan="6" style="margin-bottom: 7px">
+        <nz-select
+          [(ngModel)]="filters.provider"
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Provider"
+          (ngModelChange)="providerChanges()"
+        >
+          <nz-option
+            *ngFor="let t of providerList; index as ti"
+            [nzLabel]="t.label"
+            [nzValue]="t.value"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+
+      <div nz-col nzSpan="6" style="margin-bottom: 7px">
+        <nz-select
+          [(ngModel)]="filters.customerid"
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Customer"
+          [nzShowSearch]="true"
+          (ngModelChange)="customerChanges($event)"
+        >
+          <nz-option
+            *ngFor="let t of customerList; index as ti"
+            [nzLabel]="t.customername"
+            [nzValue]="t.customerid"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+
+      <div nz-col nzSpan="6" style="margin-bottom: 7px">
+        <nz-select
+          style="width: 95%"
+          [(ngModel)]="filters.instancerefid"
+          [nzAllowClear]="true"
+          [nzShowSearch]="true"
+          [nzSize]="size"
+          nzPlaceHolder="Instance"
+          (ngModelChange)="onServerChange($event)"
+        >
+          <nz-option
+            *ngFor="let option of filteredOptions"
+            [nzLabel]="option.instancename"
+            [nzValue]="option.instancerefid"
+          ></nz-option>
+        </nz-select>
+        <!-- <nz-input-group>
+          <input placeholder="Type instance name" nz-input [(ngModel)]="filters.instancerefid"
+            (ngModelChange)="onServerChange($event)" [nzAutocomplete]="auto" />
+        </nz-input-group>
+        <nz-autocomplete #auto>
+          <nz-auto-option *ngFor="let option of filteredOptions" [nzLabel]="option.instancename"
+            [nzValue]="option.instancename">
+            {{option.instancename}}
+          </nz-auto-option>
+        </nz-autocomplete> -->
+        <!-- <nz-select [(ngModel)]="filters.instancerefid" style="width: 95%;" nzAllowClear nzPlaceHolder="Server">
+        <nz-option *ngFor="let t of serverList; index as ti;" [nzLabel]="t.instancename" [nzValue]="t.instancerefid">
+        </nz-option>
+      </nz-select> -->
+      </div>
+      <div nz-col nzSpan="6" style="margin-bottom: 7px">
+        <input
+          [(ngModel)]="filters.instancetyperefid"
+          nz-input
+          placeholder="Instance Type"
+          disabled
+        />
+      </div>
+
+      <div nz-col nzSpan="6" style="margin-bottom: 7px">
+        <nz-select
+          [(ngModel)]="filters.utilkey"
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Type"
+          (ngModelChange)="utilkeyChanges()"
+        >
+          <nz-option
+            *ngFor="let t of utilkeyList; index as ti"
+            [nzLabel]="t.label"
+            [nzValue]="t.value"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div nz-row style="margin-top: 13px">
+      <div
+        nz-col
+        nzSpan="24"
+        style="margin-bottom: 7px; text-align: end; margin-top: 5px"
+      >
+        <button
+          nzSize="small"
+          nz-button
+          (click)="checkValidations()"
+          [nzLoading]="loading"
+          nzType="primary"
+          style="margin: 0 13px 0 0"
+        >
+          <i class="anticon anticon-search"></i>Search
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div nz-row style="height: 75%">
+  <div nz-col nzSpan="6" class="chartDetails" *ngIf="rolloverAvg != '0'">
+    <p>
+      Overall Average<br />
+      <span>{{ rolloverAvg }}</span>
+    </p>
+  </div>
+  <div nz-col nzSpan="6" class="chartDetails" *ngIf="rolloverMinAvg != '0'">
+    <p>
+      Min Average<br />
+      <span>{{ rolloverMinAvg }}</span>
+    </p>
+  </div>
+  <div nz-col nzSpan="6" class="chartDetails" *ngIf="rolloverMaxAvg != '0'">
+    <p>
+      Max Average<br />
+      <span>{{ rolloverMaxAvg }}</span>
+    </p>
+  </div>
+  <div nz-col nzSpan="24" class="chartDetails">
+    <div
+      class="chartSection"
+      *ngIf="chartOptions && chartDataList.length > 0; else content"
+      style="background: rgba(128, 128, 128, 0.212) !important; padding: 13px 0"
+    >
+      <!-- <div id="chartdiv" style="height: 90%;">
+        </div> -->
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [stroke]="chartOptions.stroke"
+        [tooltip]="chartOptions.tooltip"
+        [dataLabels]="chartOptions.dataLabels"
+        [legend]="chartOptions.legend"
+        [markers]="chartOptions.markers"
+        [grid]="chartOptions.grid"
+        [yaxis]="chartOptions.yaxis"
+        [title]="chartOptions.title"
+      ></apx-chart>
+    </div>
+    <div *ngIf="resizeReqList && resizeReqList.length > 0">
+      <h4 _ngcontent-c19="" class="amber-text p-t-12">Resize History</h4>
+      <app-cloudmatiq-data-table
+        [tableData]="resizeReqList"
+        [tableHeader]="resizeTableHeader"
+        [tableConfig]="resizeTableConfig"
+      >
+      </app-cloudmatiq-data-table>
+    </div>
+  </div>
+
+  <ng-template #content>
+    <div nz-row class="chartDetails" *ngIf="rolloverMaxAvg == '0'">
+      <div
+        nz-col
+        nzSpan="24"
+        *ngIf="!loading && chartDataList.length == 0"
+        style="display: flex; flex-direction: column; text-align: center"
+      >
+        <app-cloudmatiq-skeleton
+          [loading]="false"
+          message="No metrics data collected."
+        ></app-cloudmatiq-skeleton>
+      </div>
+      <div
+        nz-col
+        nzSpan="24"
+        *ngIf="loading"
+        style="display: flex; flex-direction: column; text-align: center"
+      >
+        <app-cloudmatiq-skeleton [loading]="true"></app-cloudmatiq-skeleton>
+      </div>
+    </div>
+  </ng-template>
+  <app-cloudmatiq-side-bar
+    [(isVisible)]="viewServerDetail"
+    (dataChanged)="viewServerDetail = false"
+    [title]="'Server Detail'"
+    [width]="950"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-server-detail [instanceref]="serverDetail">
+      </app-cloudmatiq-server-detail>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <!-- FIXME: Code Duplication. To be removed. -->
+  <!-- 
+  <app-cloudmatiq-side-bar (dataChanged)="metaSideBarVisible=false" [(isVisible)]="metaSideBarVisible"
+    [title]="metaSideBarTitle" [width]="820">
+    <ng-container *ngIf="meta" class="modal-content">
+      <nz-tabset>
+        <nz-tab nzTitle="Details">
+          <div *ngFor="let item of meta | keyvalue : 0">
+            <h4 class="amber-text">{{item.key}}</h4>
+            <div *ngFor="let t of item.value; index as ti;">
+              <h5 class="white-text text-lighten-3 ml-1">
+                {{t['title']}} :
+                <span *ngIf="t.title != 'Instance Name'" class="grey-text"> {{t['value']}}</span>
+                <span *ngIf="t.title == 'Instance Name'" class="amber-text"> {{t['value']}}</span>
+              </h5>
+            </div>
+          </div>
+          <div>
+            <h4 class="amber-text">Volumes</h4>
+            <app-cloudmatiq-data-table [tableData]="metaVolumes.volumeList" [tableHeader]="metaVolumes.Volume"
+              [tableConfig]="metaVolumes.tagTableConfig">
+            </app-cloudmatiq-data-table>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Tags">
+          <app-cloudmatiq-data-table [tableData]="metaTagsList" [tableHeader]="tagTableHeader"
+            [tableConfig]="tagTableConfig">
+          </app-cloudmatiq-data-table>
+        </nz-tab>
+        <nz-tab nzTitle="Resize History" *ngIf="enableServerResize">
+          <div>
+            <app-cloudmatiq-data-table [tableData]="resizeReqList" [tableHeader]="resizeTableHeader"
+              [tableConfig]="resizeTableConfig">
+            </app-cloudmatiq-data-table>
+          </div>
+        </nz-tab>
+        <nz-tab [nzTitle]="subtenantLable" *ngIf="assetData">
+          <div>
+            <app-mapping-instance [assetData]="assetData"></app-mapping-instance>
+          </div>
+        </nz-tab>
+        <nz-tab *ngIf="assetData" nzTitle="Budget & Billing">
+          <div>
+              <app-asset-costs [assetData]="assetData" [resource]="'ASSET_INSTANCE'"></app-asset-costs>
+          </div>
+      </nz-tab>
+        <nz-tab *ngIf="filters.provider == 'AWS'" nzTitle="Security Group">
+          <div>
+            <app-cloudmatiq-sg-add-edit [assetData]="assetData" [noEdit]="true" [sgObj]="awssgobj">
+            </app-cloudmatiq-sg-add-edit>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <div nz-row class="m-t-10">
+        <div *ngFor="let service of cardViewList; index as i;">
+          <div class="ant-card" [ngClass]="{'ant-card-margin': checkIndex(i)}">
+            <nz-card class="ant-card-view">
+              <div class="card-image">
+                <p class="logo-name">
+                  <i class="anticon anticon-pie-chart"></i></p>
+              </div>
+              <div class="card-content">
+                <div class="title">{{service.value}}</div>
+                <div class="sub-title">{{service.label}}</div>
+              </div>
+            </nz-card>
+          </div>
+        </div>
+      </div> -->
+</div>

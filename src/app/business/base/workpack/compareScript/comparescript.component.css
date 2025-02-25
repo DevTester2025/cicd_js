@@ -1,0 +1,8 @@
+.scirpt_notequal{
+    border: solid 1px #fb9b8d;
+    background: #1d0603;
+}
+.compare-container{
+    height: calc( 83vh );
+     overflow: auto;
+}

@@ -1,0 +1,10 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body param-section">
+    <app-cloudmatiq-server-detail
+      [instanceref]="serverDetail"
+      [serverDetails]="true"
+      (showDrillDown)="viewServerDetail = false; notifyDetailEntry(event)"
+    >
+    </app-cloudmatiq-server-detail>
+  </ng-container>
+</app-cloudmatiq-side-nav>

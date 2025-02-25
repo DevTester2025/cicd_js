@@ -1,0 +1,622 @@
+<app-cloudmatiq-side-bar
+  [width]="modalWidth"
+  (dataChanged)="modalVisible = false"
+  [(isVisible)]="modalVisible"
+  [title]="modalTitle"
+>
+  <ng-container class="modal-content">
+    <app-cloudmatiq-script-add-edit
+      *ngIf="modalTitle == 'Script'"
+      [scriptObj]="scriptObj"
+      (notifyScriptEntry)="notifyScriptEntry($event)"
+    >
+    </app-cloudmatiq-script-add-edit>
+    <app-cloudmatiq-ali-add-edit-vpc
+      *ngIf="modalTitle == 'VPC'"
+      [vpcObj]="vpcObj"
+      (notifyNewEntry)="notifyVpcEntry($event)"
+    >
+    </app-cloudmatiq-ali-add-edit-vpc>
+    <app-cloudmatiq-ali-add-edit-image
+      *ngIf="modalTitle == 'Image'"
+      [imageObj]="imageObj"
+      (notifyNewEntry)="notifyImageEntry($event)"
+    >
+    </app-cloudmatiq-ali-add-edit-image>
+    <app-cloudmatiq-ali-add-edit-volume
+      *ngIf="modalTitle == 'Volume'"
+      [volumeObj]="volumeObj"
+      (notifyNewEntry)="notifyVolumeEntry($event)"
+    >
+    </app-cloudmatiq-ali-add-edit-volume>
+    <app-cloudmatiq-ali-add-edit-vswitch
+      *ngIf="modalTitle == 'VSwitch'"
+      [vswitchObj]="vswitchObj"
+      (notifyNewEntry)="notifyVSwitchEntry($event)"
+    >
+    </app-cloudmatiq-ali-add-edit-vswitch>
+    <app-cloudmatiq-ali-add-edit-sg
+      *ngIf="modalTitle == 'Security Group'"
+      [sgObj]="sgObj"
+      (notifyNewEntry)="notifySgEntry($event)"
+    >
+    </app-cloudmatiq-ali-add-edit-sg>
+    <app-cloudmatiq-ali-add-edit-keypair
+      *ngIf="modalTitle == 'Key Pair'"
+      [keypairObj]="keypairObj"
+      (notifyNewEntry)="notifyKeyPairEntry($event)"
+    >
+    </app-cloudmatiq-ali-add-edit-keypair>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+  <div class="row">
+    <div class="col s12 m8">
+      <h3 class="solution-title mb-0 ml-3">Compute</h3>
+
+      <div class="col s12">
+        <form nz-form [formGroup]="instanceForm">
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="instancename"
+              >Instance Name</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-input-group>
+                <input
+                  id="instancename"
+                  placeholder="Instance Name"
+                  formControlName="instancename"
+                  nz-input
+                  type="text"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="instancetypeid"
+              >Instance Type</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="instancetypeid"
+                placeholder="Select Instance"
+                nzPlaceHolder="Select Instance"
+                formControlName="instancetypeid"
+              >
+                <nz-option
+                  *ngFor="let data of instanceTypeList"
+                  [nzLabel]="data.instancetypename"
+                  [nzValue]="data.instancetypeid"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="instancechargetype"
+              >Instance Charge Type
+            </nz-form-label>
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="instancechargetype"
+                placeholder="Select Instance Charge Type"
+                nzPlaceHolder="Select Instance Charge Type"
+                formControlName="instancechargetype"
+              >
+                <nz-option
+                  *ngFor="let data of instancechargeTypeList"
+                  [nzLabel]="data.keyname"
+                  [nzValue]="data.keyvalue"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="internetchargetype"
+              >Internet Charge Type
+            </nz-form-label>
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="internetchargetype"
+                placeholder="Select Internet Charge Type"
+                nzPlaceHolder="Select Internet Charge Type"
+                formControlName="internetchargetype"
+              >
+                <nz-option
+                  *ngFor="let data of netchargeTypeList"
+                  [nzLabel]="data.keyname"
+                  [nzValue]="data.keyvalue"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="internetmaxbandwidthin"
+              >Internet MaxBandwidth In
+            </nz-form-label>
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-input-group>
+                <nz-input-number
+                  id="internetmaxbandwidthin"
+                  [nzMin]="1"
+                  [nzMax]="200"
+                  placeholder="Internet MaxBandwidth In"
+                  formControlName="internetmaxbandwidthin"
+                  nz-input
+                  type="text"
+                >
+                </nz-input-number>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="internetmaxbandwidthout"
+              >Internet MaxBandwidth Out
+            </nz-form-label>
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-input-group>
+                <nz-input-number
+                  id="internetmaxbandwidthout"
+                  [nzMin]="0"
+                  [nzMax]="100"
+                  placeholder="Internet MaxBandwidth Out"
+                  formControlName="internetmaxbandwidthout"
+                  nz-input
+                  type="text"
+                ></nz-input-number>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="imageid"
+              >Image</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="imageid"
+                placeholder="Select Image"
+                nzPlaceHolder="Select Image"
+                formControlName="imageid"
+              >
+                <nz-option
+                  *ngFor="let data of imageList"
+                  [nzLabel]="data.imagename"
+                  [nzValue]="data.imageid"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+            <button
+              (click)="openForm('Image')"
+              class="ml-1"
+              nz-button
+              nzType="primary"
+            >
+              <i class="anticon anticon-plus"></i>
+            </button>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="scriptid"
+              >Script</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="scriptid"
+                placeholder="Select Script"
+                nzPlaceHolder="Select Script"
+                formControlName="scriptid"
+              >
+                <nz-option
+                  *ngFor="let data of scriptsList"
+                  [nzLabel]="data.scriptname"
+                  [nzValue]="data.scriptid"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+            <!-- <button (click)="openForm('Script')" class="ml-1" nz-button nzType="primary">
+              <i class="anticon anticon-plus"></i>
+            </button> -->
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="orchid"
+              >Orchestration</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="orchid"
+                placeholder="Select Orchestration"
+                nzPlaceHolder="Select Orchestration"
+                formControlName="orchid"
+              >
+                <nz-option
+                  *ngFor="let data of orchList"
+                  [nzLabel]="data.orchname"
+                  [nzValue]="data.orchid"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+            <!-- <button (click)="openForm('Script')" class="ml-1" nz-button nzType="primary">
+                  <i class="anticon anticon-plus"></i>
+              </button> -->
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="deletionprotectionyn"
+              >Termination Protection</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="deletionprotectionyn"
+                placeholder="Deletion Protection"
+                nzPlaceHolder="Deletion Protection"
+                formControlName="deletionprotectionyn"
+              >
+                <nz-option [nzLabel]="'Yes'" [nzValue]="'Y'"></nz-option>
+                <nz-option [nzLabel]="'No'" [nzValue]="'N'"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <h3 class="solution-title mb-0 ml-3 mt-1">Storage</h3>
+          <div class="col s12">
+            <nz-form-item>
+              <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="noofvolumes"
+                >No Of Volumes</nz-form-label
+              >
+              <nz-form-control [nzSm]="12" [nzXs]="12">
+                <nz-select
+                  style="width: 90%"
+                  [(ngModel)]="noofvolumes"
+                  nzPlaceHolder="Value"
+                >
+                  <nz-option nzLabel="1" nzValue="1"> </nz-option>
+                  <nz-option nzLabel="2" nzValue="2"> </nz-option>
+                  <nz-option nzLabel="3" nzValue="3"> </nz-option>
+                  <nz-option nzLabel="4" nzValue="4"> </nz-option>
+                  <nz-option nzLabel="5" nzValue="5"> </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s12">
+            <nz-form-item>
+              <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="volumeid"
+                >Data Volume</nz-form-label
+              >
+              <nz-form-control [nzSm]="12" [nzXs]="12">
+                <nz-select
+                  nzShowSearch
+                  nzAllowClear
+                  id="volumeid"
+                  placeholder="Select Volume or Add New"
+                  nzPlaceHolder="Select Volume or Add New"
+                  formControlName="volumeid"
+                >
+                  <nz-option
+                    *ngFor="let data of volumeList"
+                    [nzLabel]="data.name"
+                    [nzValue]="data.volumeid"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+              <button
+                (click)="openForm('Volume')"
+                class="ml-1"
+                nz-button
+                nzType="primary"
+              >
+                <i class="anticon anticon-plus"></i>
+              </button>
+            </nz-form-item>
+          </div>
+        </form>
+      </div>
+      <h3 class="solution-title mb-0 ml-3 mt-1">Networking</h3>
+
+      <div class="col s12">
+        <form nz-form [formGroup]="networkingForm">
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="vpcid"
+              >VPC</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="vpcid"
+                placeholder="Select VPC or Add New"
+                nzPlaceHolder="Select VPC or Add New"
+                formControlName="vpcid"
+              >
+                <nz-option
+                  *ngFor="let data of vpcList"
+                  [nzLabel]="data.vpcname"
+                  [nzValue]="data.vpcid"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+            <button
+              (click)="openForm('VPC')"
+              class="ml-1"
+              nz-button
+              nzType="primary"
+            >
+              <i class="anticon anticon-plus"></i>
+            </button>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="vswitchid"
+              >VSwitch</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="vswitchid"
+                placeholder="Select VSwitch"
+                nzPlaceHolder="Select VSwitch"
+                formControlName="vswitchid"
+              >
+                <nz-option
+                  *ngFor="let data of vswitchList"
+                  [nzLabel]="data.vswitchname"
+                  [nzValue]="data.vswitchid"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+            <button
+              (click)="openForm('VSwitch')"
+              class="ml-1"
+              nz-button
+              nzType="primary"
+            >
+              <i class="anticon anticon-plus"></i>
+            </button>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="8"
+              [nzXs]="12"
+              nzRequired
+              nzFor="securitygroupid"
+              >Security Group</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="securitygroupid"
+                placeholder="Select Security Group or Add New"
+                nzPlaceHolder="Select Security Group or Add New"
+                formControlName="securitygroupid"
+              >
+                <nz-option
+                  *ngFor="let data of sgList"
+                  [nzLabel]="data.securitygroupname"
+                  [nzValue]="data.securitygroupid"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+            <button
+              (click)="openForm('Security Group')"
+              class="ml-1"
+              nz-button
+              nzType="primary"
+            >
+              <i class="anticon anticon-plus"></i>
+            </button>
+          </nz-form-item>
+        </form>
+      </div>
+
+      <h3 class="solution-title mb-0 ml-3">Key</h3>
+
+      <div class="ml-0">
+        <form nz-form [formGroup]="keysForm">
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="keyid"
+              >Select Key Pair</nz-form-label
+            >
+            <nz-form-control [nzSm]="12" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="keyid"
+                nzPlaceHolder="Select Key Pair"
+                formControlName="keyid"
+              >
+                <nz-option
+                  *ngFor="let data of keyList"
+                  [nzLabel]="data.keyname"
+                  [nzValue]="data.keyid"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+            <button
+              (click)="openForm('Key Pair')"
+              class="ml-1"
+              nz-button
+              nzType="primary"
+            >
+              <i class="anticon anticon-plus"></i>
+            </button>
+          </nz-form-item>
+        </form>
+      </div>
+
+      <h3 class="solution-title mb-0 ml-3">Tags</h3>
+
+      <div class="ml-4">
+        <form nz-form [formGroup]="tagsForm" class="tags-section">
+          <div
+            class="col s12 m12 right-align network-button"
+            style="padding-right: 56px"
+          >
+            <button (click)="addTag()" nz-button nzType="primary">
+              <i class="anticon anticon-plus"></i>
+            </button>
+          </div>
+          <div formArrayName="tags">
+            <div
+              *ngFor="let rules of getFormArray('tags').controls; let i = index"
+            >
+              <div [formGroupName]="i">
+                <div class="row">
+                  <div class="col s12 m5">
+                    <nz-form-item>
+                      <nz-form-label
+                        *ngIf="i == 0"
+                        style="text-align: left"
+                        [nzSm]="22"
+                        [nzXs]="12"
+                        nzFor="tagkey"
+                        >Key
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="22" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="tagkey"
+                            placeholder="Key"
+                            formControlName="tagkey"
+                            nz-input
+                            type="text"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="col s12 m5">
+                    <nz-form-item>
+                      <nz-form-label
+                        *ngIf="i == 0"
+                        style="text-align: left"
+                        [nzSm]="22"
+                        [nzXs]="12"
+                        nzFor="tagvalue"
+                      >
+                        Value</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="22" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="tagvalue"
+                            placeholder="Value"
+                            formControlName="tagvalue"
+                            nz-input
+                            type="text"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="col s12 m2">
+                    <i
+                      [style.margin-top.px]="i == 0 ? '50' : '10'"
+                      (click)="removeTag(i)"
+                      class="anticon hover-pointer amber-text anticon-delete"
+                      style="padding-left: 56px"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div
+      *ngIf="alibabaSolutionsList && alibabaSolutionsList.length > 0"
+      class="col m4 pl-2 pr-2"
+    >
+      <h3 class="amber-text">Servers</h3>
+      <table
+        *ngIf="alibabaSolutionsList && alibabaSolutionsList.length > 0"
+        style="width: 100%"
+      >
+        <tr *ngFor="let s of alibabaSolutionsList">
+          <td class="white-text">{{ s.instancename }}</td>
+          <td>
+            <i
+              (click)="editInstance({ edit: true, data: s })"
+              class="anticon hover-pointer amber-text anticon-edit ml-2"
+            ></i>
+            <i
+              (click)="deleteInstance(s)"
+              class="anticon hover-pointer amber-text anticon-delete ml-1"
+            ></i>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</nz-spin>
+<div class="row">
+  <div class="col s12 m8 center-align mt-2">
+    <nz-dropdown nzPlacement="topCenter">
+      <button style="width: 115px" class="server-button" nz-button nz-dropdown>
+        <span>Save</span>
+        <i class="anticon anticon-down"></i>
+      </button>
+      <ul nz-menu>
+        <li
+          (click)="addServer(false)"
+          [nzDisabled]="!instanceForm.valid || !networkingForm.valid"
+          nz-menu-item
+        >
+          <a>Save and Add Another</a>
+        </li>
+        <li
+          (click)="addServer(false)"
+          [nzDisabled]="!instanceForm.valid || !networkingForm.valid"
+          nz-menu-item
+        >
+          <a>Save and Continue</a>
+        </li>
+      </ul>
+    </nz-dropdown>
+  </div>
+</div>

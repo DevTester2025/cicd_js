@@ -1,0 +1,602 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <form nz-form [formGroup]="serviceRequestForm">
+      <div class="col s12 m12 create-service">
+        <h3 class="white-text mb-0">Basic Details</h3>
+
+        <div class="serviceform">
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="create-service ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"  nzFor="service" nzRequired
+                  >Service Name
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                    <input type="text" nz-input placeholder="Select Service" formControlName="service"/>
+                    <!-- <p style="margin-top: 0px;"> {{servicename}}</p> -->
+                  <!-- <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    id="service"
+                    placeholder="Select Service"
+                    nzPlaceHolder="Select Service"
+                    (ngModelChange)="getSolutionName($event)"
+                    formControlName="service"
+                  >
+                    <nz-option
+                      *ngFor="let data of solutionList"
+                      [nzLabel]="data.solutionname"
+                      [nzValue]="data.solutionid"
+                    ></nz-option>
+                  </nz-select> -->
+                  <a
+                    class="show-button"
+                    *ngIf="serviceRequestForm.get('service').valid && isSolution"
+                    (click)="showSolutionSummary()"
+                  >
+                    Show Details
+                    <span>
+                      <nz-spin
+                        *ngIf="summaryLoading"
+                        [nzIndicator]="indicatorTemplate"
+                      >
+                      </nz-spin>
+                    </span>
+                  </a>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="groupname"
+                  >Group Name
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    id="groupname"
+                    placeholder="Select Group Name"
+                    nzPlaceHolder="Select Group Name"
+                    formControlName="groupname"
+                  >
+                    <nz-option
+                      *ngFor="let data of groupNamesList"
+                      [nzLabel]="data.keyname"
+                      [nzValue]="data.lookupid"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="startdate"
+                  >Start Date
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-group nzCompact>
+                    <nz-date-picker
+                      nzFormat="dd-MMM-yyyy"
+                      nzPlaceHolder="Start Date"
+                      id="startdate"
+                      formControlName="startdate"
+                    ></nz-date-picker>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="publishdate"
+                  >Publish Date
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-group nzCompact>
+                    <nz-date-picker
+                      nzFormat="dd-MMM-yyyy"
+                      nzPlaceHolder="Publish Date"
+                      id="publishdate"
+                      formControlName="publishdate"
+                    ></nz-date-picker>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="enddate"
+                  >End Date
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-group nzCompact>
+                    <nz-date-picker
+                      nzFormat="dd-MMM-yyyy"
+                      id="enddate"
+                      nzPlaceHolder="End Date"
+                      formControlName="enddate"
+                    ></nz-date-picker>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzFor="workflow"
+                  nzRequired
+                  >Workflow
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    id="groupname"
+                    placeholder="Select Workflow"
+                    nzPlaceHolder="Select Workflow"
+                    formControlName="wrkflowid"
+                    (ngModelChange)="onWorkflowSelect($event)"
+                  >
+                    <nz-option
+                    *ngFor="let p of workflowList"
+                    [nzLabel]="p.wrkflowname"
+                    [nzValue]="p.wrkflowid"
+                    ></nz-option>
+                  </nz-select>
+                  <a class="show-button" (click)="showWorkflowSummary()">
+                    Show Workflow Details
+                  </a>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24 service-image">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="catalogimage"
+                  >Service Image
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <!-- <nz-upload nzType="drag" (nzChange)="handleChange($event,'ServiceImg')">
+                                                        <p class="ant-upload-drag-icon">
+                                                            <i class="anticon anticon-inbox"></i>
+                                                        </p>
+                                                        <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                                                    </nz-upload> -->
+
+                  <input
+                    type="file"
+                    formControlName="serviceimage"
+                    name="catalogimage"
+                    (change)="onFile($event, 'ServiceImg')"
+                  />
+                  <a (click)="onPreview(servicefile, 'Service Image')">
+                    <img
+                      *ngIf="servicefile != undefined && servicefile != null"
+                      [src]="servicefile"
+                      alt=""
+                      class="imgs"
+                    />
+                  </a>
+
+                  <a
+                    *ngIf="catalogdownload"
+                    [href]="servicefile"
+                    target="_blank"
+                    style="margin-left: 20px"
+                    download
+                    >Download</a
+                  >
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24 service-image">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="catalogola"
+                  >Service Catalog
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <!-- <nz-upload nzType="drag" (nzChange)="handleChange($event,'olaImg')">
+                                                            <p class="ant-upload-drag-icon">
+                                                                <i class="anticon anticon-inbox"></i>
+                                                            </p>
+                                                            <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                                                        </nz-upload> -->
+                  <!-- <img *ngIf="olafile!=undefined && olafile!=null" [src]="olafile" alt="" class="thumbnail" (click)="onPreview(olafile,'Service Catalog')" /> -->
+                  <input
+                    type="file"
+                    name="catalogola"
+                    formControlName="servicecatalogimg"
+                    (change)="onFile($event, 'olaImg')"
+                  />
+
+                  <a (click)="onPreview(olafile, 'Service Catalog')">
+                    <img
+                      *ngIf="olafile != undefined && olafile != null"
+                      [src]="olafile"
+                      alt=""
+                      class="imgs"
+                    />
+                  </a>
+                  <a
+                    *ngIf="oladownload && olafile"
+                    [href]="olafile"
+                    target="_blank"
+                    style="margin-left: 20px"
+                    download
+                    >Download</a
+                  >
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24 service-image">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="archdiagram"
+                  >Architectural View
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <!-- <nz-upload nzType="drag" (nzChange)="handleChange($event,'ArchImg')">
+                                                                <p class="ant-upload-drag-icon">
+                                                                    <i class="anticon anticon-inbox"></i>
+                                                                </p>
+                                                                <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                                                            </nz-upload> -->
+                  <input
+                    type="file"
+                    name="archdiagram"
+                    formControlName="archviewimg"
+                    (change)="onFile($event, 'ArchImg')"
+                  />
+
+                  <a (click)="onPreview(archfile, 'Architectural View')">
+                    <img
+                      *ngIf="archfile != undefined && archfile != null"
+                      alt=""
+                      [src]="archfile"
+                      class="imgs"
+                    />
+                  </a>
+
+                  <a
+                    *ngIf="archdownload"
+                    [href]="archfile"
+                    target="_blank"
+                    type="application/*"
+                    style="margin-left: 20px"
+                    download
+                    >Download</a
+                  >
+                </nz-form-control>
+                <!-- <img *ngIf="archfile!=undefined && archfile!=null" alt="" [src]="archfile" class="thumbnail"  download/> -->
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m12 create-service" style="width: 100%">
+        <h3 class="white-text mb-0">Characteristics</h3>
+        <!-- <p *ngIf="serviceRequestForm.get('service').valid">This is a standard deployment of {{solutionName}} with the following characteristics</p> -->
+        <div class="serviceform">
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isSolution">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="ha"
+                  >High Availability
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="24">
+                  <nz-input-group>
+                    <nz-input-number
+                      formControlName="ha"
+                      [nzMin]="1"
+                      [nzMax]="100"
+                      [nzStep]="1"
+                    >
+                    </nz-input-number>
+                    <input id="ha" placeholder="" formControlName="ha" nz-input type="text">
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="description"
+                  >Description
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-group>
+                    <p-editor
+                    formControlName="description"
+                    [style]="{ height: '220px' }"
+                  ></p-editor>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12">Created By</nz-form-label>
+                <!-- <nz-form-control [nzSm]="8" [nzXs]="24">
+                  <input placeholder="" [(ngModel)]="CreatedBy" name="createdby" nz-input type="text">
+                </nz-form-control> -->
+                <p style="margin-top: 8px;">{{CreatedBy}}</p>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12">Created Date</nz-form-label>
+                <!-- <nz-form-control [nzSm]="8" [nzXs]="24">
+                  <nz-input-group nzCompact>
+                    <nz-date-picker
+                      nzFormat="dd-MMM-yyyy"
+                      nzPlaceHolder=""
+                      [(ngModel)]="CreatedDate"
+                      name="createddt"
+                    ></nz-date-picker>
+                  </nz-input-group>
+                </nz-form-control> -->
+                <p style="margin-top: 8px;">{{CreatedDate}}</p>
+              </nz-form-item>
+            </div>
+            
+            <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isSolution">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="estimatedcost">Estimated Cost (One Time)</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <nz-input-group>
+                                        <nz-input-number formControlName="estimatedcost" id="estimatedcost" [nzMin]="1" [nzStep]="10" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isSolution">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="setupcost">Setup Cost (One Time) </nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <nz-input-number formControlName="setupcost" id="setupcost" [nzMin]="1" [nzStep]="10" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isSolution">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="runningcost">Running Cost (Monthly)</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <nz-input-number formControlName="runningcost" id="runningcost" [nzMin]="1" [nzStep]="10" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isSolution">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="othercost">Other Costs (Professional Services, Support, etc)</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <nz-input-number formControlName="othercost" id="othercost" [nzMin]="1" [nzStep]="10" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+          </div>
+
+          <!-- <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="autodeployyn"
+                  >Automated Deployment</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-radio-group
+                    nzName="radiogroup"
+                    formControlName="autodeployyn"
+                    id="autodeployyn"
+                  >
+                    <label nz-radio nzValue="Y">Yes</label>
+                    <label nz-radio nzValue="N">No</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="approvalyn"
+                  >System Require Approval</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-radio-group
+                    nzName="radiogroup"
+                    formControlName="approvalyn"
+                    id="approvalyn"
+                    (ngModelChange)="approvalChange($event)"
+                  >
+                    <label nz-radio nzValue="Y">Yes</label>
+                    <label nz-radio nzValue="N">No</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              class="ant-col-md-24 ant-col-lg-24 creative-service"
+              *ngIf="serviceRequestForm.get('approvalyn').value == 'Y'"
+            >
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="8"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="noofapprovers"
+                  >No. of Levels of Approval</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-number
+                    placeholder="1"
+                    [nzMin]="1"
+                    formControlName="noofapprovers"
+                    [nzMax]="3"
+                    (ngModelChange)="approvalLvlChange($event)"
+                    [nzStep]="1"
+                    id="noofapprovers"
+                  ></nz-input-number>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              class="ant-col-md-24 ant-col-lg-24"
+              *ngIf="serviceRequestForm.get('approvalyn').value == 'Y'"
+            >
+              <div
+                formArrayName="approversArray"
+                *ngFor="let control of labelParams; let i = index"
+              >
+                <div [formGroupName]="i">
+                  <nz-form-item>
+                    <nz-form-label
+                      [nzSm]="8"
+                      [nzXs]="12"
+                      nzRequired
+                      [nzFor]="control.label"
+                    >
+                      Approver {{ control.index + 1 }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="8" [nzXs]="12">
+                      <nz-select
+                        nzShowSearch
+                        nzPlaceHolder=""
+                        nzAllowClear
+                        [formControlName]="control.label"
+                      >
+                        <ng-container *ngFor="let obj of usersList">
+                          <nz-option
+                            [nzValue]="obj.userid"
+                            [nzLabel]="obj.fullname"
+                          >
+                          </nz-option>
+                        </ng-container>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+          </div> -->
+        </div>
+        <div class="col s12 m12 right-align clear save-button">
+          <button
+            (click)="createServiceReq(serviceRequestForm.value)"
+            nz-button
+            class="service-button mt-1 mr-1"
+            nzType="primary"
+          >
+            <span>{{ buttonText }}</span>
+          </button>
+          <button
+            (click)="closeModal()"
+            nz-button
+            class="service-button mt-1 mr-1"
+            nzType="primary"
+          >
+            <span>Close</span>
+          </button>
+        </div>
+      </div>
+    </form>
+    <div *ngIf="showSummary" class="col s12 m12">
+      <nz-drawer
+        id="sidebar-modal"
+        [nzBodyStyle]="{ 'padding-bottom': '55px' }"
+        [nzMaskClosable]="true"
+        [nzWidth]="820"
+        [nzVisible]="showSummary"
+        nzTitle="Solution Summary"
+        (nzOnClose)="showSummary = !showSummary"
+      >
+        <app-cloudmatiq-summary-view
+          *ngIf="solutionData"
+          [style.width]="'100%'"
+          class="deploymentForm"
+          (closeSummary)="closeSummary($event)"
+          [viewData]="solutionData"
+          [summaryTitle]="'Solution Summary'"
+        >
+        </app-cloudmatiq-summary-view>
+      </nz-drawer>
+    </div>
+<!-- workflow -->
+<div *ngIf="showWorkflow" class="col s12 m12">
+  <nz-drawer
+    id="sidebar-modal"
+    [nzBodyStyle]="{ 'padding-bottom': '55px' }"
+    [nzMaskClosable]="true"
+    [nzWidth]="820"
+    [nzVisible]="showWorkflow"
+    nzTitle="Workflow"
+    (nzOnClose)="showWorkflow = !showWorkflow"
+  >
+    <div style="opacity: 0.8; pointer-events: none;">
+      <app-workflow-add-edit 
+        [isView]="false"
+        [operationMode]="operationMode"
+        [selectedWorkflow]="selectedWorkflow">
+      </app-workflow-add-edit>
+    </div>
+  </nz-drawer>
+</div>
+    <nz-modal
+      [nzVisible]="previewVisible"
+      [nzClosable]="false"
+      [nzTitle]="previewTitle"
+      [nzContent]="modalContent"
+      [nzFooter]="modalFooter"
+    >
+      <ng-template #modalContent>
+        <img [src]="previewImage" class="prew-image" />
+      </ng-template>
+      <ng-template #modalFooter>
+        <button nz-button nzType="default" (click)="previewVisible = false">
+          Close
+        </button>
+      </ng-template>
+    </nz-modal>
+  </ng-container>
+</app-cloudmatiq-side-nav>

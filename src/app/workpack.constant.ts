@@ -1,0 +1,162 @@
+export const WorkpackConstant = Object.freeze({
+  COLUMNS: {
+    WORKPACKTEMPLATE: [
+      {
+        field: "title",
+        header: "Title",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "description",
+        header: "description",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "component",
+        header: "component",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "category",
+        header: "category",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "version",
+        header: "version",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "reference",
+        header: "reference",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "prerequisites",
+        header: "prerequisites",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "notes",
+        header: "notes",
+        datatype: "html",
+        isdefault: false,
+      },
+      {
+        field: "estimate",
+        header: "estimate",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "status",
+        header: "status",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "createdby",
+        header: "createdby",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "createddt",
+        header: "createddt",
+        datatype: "timestamp",
+        format: "dd-MMM-yyyy",
+        isdefault: false,
+      },
+      {
+        field: "updatedby",
+        header: "updatedby",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "updateddt",
+        header: "updateddt",
+        datatype: "timestamp",
+        format: "dd-MMM-yyyy",
+        isdefault: true,
+      },
+    ],
+    TASKSTEMPLATES:[
+      {
+        field: "title",
+        header: "Title",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "position",
+        header: "Position",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "description",
+        header: "description",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "expected_result",
+        header: "expected_result",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "notes",
+        header: "notes",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "estimate",
+        header: "estimate",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "status",
+        header: "status",
+        datatype: "string",
+        isdefault: true,
+      },
+      {
+        field: "createdby",
+        header: "createdby",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "createddt",
+        header: "createddt",
+        datatype: "timestamp",
+        format: "dd-MMM-yyyy",
+        isdefault: false,
+      },
+      {
+        field: "updatedby",
+        header: "updatedby",
+        datatype: "string",
+        isdefault: false,
+      },
+      {
+        field: "updateddt",
+        header: "updateddt",
+        datatype: "timestamp",
+        format: "dd-MMM-yyyy",
+        isdefault: false,
+      },
+    ]
+  },
+});

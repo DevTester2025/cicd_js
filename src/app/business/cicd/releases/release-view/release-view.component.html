@@ -1,0 +1,122 @@
+<app-cloudmatiq-side-nav>
+  <ng-container class="page-body">
+    <div nz-row style="margin-top: 0px">
+      <div nz-col nzSpan="24" style="display: flex; align-items: center;">
+        <button nz-button nzType="primary" (click)="back()" style="margin: 0 10px 0px 0;">
+          <i class="anticon anticon-arrow-left"></i></button>
+        <h3 style="color: #aabb11; margin-bottom: 0px">Release :</h3>&nbsp;
+        <h3 style="color: #ffffff; margin-bottom: 0px">{{ releaseName }}</h3>
+      </div>
+    </div>
+    <nz-divider style="margin: 5px; height: 1px"></nz-divider>
+    <div style="height: 84vh; overflow: hidden;">
+      <div style="background: rgb(28, 46, 60); height: 100%; border-radius: 10px; padding: 8px;" class="release-view">
+        <div style="border: 1px solid #8d9ba6; margin-bottom: 5px;border-radius: 6px;">
+          <div nz-row>
+            <div *ngIf="txnLog.length === 0; else workflowLog">
+              <h3 style="color: #bfbfbf; text-align: center;">No Data</h3>
+              <nz-divider style="margin: 4px; width: 99%"></nz-divider>
+            </div>
+            <ng-template #workflowLog>
+              <div class="node-container" [class.node-container-height]="nodes.length > 5">
+                <svg width="100%" height="100%" [attr.viewBox]="nodes.length > 5 ? '50 103 1102 49' : '50 71 1102 49'">
+                  <defs>
+                    <marker id="arrow" markerWidth="5" markerHeight="3.5" refX="1" refY="1.75" orient="auto">
+                      <polygon points="0 0, 5 1.75, 0 3.5" />
+                    </marker>
+                  </defs>
+                  <g *ngFor="let line of lines">
+                    <line [attr.x1]="getNodePosition(line.from).x" [attr.y1]="getNodePosition(line.from).y"
+                      [attr.x2]="getNodePosition(line.to).x" [attr.y2]="getNodePosition(line.to).y"
+                      stroke="rgb(71, 85, 96)" stroke-width="2" marker-end="url(#arrow)" />
+                  </g>
+
+                  <g *ngFor="let node of nodes" (click)="viewLog(node)" style="cursor: pointer;">
+                    <rect [attr.x]="getNodePosition(node.id).x - 50" [attr.y]="getNodePosition(node.id).y - 20"
+                      [attr.width]="getWidth(nodes.length)" height="36" [attr.fill]="getNodeColor(node.status)"
+                      [attr.stroke]="selectedLog.id === node.id ? '#ffcc00db' : 'rgb(71, 85, 96)'" stroke-width="2"
+                      rx="19" ry="19">
+                    </rect>
+                    <foreignObject [attr.x]="getNodePosition(node.id).x - 44"
+                      [attr.y]="getNodePosition(node.id).y - (node.status == 'INPROGRESS' ? 16 : 15)"
+                      [attr.width]="getWidthAndHeight(node.status)" [attr.height]="getWidthAndHeight(node.status)">
+                      <ng-container *ngIf="node.status !== 'INPROGRESS'">
+                        <svg nz-tooltip [nzTitle]="node.status" width="26" height="26" viewBox="0 0 16 16" fill="none"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <ng-container *ngIf="node.status === 'COMPLETED'">
+                            <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#00A64C" />
+                            <path d="M4.1499 8.18333L6.71657 10.75L11.8499 5.25" stroke="#00A64C" stroke-width="1.5"
+                              stroke-linecap="round" stroke-linejoin="round" />
+                          </ng-container>
+                          <ng-container *ngIf="node.status === 'PENDING'">
+                            <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#475560" />
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M8.75 10.25C8.75 10.4489 8.67098 10.6397 8.53033 10.7803C8.38968 10.921 8.19891 11 8 11C7.80109 11 7.61032 10.921 7.46967 10.7803C7.32902 10.6397 7.25 10.4489 7.25 10.25C7.25 10.0511 7.32902 9.86032 7.46967 9.71967C7.61032 9.57902 7.80109 9.5 8 9.5C8.19891 9.5 8.38968 9.57902 8.53033 9.71967C8.67098 9.86032 8.75 10.0511 8.75 10.25ZM8.5625 5.5625C8.5625 5.41332 8.50324 5.27024 8.39775 5.16475C8.29226 5.05926 8.14918 5 8 5C7.85082 5 7.70774 5.05926 7.60225 5.16475C7.49676 5.27024 7.4375 5.41332 7.4375 5.5625V8.1875C7.4375 8.33668 7.49676 8.47976 7.60225 8.58525C7.70774 8.69074 7.85082 8.75 8 8.75C8.14918 8.75 8.29226 8.69074 8.39775 8.58525C8.50324 8.47976 8.5625 8.33668 8.5625 8.1875V5.5625Z"
+                              fill="#475560" />
+                          </ng-container>
+                          <ng-container *ngIf="node.status === 'CANCELLED' || node.status === 'FAILED'">
+                            <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#C30000" />
+                            <path d="M11 5L5 11M5 5L11 11" stroke="#C30000" stroke-width="1.5" stroke-linecap="round"
+                              stroke-linejoin="round" />
+                          </ng-container>
+                        </svg>
+                      </ng-container>
+                      <ng-container *ngIf="node.status === 'INPROGRESS'">
+                        <svg nz-tooltip [nzTitle]="node.status" xmlns="http://www.w3.org/2000/svg" width="28"
+                          height="28" viewBox="0 0 24 24">
+                          <path fill="rgb(201 132 0)"
+                            d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
+                            opacity="0.7" />
+                          <path fill="rgb(201 132 0)"
+                            d="M10.72,19.9a8,8,0,0,1-6.5-9.79A7.77,7.77,0,0,1,10.4,4.16a8,8,0,0,1,9.49,6.52A1.54,1.54,0,0,0,21.38,12h.13a1.37,1.37,0,0,0,1.38-1.54,11,11,0,1,0-12.7,12.39A1.54,1.54,0,0,0,12,21.34h0A1.47,1.47,0,0,0,10.72,19.9Z">
+                            <animateTransform attributeName="transform" dur="0.525s" repeatCount="indefinite"
+                              type="rotate" values="0 12 12;360 12 12" />
+                          </path>
+                          <circle cx="12" cy="12" r="7" fill="rgb(201 132 0)" />
+                        </svg>
+                      </ng-container>
+                    </foreignObject>
+                    <text [attr.x]="getNodePosition(node.id).x - 10" [attr.y]="getNodePosition(node.id).y + 2"
+                      font-size="10" [attr.fill]="node.status === 'PENDING'? '#cfcfcf8c' : 'white'">
+                      {{node.name}}
+                    </text>
+                    <foreignObject [attr.x]="getNodePosition(node.id).x + getShowLogPosition(nodes.length)"
+                      [attr.y]="getNodePosition(node.id).y - 11" width="19" height="20"
+                      *ngIf="node.referenceType === 'ORCHESTRATION'">
+                      <ng-container>
+                        <svg nz-tooltip nzTitle="Show Detail Log" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                          width="14pt" height="14pt" viewBox="0 0 64.000000 64.000000"
+                          preserveAspectRatio="xMidYMid meet">
+                          <g transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)" fill="#ffcc00"
+                            stroke="#ffcc00">
+                            <path
+                              d="M100 620 c-19 -19 -20 -33 -20 -300 0 -267 1 -281 20 -300 19 -19 33 -20 220 -20 187 0 201 1 220 20 19 19 20 33 20 243 l0 224 -79 76 -79 77 -141 0 c-128 0 -143 -2 -161 -20z m270 -85 c0 -77 9 -85 99 -85 l61 0 0 -193 c0 -137 -3 -196 -12 -205 -17 -17 -379 -17 -396 0 -17 17 -17 519 0 536 8 8 52 12 130 12 l118 0 0 -65z m130 -42 c0 -2 -20 -3 -45 -3 l-45 0 0 47 0 47 45 -44 c25 -24 45 -45 45 -47z" />
+                            <path
+                              d="M164 379 c-14 -24 18 -29 157 -27 128 3 144 5 147 21 3 16 -9 17 -147 17 -97 0 -152 -4 -157 -11z" />
+                            <path
+                              d="M164 279 c-14 -24 18 -29 157 -27 128 3 144 5 147 21 3 16 -9 17 -147 17 -97 0 -152 -4 -157 -11z" />
+                            <path d="M165 180 c-13 -21 11 -31 66 -28 40 2 54 7 54 18 0 19 -109 28 -120 10z" />
+                          </g>
+                        </svg>
+                      </ng-container>
+                    </foreignObject>
+                  </g>
+                </svg>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+        <nz-spin [nzSize]="'large'" nzTip="Loading..." [nzSpinning]="loading">
+          <div style="height: 84vh;position: relative;">
+            <pre style="height: 85.7%;border: 1px solid #8d9ba6;" [class.logdetail-height]="nodes.length > 5"
+              [class.logdetail-border]="nodes[selectedLogIdx] && selectedLog.isSelected"
+              #logTextarea>{{nodes[selectedLogIdx] && selectedLog.isSelected ? nodes[selectedLogIdx].log :" Please click on the job to view the log details" }}</pre>
+            <div class="selected-job">
+              <h3>{{ selectedJob }}</h3>
+            </div>
+          </div>
+        </nz-spin>
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

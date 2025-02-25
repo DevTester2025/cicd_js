@@ -1,0 +1,187 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <!-- <app-cloudmatiq-side-bar (dataChanged)="rightbarChanged($event)" [(isVisible)]="isVisible" [title]="formTitle">
+        <ng-container class="modal-content">
+            <form nz-form [formGroup]="roleForm" (ngSubmit)="saveOrUpdate(this.roleForm.value)">
+                <div class="row" style="margin-bottom: 0">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="rolename">Role Name</nz-form-label>
+                        <nz-form-control [nzSm]="24" [nzXs]="24">
+                            <input nz-input placeholder="Role Name" formControlName="rolename" type="text">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="permissions">Permissions</nz-form-label>
+                        <nz-form-control [nzSm]="24" [nzXs]="24">
+                            <nz-select nzMode="multiple" nzShowSearch nzAllowClear id="permissions" placeholder="Select Permissions" nzPlaceHolder="Select Permissions" formControlName="permissions">
+                                <nz-option *ngFor="let d of moduleList" [nzLabel]="d.keyvalue" [nzValue]="d.keyvalue"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <div *ngIf="edit">
+                        <nz-form-item>
+                            <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status">Status</nz-form-label>
+                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                <nz-input-group>
+                                    <nz-switch class="status" id="status" formControlName="status"></nz-switch>
+                                </nz-input-group>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="right mr-0">
+                        <button class="mt-1 save-button" type="submit" nz-button nzType="primary" [nzLoading]="addingparam">{{button}}</button>
+                    </div>
+                </div>
+            </form>
+        </ng-container>
+    </app-cloudmatiq-side-bar> -->
+
+  <ng-container class="page-body">
+    <div class="row param-table">
+      <div class="row">
+        <div class="col s12 m2 left left-align">
+          <button
+            *ngIf="visibleadd"
+            (click)="router.navigate(['role/create'])"
+            nz-button
+            nzType="primary"
+          >
+            <i class="anticon anticon-plus"></i>{{ buttonText }}
+          </button>
+        </div>
+
+        <!-- search and refresh -->
+        <!-- <div class="row">
+      <div class="col s12 m2 right left-align">
+        <button
+          nz-button
+          style="position: relative; float: right"
+          (click)="refresh()"
+          title="Reload"
+        >
+          <i class="anticon anticon-reload"></i>
+        </button>
+        <input
+          type="search"
+          nz-input
+          [(ngModel)]="searchText"
+          (keyup.enter)="getAllRoles()"
+          (ngModelChange)="getAllRoles()"
+          placeholder="Search"
+          style="width: 50% !important"
+          
+        />
+        <i
+          title="Click to search"
+          class="anticon anticon-search amber-text p-t-10 p-l-5"
+          (click)="getAllRoles()"
+          
+        ></i>
+      </div>
+    </div> -->
+
+        <app-cloudmatiq-data-table
+          (dataChanged)="dataChanged($event)"
+          [tableData]="roleList"
+          [tableHeader]="roleListHeaders"
+          [selectedcolumns]="selectedcolumns"
+          [tableConfig]="roleTableConfig"
+          [totalCount]="totalCount"
+        ></app-cloudmatiq-data-table>
+      </div>
+      <!-- <nz-table
+        #roleTable
+        [nzData]="roleList"
+        [nzNoResult]="roleList.length<0|| 'No Data'"
+        [nzTotal]="totalCount"
+        [(nzPageIndex)]="pageIndex"
+        
+        nzSize="middle"
+        [nzWidthConfig]="widthConfig"
+      >
+        <thead (nzSortChange)="getAllRoles()" nzSingleSort>
+          <tr>
+            <th class="left-align" nzShowSort nzSortKey="rolename">
+              Role Name
+            </th>
+            <th class="left-align" nzShowSort nzSortKey="lastupdatedby">
+              Updated By
+            </th>
+            <th class="left-align" nzShowSort nzSortKey="lastupdateddt">
+              Updated On
+            </th>
+            <th class="left-align" nzShowSort nzSortKey="status">Status</th>
+            <th class="center" nzWidth="120px" nzRight="0px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of roleTable.data">
+            <td class="left-align">{{ data.rolename }}</td>
+            <td class="left-align">{{ data.lastupdatedby }}</td>
+            <td class="left-align">
+              {{ data.lastupdateddt | date : "dd-MMM-yyyy hh:mm:ss" }}
+            </td>
+            <td class="left-align">{{ data.status }}</td>
+            <td class="center" nzRight="0px">
+              <a
+                *ngIf="visibleedit && rolename == 'csdm_admin'"
+                (click)="editData(data)"
+                title="Edit"
+              >
+                <i class="anticon anticon-edit"></i> </a
+              >&nbsp;
+              <a
+                *ngIf="
+                  visibleedit &&
+                  rolename != 'csdm_admin' &&
+                  data.rolename != 'csdm_admin' &&
+                  data.rolename != 'tenant_admin' &&
+                  data.rolename != 'ops_generic' &&
+                  data.rolename != 'sales_generic'
+                "
+                (click)="editData(data)"
+                title="Edit"
+              >
+                <i class="anticon anticon-edit"></i> </a
+              >&nbsp;
+              <a *ngIf="visibleview" (click)="view(data)" title="View">
+                <i class="anticon anticon-eye-o"></i> </a
+              >&nbsp;
+              <a *ngIf="visiblecopy" (click)="copy(data)" title="Copy">
+                <i class="anticon anticon-copy"></i> </a
+              >&nbsp;
+              <a
+                title="Delete"
+                *ngIf="visibleedit && rolename == 'csdm_admin'"
+                nz-popconfirm
+                nzTitle="Are you sure?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="deleteRecord(data)"
+              >
+                <i class="anticon anticon-delete"></i>
+              </a>
+              <a
+                title="Delete"
+                *ngIf="
+                  visibleedit &&
+                  rolename != 'csdm_admin' &&
+                  data.rolename != 'csdm_admin' &&
+                  data.rolename != 'tenant_admin' &&
+                  data.rolename != 'ops_generic' &&
+                  data.rolename != 'sales_generic'
+                "
+                nz-popconfirm
+                nzTitle="Are you sure?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="deleteRecord(data)"
+              >
+                <i class="anticon anticon-delete"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table> -->
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

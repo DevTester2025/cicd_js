@@ -1,0 +1,47 @@
+<div nz-row style="height: 49%; margin-top: 13px">
+  <div nz-col nzSpan="15" style="height: 100%">
+    <div class="chartSection">
+      <h4 style="color: #ffbf00">Asset Details</h4>
+      <div id="pwac" style="height: 90%"></div>
+    </div>
+  </div>
+  <div nz-col nzSpan="9" style="height: 100%">
+    <div class="chartSection">
+      <div nz-col nzSpan="12">
+        <h4 style="color: #ffbf00">Billing (Current Month)</h4>
+      </div>
+      <nz-select
+        [(ngModel)]="cloudprovider"
+        style="width: 50%"
+        nzPlaceHolder="Provider"
+        (ngModelChange)="onProviderChange($event)"
+      >
+        <nz-option
+          *ngFor="let t of providerList; index as ti"
+          [nzLabel]="t"
+          [nzValue]="t"
+        >
+        </nz-option>
+      </nz-select>
+      <div id="awc" style="height: 90%"></div>
+    </div>
+  </div>
+</div>
+<div nz-row style="height: 49%; margin-top: 13px">
+  <div nz-col nzSpan="12" style="height: 100%">
+    <div class="chartSection">
+      <h4 style="color: #ffbf00">Provider Details (Total Assets)</h4>
+      <div id="pds" style="height: 90%"></div>
+      <!-- <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [labels]="chartOptions.labels" [title]="chartOptions.title" [theme]="chartOptions.theme" [responsive]="chartOptions.responsive"></apx-chart> -->
+    </div>
+  </div>
+  <div nz-col nzSpan="12" style="height: 100%">
+    <div class="chartSection">
+      <h4 style="color: #ffbf00">Asset Locations</h4>
+      <div id="lwa" style="height: 90%"></div>
+    </div>
+  </div>
+</div>
+<div *ngIf="loading == true">
+  <app-cloudmatiq-skeleton [loading]="true"></app-cloudmatiq-skeleton>
+</div>

@@ -1,0 +1,25 @@
+<nz-spin [nzSpinning]="loading">
+  <div *ngIf="dataObj">
+    <div class="cloudasset" *ngFor="let item of dataObj | keyvalue">
+      <div class="row">
+        <h4 class="white-text text-lighten-3 ml-1">
+          <div class="col s12 m2">{{ item.key | uppercase }}</div>
+          <div class="grey-text">: {{ item.value }}</div>
+        </h4>
+      </div>
+    </div>
+  </div>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      (click)="notifyNewEntry.next($event)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+    >
+      Close
+    </button>
+  </div>
+</div>

@@ -1,0 +1,121 @@
+<nz-spin [nzSpinning]="loading">
+  <form nz-form [formGroup]="imageForm">
+    <div class="row" style="margin-bottom: 0">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="imagename"
+          >Image Name</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input
+            id="imagename"
+            placeholder="Image Name"
+            formControlName="imagename"
+            nz-input
+            type="text"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="aliimageid"
+          >Alibaba Image ID</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input
+            id="aliimageid"
+            placeholder="Alibaba Image ID"
+            formControlName="aliimageid"
+            nz-input
+            type="text"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="zoneid" nzRequired
+          >Select Zone
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="zoneid"
+            nzPlaceHolder="Select Zone"
+            formControlName="zoneid"
+          >
+            <nz-option
+              *ngFor="let data of zoneList"
+              [nzLabel]="data.zonename"
+              [nzValue]="data.zoneid"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="platform"
+          >Platform</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="platform"
+            placeholder="Select Platform"
+            nzPlaceHolder="Select Platform"
+            formControlName="platform"
+          >
+            <nz-option
+              *ngFor="let p of platformList"
+              [nzLabel]="p.keyvalue"
+              [nzValue]="p.keyvalue"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="notes" class="notes"
+          >Notes</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <textarea
+              id="notes"
+              formControlName="notes"
+              placeholder="Some Notes.."
+              type="text"
+              nz-input
+            ></textarea>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <div *ngIf="edit">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+            >Status</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-input-group>
+              <nz-switch
+                class="status"
+                id="status"
+                formControlName="status"
+              ></nz-switch>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="disabled"
+      (click)="saveOrUpdate(imageForm.value)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<nz-spin [nzSpinning]="loading">
+  <div class="cloudasset">
+    <div class="row">
+      <h3 class="white-text text-lighten-3 ml-1">
+        <div class="col s12 m2">Name</div>
+        <div class="grey-text">: {{ cloudassetObj.assetname }}</div>
+      </h3>
+    </div>
+    <div class="row">
+      <h3 class="white-text text-lighten-3 ml-1">
+        <div class="col s12 m2">Cloud Provider</div>
+        <div class="grey-text">: {{ cloudassetObj.cloudprovider }}</div>
+      </h3>
+    </div>
+    <div class="row">
+      <h3 class="white-text text-lighten-3 ml-1">
+        <div class="col s12 m2">Region</div>
+        <div class="grey-text">: {{ cloudassetObj.region }}</div>
+      </h3>
+    </div>
+    <div class="row">
+      <h3 class="white-text text-lighten-3 ml-1">
+        <div class="col s12 m2">Type</div>
+        <div class="grey-text">: {{ cloudassetObj.assettype }}</div>
+      </h3>
+    </div>
+    <div class="row">
+      <div
+        class="ant-drawer-header ng-star-inserted col s6 m6 p-a-0"
+        style="padding-left: 0"
+      >
+        <div class="ant-drawer-title">
+          <div class="ng-star-inserted">Details</div>
+        </div>
+      </div>
+      <div class="ant-card col s12 m12">
+        <nz-card style="width: 770px" class="ant-card-view">
+          <div class="card-content" style="width: 100%">
+            <pre>{{ cloudassetObj.assetdata }}</pre>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+    <div *ngIf="cloudassetObj.remarks">
+      <div class="assetlabel">Remarks :</div>
+      <div class="ant-card">
+        <nz-card style="width: 770px" class="ant-card-view cardborder">
+          <div class="card-content" style="width: 100%">
+            {{ cloudassetObj.remarks }}
+          </div>
+        </nz-card>
+      </div>
+    </div>
+  </div>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      (click)="notifyNewEntry.next($event)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+    >
+      Close
+    </button>
+  </div>
+</div>

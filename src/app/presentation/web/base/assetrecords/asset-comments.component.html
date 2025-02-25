@@ -1,0 +1,67 @@
+<div *ngIf="add">
+  <nz-input-group>
+    <textarea
+    *ngIf="!isWorkflowNotification"
+      placeholder="Type your comments here..."
+      id="ctextarea"
+      rows="4"
+      nz-input
+      [(ngModel)]="comments.comment"
+    ></textarea>
+    <p-editor *ngIf="isWorkflowNotification"
+    [(ngModel)]="comments.comment" [style]="{ height: '100px' }"></p-editor>
+  </nz-input-group>
+  <br />
+  <div class="row right-align">
+    <button nz-button nzType="primary" (click)="addUpdateComment()">
+      {{ buttonText }}
+    </button>
+  </div>
+  <br />
+</div>
+<div *ngIf="commentRecords && commentRecords.length > 0">
+  <div
+    *ngFor="let c of commentRecords; let i = index"
+    style="background: #ffffff1f; padding: 14px 15px; margin-bottom: 13px"
+  >
+    <div style="display: flex; justify-content: space-between; font-size: 12px">
+      <p>{{ c.createdby }}</p>
+      <p style="color: gold">
+        {{ c.createddt | date: "dd-MMM-yyyy hh:mm a" }}
+      </p>
+    </div>
+    <div [innerHtml]="c.comment">
+    </div>
+    <!-- Fixme: User permission logic should change -->
+    <div class="row right-align">
+      <i
+        class="anticon anticon-edit"
+        style="color: #ffcc00"
+        *ngIf="edit && c.createdby == userstoragedata.fullname"
+        title="Edit"
+        (click)="editComment(c, i)"
+      ></i
+      >&nbsp;&nbsp;
+      <a
+        nz-popconfirm
+        nzTitle="Are you sure?"
+        nzOkText="Ok"
+        nzCancelText="Cancel"
+        title="Delete"
+        (nzOnConfirm)="deleteComment(c, i)"
+      >
+        <i
+          *ngIf="delete && c.createdby == userstoragedata.fullname"
+          class="anticon anticon-delete"
+          style="color: #ffcc00"
+        ></i>
+      </a>
+    </div>
+  </div>
+</div>
+<div
+  *ngIf="commentRecords.length <= 0"
+  style="text-align: center; color: white"
+>
+  <p class="mt-5">No comments yet.</p>
+</div>

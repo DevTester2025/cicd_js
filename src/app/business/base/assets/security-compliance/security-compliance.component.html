@@ -1,0 +1,117 @@
+
+<div *ngIf="secloading" class="row">
+  <div class="col s12 text-xs-center center mt-15">
+    <nz-spin
+      nzSize="large"
+      nzTip="Loading..."
+    ></nz-spin>
+  </div>
+</div>
+
+<div class="row param-table" *ngIf="!secloading && agentID">
+  <!-- <div class="container-div">
+  <nz-select
+    style="width: 60%; float: right"
+    (ngModelChange)="changeDateRange($event)"
+    [(ngModel)]="selected_time"
+    nzPlaceHolder="Select Time"
+    nzShowSearch
+  >
+    <nz-option
+      *ngFor="let t of availableRange"
+      [nzLabel]="'Last ' + t + ' days'"
+      [nzValue]="t"
+    >
+    </nz-option>
+  </nz-select>
+</div> -->
+  <div>
+    <nz-tabset [nzSelectedIndex]="stabIndex"
+    (nzSelectChange)="tabChanged($event)">
+      <nz-tab nzTitle="PCI DSS">
+        <div class="row">
+          <iframe
+            [src]="dashboard_urls['PCIDSS']"
+            height="1350"
+            width="100%"
+          ></iframe>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="GDPR">
+        <div class="row">
+          <iframe
+            [src]="dashboard_urls['GDPR']"
+            height="1350"
+            width="100%"
+          ></iframe>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="HIPAA">
+        <div class="row">
+          <iframe
+            [src]="dashboard_urls['HIPAA']"
+            height="1100"
+            width="100%"
+          ></iframe>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="NIST">
+        <div class="row">
+          <iframe
+            [src]="dashboard_urls['NIST']"
+            height="1350"
+            width="100%"
+          ></iframe>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="SOC2(TSC)">
+        <div class="row">
+          <iframe
+            [src]="dashboard_urls['SOC2']"
+            height="1350"
+            width="100%"
+          ></iframe>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="CIS - Benchmarks">
+        <div class="row">
+          <div class="col m4">
+            <nz-card nzTitle="Pass" class="dashboard-card">
+              {{ scaTotal?.pass }}
+            </nz-card>
+          </div>
+          <div class="col m4">
+            <nz-card nzTitle="Fail" class="dashboard-card">
+              {{ scaTotal?.fail }}
+            </nz-card>
+          </div>
+          <div class="col m4">
+            <nz-card nzTitle="Not applicable" class="dashboard-card">
+              {{ scaTotal?.invalid }}
+            </nz-card>
+          </div>
+        </div>
+        <div class="p-10">
+          <div class="dashboard-label">Policy Compliance</div>
+          <app-cloudmatiq-data-table
+            [tableData]="scaList"
+            [tableHeader]="scaHeader"
+            (dataChanged)="dataChanged($event)"
+            [tableConfig]="pckgTableConfig"
+          >
+          </app-cloudmatiq-data-table></div
+      ></nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+<app-cloudmatiq-side-bar
+  (dataChanged)="onChanged($event)"
+  [(isVisible)]="showDetails"
+  title="Details"
+  [width]="820"
+>
+  <ng-container class="modal-content">
+    <app-details [dataObj]="detailsObj"></app-details>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+<div *ngIf="!agentID" class="no-data-txt">No data found</div>

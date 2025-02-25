@@ -1,0 +1,407 @@
+<div>
+  <!-- <div nz-row class="row m-t-35 m-b-20"> -->
+  <div class="row">
+    <!-- <div class="row">
+        <h4 class="amber-text">Budget Details</h4>
+        </div> -->
+    <!-- <div>
+            <h5 class="white-text text-lighten-3 ml-1">
+                Start Date :
+                <span class="grey-text"> {{startdt | date: 'dd-MMM-yyyy'}}</span>
+            </h5>
+        </div>
+        <div>
+            <h5 class="white-text text-lighten-3 ml-1">
+                End Date :
+                <span class="grey-text"> {{enddt | date: 'dd-MMM-yyyy'}}</span>
+            </h5>
+        </div>
+        <div>
+            <h5 class="white-text text-lighten-3 ml-1">
+                Cloud Provider :
+                <span class="grey-text"> {{cloudprovider}}</span>
+            </h5>
+        </div>
+        <div>
+            <h5 class="white-text text-lighten-3 ml-1">
+                Customer :
+                <span class="grey-text"> {{customername}}</span>
+            </h5>
+        </div> -->
+    <div *ngIf="!isPreview">
+      <div *ngIf="cloudprovider" class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="cloudprovider"
+            >Cloud Provider
+          </nz-form-label>
+          <nz-input-group>
+            <input
+              id="cloudprovider"
+              placeholder="Cloudprovider"
+              [(ngModel)]="cloudprovider"
+              nz-input
+              type="text"
+              disabled
+            />
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="startdt"
+            >Start Date
+          </nz-form-label>
+          <nz-input-group nzCompact>
+            <nz-date-picker
+              nzFormat="dd-MMM-yyyy"
+              nzPlaceHolder="Start Date"
+              [(ngModel)]="startdt"
+              disabled
+            ></nz-date-picker>
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+
+      <div class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="enddt"
+            >End Date
+          </nz-form-label>
+          <nz-input-group nzCompact>
+            <nz-date-picker
+              nzFormat="dd-MMM-yyyy"
+              nzPlaceHolder="End Date"
+              [(ngModel)]="enddt"
+              disabled
+            >
+            </nz-date-picker>
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="budgetamount"
+            >Budget Amount
+          </nz-form-label>
+          <nz-input-group [nzAddOnAfter]="addOnAfterIconTemplate">
+            <input
+              id="budgetamount"
+              placeholder="Budget"
+              [(ngModel)]="budgetamount"
+              nz-input
+              type="text"
+              disabled
+            />
+          </nz-input-group>
+          <ng-template #addOnAfterIconTemplate>
+            <a (click)="editBudget(budgetObj)"
+              ><i class="anticon anticon-edit yellow-icon"></i
+            ></a>
+          </ng-template>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="actamt"
+            >Total Billing
+          </nz-form-label>
+          <nz-input-group nzCompact>
+            <input
+              id="actamt"
+              placeholder="Total Billing"
+              [(ngModel)]="actamt"
+              nz-input
+              type="text"
+              disabled
+            />
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+      <div *ngIf="customername" class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="customername"
+            >Customer
+          </nz-form-label>
+          <nz-input-group>
+            <input
+              id="customer"
+              placeholder="Customer"
+              [(ngModel)]="customername"
+              nz-input
+              type="text"
+              disabled
+            />
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+      <div *ngIf="tagid" class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="tagid"
+            >Tag
+          </nz-form-label>
+          <nz-input-group>
+            <nz-select
+              [disabled]="true"
+              nzMode="multiple"
+              [(ngModel)]="tagid"
+              style="width: 95%"
+              nzAllowClear
+              nzPlaceHolder="Tag"
+              nzShowSearch
+            >
+              <nz-option
+                *ngFor="let t of tagList; index as ti"
+                [nzLabel]="t.tagname"
+                [nzValue]="t.tagid"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+      <div *ngIf="tagvalue" class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="tagvalue"
+            >Tag Value
+          </nz-form-label>
+          <nz-input-group>
+            <input
+              id="tagvalue"
+              placeholder="Tag Value"
+              [(ngModel)]="tagvalue"
+              nz-input
+              type="text"
+              disabled
+            />
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+      <div *ngIf="assettyype" class="col s12 m3">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="assettyype"
+            >Resource Type
+          </nz-form-label>
+          <nz-input-group>
+            <input
+              id="assettyype"
+              placeholder="Resource Type"
+              [(ngModel)]="assettyype"
+              nz-input
+              type="text"
+              disabled
+            />
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+      <div *ngIf="instancenames && instancenames.length > 0" class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label
+            class="budget-summary-label"
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="instancenames"
+            >Resource
+          </nz-form-label>
+          <nz-input-group>
+            <nz-select
+              nzMode="multiple"
+              [(ngModel)]="instancenames"
+              style="width: 95%"
+              nzAllowClear
+              nzPlaceHolder="Resource"
+              nzShowSearch
+            >
+              <nz-option
+                *ngFor="let t of instanceList; index as ti"
+                [nzLabel]="t.label"
+                [nzValue]="t.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-input-group>
+        </nz-form-item>
+      </div>
+    </div>
+    <!-- <div class="row"> -->
+
+    <!-- </div> -->
+  </div>
+  <!-- </div> -->
+  <nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+    <div nz-col class="col s12 gutter-row">
+      <div nz-row>
+        <div
+          nz-col
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+          class="card-toggle-btn"
+        >
+          <nz-button-group>
+            <button
+              [ngClass]="{ 'active-btn': currentTab == 0 }"
+              nz-button
+              (click)="changeTab(0)"
+              class="button"
+              [nzType]="currentTab == 0 ? 'primary' : 'default'"
+            >
+              <i class="anticon anticon-bar-chart"></i>
+            </button>
+            <button
+              [ngClass]="{ 'active-btn': currentTab == 1 }"
+              nz-button
+              (click)="changeTab(1)"
+              class="button"
+              [nzType]="currentTab == 1 ? 'primary' : 'default'"
+            >
+              <i class="anticon anticon-line-chart"></i>
+            </button>
+            <!-- <button [ngClass]="{'active-btn': currentTab == 2}" nz-button (click)="changeTab(2)"
+                        [nzType]="currentTab == 2 ? 'primary' : 'default'"> <i
+                            class="anticon anticon-appstore"></i></button> -->
+          </nz-button-group>
+        </div>
+        <div>
+          <div
+            style="
+              background: rgba(128, 128, 128, 0.212) !important;
+              padding: 13px 0px 33px 0;
+              margin-top: 13px;
+            "
+          >
+            <div nz-row id="dailyChart"></div>
+          </div>
+          <div class="col s12 p-t-20" *ngIf="!loading">
+            <!-- <div class="param-table" style="margin-top: 0px">
+                        <app-cloudmatiq-data-table [tableData]=" billingSummary" [tableHeader]="tableHeader" [tableConfig]="tableConfig"></app-cloudmatiq-data-table>
+                    </div> -->
+            <nz-table
+              #nzTable
+              [nzData]="billingSummary"
+              [nzShowPagination]="false"
+              class="table-section deploylist"
+            >
+              <thead>
+                <tr>
+                  <th class="left-align" nzWidth="30px">Month</th>
+                  <th class="left-align" nzWidth="15px">Budget</th>
+                  <th class="left-align" nzWidth="15px">Bill Amount</th>
+                  <th class="left-align" nzWidth="15px">Diff. Amount</th>
+                  <th class="center-align" nzWidth="15px">Diff. Percentage</th>
+                </tr>
+              </thead>
+              <tbody style="color: white">
+                <tr
+                  [ngStyle]="getSummaryStyles(data)"
+                  *ngFor="let data of billingSummary"
+                >
+                  <td class="left-align" nzWidth="30px">
+                    {{ data.monthname }}
+                  </td>
+                  <td class="left-align" nzWidth="15px">
+                    {{ data.budgetamount | currency: data.currency }}
+                  </td>
+                  <td class="left-align" nzWidth="15px">
+                    {{ data.amount | currency: data.currency }}
+                  </td>
+                  <td class="left-align" nzWidth="15px">
+                    {{ data.diffamount | currency: data.currency }}
+                  </td>
+                  <td class="center-align" nzWidth="15px">
+                    {{ data.diffpercentage }} %
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-spin>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onChanged($event)"
+    [(isVisible)]="showSidebar"
+    [title]="formTitle"
+    [width]="820"
+  >
+    <ng-container *ngIf="showSidebar" class="modal-content">
+      <app-addeditbudget
+        [budgetList]="{ data: budgetObj }"
+        (notifyBudgetEntry)="notifyBudgetEntry($event)"
+      >
+      </app-addeditbudget>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onDtlChanged($event)"
+    [(isVisible)]="showSummaryDtl"
+    [title]="'Billing by Asset Type'"
+    [width]="1050"
+  >
+    <ng-container *ngIf="showSummaryDtl" class="modal-content">
+      <app-summarydtl
+        [budgetObj]="summaryObj"
+        [month]="selectedMonth"
+        (drilldown)="drilldown($event)"
+      ></app-summarydtl>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="showDrillDownDetail = false"
+    [(isVisible)]="showDrillDownDetail"
+    [title]="'Cost Details'"
+    [width]="1000"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-resource-billing
+        *ngIf="ddoptions != null"
+        groupby="resourceid"
+        [tenantid]="userstoragedata.tenantid"
+        [startdate]="ddoptions.startdate"
+        [enddate]="ddoptions.enddate"
+        [options]="{
+          resourcetype: ddoptions.resourcetype,
+          filters: ddoptions.filters
+        }"
+      ></app-cloudmatiq-resource-billing>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+</div>

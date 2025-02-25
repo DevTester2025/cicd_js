@@ -1,0 +1,92 @@
+<ng-container class="modal-content">
+  <div>
+    <form nz-form [formGroup]="accountForm" [nzLayout]="'horizontal'">
+      <div class="row">
+        <div class="col s23 m12">
+          <nz-form-label
+            style="text-align: left"
+            [nzSm]="22"
+            [nzXs]="11"
+            nzFor="region"
+          >
+            Account name</nz-form-label
+          >
+        </div>
+        <div class="col s23 m12">
+          <nz-form-item>
+            <nz-form-control [nzSm]="24" [nzXs]="6">
+              <input
+                nz-input
+                placeholder="Account Name"
+                formControlName="name"
+                type="text"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s23 m12">
+          <nz-form-label
+            style="text-align: left"
+            [nzSm]="22"
+            [nzXs]="11"
+            nzFor="region"
+          >
+            Role name</nz-form-label
+          >
+        </div>
+        <div class="col s23 m12">
+          <nz-form-item>
+            <nz-form-control [nzSm]="24" [nzXs]="6">
+              <input
+                nz-input
+                placeholder="Account Name"
+                formControlName="rolename"
+                type="text"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s23 m12">
+          <nz-form-label
+            style="text-align: left"
+            [nzSm]="22"
+            [nzXs]="11"
+            nzFor="region"
+          >
+            Account Id</nz-form-label
+          >
+        </div>
+        <div class="col s23 m12">
+          <nz-form-item>
+            <nz-form-control [nzSm]="24" [nzXs]="6">
+              <input
+                nz-input
+                placeholder="Account Id"
+                formControlName="accountref"
+                type="text"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s23 m12 right-align">
+          <button
+            nzSize="small"
+            nz-button
+            nzType="primary"
+            style="margin: 0"
+            [nzLoading]="savingAccount"
+            (click)="saveAccount()"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-container>

@@ -1,0 +1,83 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-add-edit-ami
+        *ngIf="provider == 'AWS'"
+        [amiObj]="amiObj"
+        (notifyAmiEntry)="notifyAmiEntry($event)"
+      >
+      </app-cloudmatiq-add-edit-ami>
+
+      <app-cloudmatiq-ecl2-add-edit-ami
+        *ngIf="provider == 'ECL2'"
+        [amiObj]="amiObj"
+        (notifyAmiEntry)="notifyAmiEntry($event)"
+      >
+      </app-cloudmatiq-ecl2-add-edit-ami>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <div class="row">
+      <div class="col s12">
+        <div class="col s6 m3 mt-1">
+          <nz-select
+            nzShowSearch
+            placeholder="Select Provider"
+            nzPlaceHolder="Select Provider"
+            [(ngModel)]="provider"
+            style="width: 93%"
+            (ngModelChange)="onChange($event)"
+          >
+            <nz-option
+              *ngFor="let i of providerList"
+              [nzLabel]="i.keyname"
+              [nzValue]="i.keyvalue"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div
+          *ngIf="provider == 'AWS' || provider == 'ECL2'"
+          class="col s6 m2 right right-align mt-1"
+        >
+          <button
+            *ngIf="visibleadd"
+            nz-button
+            nzType="primary"
+            (click)="showModal()"
+          >
+            <i class="anticon anticon-plus"></i>{{ buttonText }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="param-table"
+      style="margin-top: 0px"
+      *ngIf="awsamiList.length != 0"
+    >
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="awsamiList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+    </div>
+    <div
+      class="param-table"
+      style="margin-top: 0px"
+      *ngIf="awsamiList.length == 0"
+    >
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="awsamiList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

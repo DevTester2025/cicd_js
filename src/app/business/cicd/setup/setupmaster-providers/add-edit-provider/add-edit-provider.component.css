@@ -1,0 +1,86 @@
+.line {
+    margin: 7px; 
+    height: 2px; 
+    background-color: #aabb11;
+}
+.providerTitle {
+    display: flex; 
+    align-items: center;
+    margin: 15px;
+}
+.m-r-20 {
+    margin-right: 20px;
+}
+.add-provider ::ng-deep .ant-form-item-label label:after {
+    content: " ";
+}
+.add-provider ::ng-deep .ant-input {
+    border: 1px solid #8d9ba6;
+}
+.add-provider ::ng-deep .ant-switch-checked {
+    background-color: #aabb11;
+}
+.add-provider .m-b-14 {
+    margin-bottom: 14px;
+}
+.discard:hover {
+    background: #475560;
+    color: #a4a7a8 !important;
+    border: 1px solid #a4a7a8;
+}
+::ng-deep .ant-confirm-body .ant-confirm-content {
+    color: white !important;
+}
+::ng-deep .ant-confirm-body .ant-confirm-title {
+    color: white !important;
+}
+.card-container {
+    height: 76vh;
+    width: 123%;
+    background-color: #1c2e3c;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 3%;
+    overflow-y: auto;
+}
+.repoline { 
+    margin: 7px; 
+    height: 2px; 
+    background-color: #475560;
+}
+.repospin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+}
+.text-light-gray {
+    color: lightgray;
+}
+::ng-deep .ql-toolbar.ql-snow {
+    width: 95% !important;
+}
+#tableContent th {
+    border: 1px solid #dddddd30;
+    padding: 8px;
+    border-style: groove;
+  }
+
+    #tableContent td {
+    border: 1px solid #dddddd30;
+    padding: 6px;
+    border-style: groove;
+  }
+
+    #tableContent th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    color: white;
+  }
+  .width-50 {
+    width: 50%;
+    }
+    .width-3 {
+        width: 3%;
+        }

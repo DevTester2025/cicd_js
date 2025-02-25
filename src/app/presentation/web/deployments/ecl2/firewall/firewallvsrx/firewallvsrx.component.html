@@ -1,0 +1,645 @@
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'" *ngIf="!edit">
+  <form nz-form [formGroup]="firewallvsrxForm">
+    <h3 class="solution-title mb-0">Basic Details</h3>
+    <div class="row">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vsrxname"
+            >Name</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <input
+              nz-input
+              placeholder="Name"
+              formControlName="vsrxname"
+              type="text"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="zoneid" nzRequired
+            >Select Zone/Group
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              id="zoneid"
+              placeholder="Select Zone/Group"
+              formControlName="zoneid"
+              (ngModelChange)="onRegionChange($event)"
+            >
+              <nz-option
+                *ngFor="let data of ecl2zoneList"
+                [nzLabel]="data.zonename"
+                [nzValue]="data"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="customerid" nzRequired
+            >Select {{ subtenantLable }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              id="customerid"
+              placeholder="Select"
+              formControlName="customerid"
+              (ngModelChange)="onCustomerChange($event)"
+            >
+              <nz-option
+                *ngFor="let data of customerList"
+                [nzLabel]="data.customername"
+                [nzValue]="data"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="vsrxplanid"
+            >Firewall Plan</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              id="vsrxplanid"
+              placeholder="Select Firewall Plan"
+              nzPlaceHolder="Select Firewall Plan"
+              formControlName="vsrxplanid"
+            >
+              <nz-option
+                *ngFor="let data of firewallplanList"
+                [nzLabel]="data.vsrxplanname"
+                [nzValue]="data"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="12"
+            nzFor="description"
+            class="description"
+            >Description
+          </nz-form-label>
+
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-input-group>
+              <textarea
+                id="description"
+                formControlName="description"
+                placeholder="Description"
+                type="text"
+                nz-input
+              ></textarea>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <h3 class="solution-title mb-0">Interface</h3>
+    <div class="row">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vsrxinterfacename"
+            >Interface Name</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <input
+              nz-input
+              placeholder="Name"
+              formControlName="vsrxinterfacename"
+              type="text"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="networkid"
+            >Select Network</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              id="networkid"
+              placeholder="Select Firewall Plan"
+              nzPlaceHolder="Select Firewall Plan"
+              formControlName="networkid"
+            >
+              <nz-option
+                *ngFor="let data of networkList"
+                [nzLabel]="data.networkname"
+                [nzValue]="data"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="ipaddress" nzRequired
+            >Fixed IP Address</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <input nz-input formControlName="ipaddress" type="text" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="defaultgateway"
+            >Default Gateway</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <input nz-input formControlName="defaultgateway" type="text" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <!-- <div class="row">
+            <div class="col s6">
+                <nz-form-item>
+                    <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="interfacezone" nzRequired>Interface Zone</nz-form-label>
+                    <nz-form-control [nzSm]="24" [nzXs]="24">
+                        <nz-select nzShowSearch nzAllowClear id="interfacezone" placeholder="Select Zone"
+                            formControlName="interfacezone">
+                            <nz-option *ngFor="let data of interfaceZoneList" [nzLabel]="data.keyname" [nzValue]="data.keyvalue"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="unit" nzRequired>Logical Unit Number
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="24" [nzXs]="24">
+                        <input nz-input formControlName="unit" type="number">
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col s6">
+                <nz-form-item>
+                    <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="services" nzRequired>Services
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="24" [nzXs]="24">
+                        <nz-select nzShowSearch nzAllowClear id="services" placeholder="Select Zone" formControlName="services">
+                            <nz-option *ngFor="let data of interfaceServiceList" [nzLabel]="data.keyname" [nzValue]="data.keyvalue"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div> -->
+  </form>
+</nz-spin>
+<div *ngIf="!edit" class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="disabled"
+      (click)="saveOrUpdate(firewallvsrxForm.value)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+      [nzLoading]="addingparam"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>
+
+<nz-tabset
+  [(nzSelectedIndex)]="selectedIndex"
+  class="networking-tab"
+  *ngIf="edit"
+>
+  <nz-tab nzTitle="Firewall">
+    <nz-spin [nzSpinning]="loading">
+      <form nz-form [formGroup]="ecl2firewallvsrxForm">
+        <div class="row">
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vsrxname"
+                >Name</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <input
+                  [attr.disabled]="tagsOnly"
+                  nz-input
+                  placeholder="Name"
+                  formControlName="vsrxname"
+                  type="text"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="zoneid" nzRequired
+                >Select Zone/Group
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-select
+                  [nzDisabled]="vsrxObj.vsrxid || tagsOnly"
+                  nzShowSearch
+                  nzAllowClear
+                  id="zoneid"
+                  placeholder="Select Zone/Group"
+                  formControlName="zoneid"
+                  (ngModelChange)="onRegionChange($event)"
+                >
+                  <nz-option
+                    *ngFor="let data of ecl2zoneList"
+                    [nzLabel]="data.zonename"
+                    [nzValue]="data"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzFor="customerid"
+                nzRequired
+                >Select {{ subtenantLable }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-select
+                  [nzDisabled]="vsrxObj.vsrxid || tagsOnly"
+                  nzShowSearch
+                  nzAllowClear
+                  id="customerid"
+                  placeholder="Select"
+                  formControlName="customerid"
+                >
+                  <nz-option
+                    *ngFor="let data of customerList"
+                    [nzLabel]="data.customername"
+                    [nzValue]="data"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzRequired
+                nzFor="vsrxplanid"
+                >Firewall Plan
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-select
+                  [nzDisabled]="vsrxObj.vsrxid || tagsOnly"
+                  nzShowSearch
+                  nzAllowClear
+                  id="vsrxplanid"
+                  placeholder="Select Firewall Plan"
+                  nzPlaceHolder="Select Firewall Plan"
+                  formControlName="vsrxplanid"
+                >
+                  <nz-option
+                    *ngFor="let data of firewallplanList"
+                    [nzLabel]="data.vsrxplanname"
+                    [nzValue]="data"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="24"
+                [nzXs]="12"
+                nzFor="description"
+                class="description"
+                >Description
+              </nz-form-label>
+
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-input-group>
+                  <textarea
+                    [attr.disabled]="tagsOnly"
+                    id="description"
+                    formControlName="description"
+                    placeholder="Description"
+                    type="text"
+                    nz-input
+                  ></textarea>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </nz-spin>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button
+          [disabled]="disabled || tagsOnly"
+          (click)="saveOrUpdate(ecl2firewallvsrxForm.value)"
+          class="save-button"
+          type="submit"
+          nz-button
+          nzType="primary"
+          [nzLoading]="addingparam"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </nz-tab>
+  <nz-tab nzTitle="Interface">
+    <app-cloudmatiq-side-bar
+      (dataChanged)="onChanged($event)"
+      [(isVisible)]="securityzonevisible"
+      [title]="formTitle"
+      [width]="320"
+    >
+      <ng-container class="modal-content">
+        <app-securityzone
+          *ngIf="modal == 'Security Zone'"
+          [securityZoneObj]="securityZoneObj"
+          (notifyNewEntry)="securityEntry($event)"
+        >
+        </app-securityzone>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <div class="col s12">
+      <nz-table
+        #nzTable
+        [nzData]="firewallInterfaceList"
+        [nzShowPagination]="false"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="20px">Slot Name</th>
+            <th nzWidth="20px">Name</th>
+            <th nzWidth="40px">Logical Network</th>
+            <th nzWidth="30px">Fixed IP</th>
+            <th class="center-align" nzWidth="15px" nzRight="0px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of nzTable.data">
+            <td>{{ data.slotname }}</td>
+            <td>
+              {{ data.vsrxinterfacename == "" ? "-" : data.vsrxinterfacename }}
+            </td>
+            <td>
+              {{ data.networkid == null ? "-" : data.ecl2networks.networkname }}
+            </td>
+            <td>{{ data.ipaddress }}</td>
+            <td class="center-align" nzWidth="15px" nzRight="0px">
+              <!-- &nbsp; -->
+              <a *ngIf="data.networkid == null" (click)="editInterface(data)">
+                <i
+                  class="fa fa-link"
+                  style="color: #ffcc00"
+                  nz-tooltip
+                  nzTitle="Attach Network"
+                ></i>
+              </a>
+              &nbsp;
+              <a (click)="editConfiguration(data, 'Security Zone')">
+                <i
+                  class="anticon anticon-edit"
+                  nz-tooltip
+                  nzTitle="Security Zone"
+                ></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-tab>
+  <nz-tab nzTitle="Rules">
+    <app-securitypolicy
+      [inputdisabled]="true"
+      [securityPolicyObj]="securityPolicyObj"
+    ></app-securitypolicy>
+  </nz-tab>
+  <nz-tab nzTitle="Source NAT">
+    <app-sourcenat [inputdisabled]="true" [sourceNATObj]="natObj">
+    </app-sourcenat>
+  </nz-tab>
+  <nz-tab nzTitle="Destination NAT">
+    <app-destinationnat [inputdisabled]="true" [destinationNATObj]="natObj">
+    </app-destinationnat>
+  </nz-tab>
+  <nz-tab nzTitle="ProxyARP NAT">
+    <app-proxyarp
+      [inputdisabled]="true"
+      [proxyNATObj]="proxyNATObj"
+    ></app-proxyarp>
+  </nz-tab>
+  <nz-tab nzTitle="Tags">
+    <app-cloudmatiq-side-bar
+      (dataChanged)="tagDrawerChanges($event)"
+      [(isVisible)]="tagPickerVisible"
+      [width]="550"
+      [title]="'Add/Edit Tags'"
+    >
+      <ng-container class="modal-content">
+        <app-cloudmatiq-tag-picker
+          *ngIf="vsrxObj && vsrxObj.vsrxid"
+          [currentTags]="tags"
+          cloudProvider="ECL2"
+          [pickermode]="'combined'"
+          [mode]="'picker'"
+          [validateInputs]="true"
+          [disableParams]="true"
+          [tagGroupType]="null"
+          [resourceId]="vsrxObj.vsrxid"
+          [resourceType]="'ASSET_FIREWALL'"
+          (tagChanges)="onTagChangeEmit($event)"
+        >
+        </app-cloudmatiq-tag-picker>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+      <div nz-row class="ml-1">
+        <div
+          nz-col
+          nzSpan="24"
+          style="display: flex; justify-content: space-between"
+        >
+          <!-- <h2 class="solution-title mb-0" style="margin-top: .5em;">Tags</h2> -->
+          <button
+            (click)="tagPickerVisible = true"
+            nz-button
+            nzType="primary"
+            style="margin: 9px 0"
+          >
+            Add/Edit Tags
+          </button>
+        </div>
+        <div nz-col nzSpan="24">
+          <div class="param-table" style="margin-top: 0px">
+            <app-cloudmatiq-data-table
+              [tableData]="tagsList"
+              [tableHeader]="tagTableHeader"
+              [tableConfig]="tagTableConfig"
+            >
+            </app-cloudmatiq-data-table>
+          </div>
+        </div>
+      </div>
+    </nz-spin>
+    <button
+      (click)="updateTags()"
+      [nzLoading]="loading"
+      class="save-button"
+      nz-button
+      nzType="primary"
+    >
+      Save
+    </button>
+  </nz-tab>
+  <nz-tab [nzTitle]="subtenantLable" *ngIf="addTenant">
+    <div>
+      <app-mapping-instance [assetData]="assetData"></app-mapping-instance>
+    </div>
+  </nz-tab>
+  <nz-tab nzTitle="Pricing" *ngIf="addTenant">
+    <div>
+      <app-asset-costs [assetData]="assetData"></app-asset-costs>
+    </div>
+  </nz-tab>
+</nz-tabset>
+
+<app-cloudmatiq-side-bar
+  [width]="320"
+  (dataChanged)="onChanged($event)"
+  [(isVisible)]="childrenVisible"
+  [title]="formTitle"
+>
+  <ng-container class="modal-content">
+    <nz-spin [nzSpinning]="loading">
+      <form nz-form [formGroup]="singleinterfaceForm">
+        <div class="row" style="margin-bottom: 0">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vsrxinterfacename"
+              >Interface Name</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <input
+                nz-input
+                placeholder="Name"
+                formControlName="vsrxinterfacename"
+                type="text"
+              />
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="networkid" nzRequired
+              >Select Network
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="networkid"
+                placeholder="Select Network"
+                formControlName="networkid"
+              >
+                <nz-option
+                  *ngFor="let data of networkList"
+                  [nzLabel]="data.networkname"
+                  [nzValue]="data"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="ipaddress" nzRequired
+              >Fixed IP Address
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <input nz-input formControlName="ipaddress" type="text" />
+            </nz-form-control>
+          </nz-form-item>
+          &nbsp;
+          <!-- <div>
+                        <h3 class="solution-title mb-0">Allowed Address Pairs</h3>
+                        <nz-form-item>
+                            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="addresspairip">IP Address</nz-form-label>
+                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                <input nz-input formControlName="addresspairip" type="text">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="type">Type</nz-form-label>
+                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                <nz-select nzShowSearch placeholder="Select" nzPlaceHolder="Select" formControlName="type"
+                                    style="width: 93%;">
+                                    <nz-option nzLabel="Not Specified" nzValue="Not Specified"></nz-option>
+                                    <nz-option nzLabel="VRRP" nzValue="VRRP"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item *ngIf="singleinterfaceForm.value.type == 'Not Specified'">
+                            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="macaddress">MAC Address</nz-form-label>
+                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                <input nz-input formControlName="macaddress" type="text">
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item *ngIf="singleinterfaceForm.value.type == 'VRRP'">
+                            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vrid">VRID</nz-form-label>
+                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                <input nz-input formControlName="vrid" type="text">
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div> -->
+        </div>
+      </form>
+    </nz-spin>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button
+          [disabled]="disabled"
+          (click)="attachNetwork(singleinterfaceForm.value)"
+          class="save-button"
+          type="submit"
+          nz-button
+          nzType="primary"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </ng-container></app-cloudmatiq-side-bar
+>

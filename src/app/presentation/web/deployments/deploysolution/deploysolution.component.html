@@ -1,0 +1,1342 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <div class="ml-0 mt-0">
+      <div class="row">
+        <div class="col s12 m12">
+          <div class="right">
+            <button
+              class="mr-0-5 deploy-button mt-1"
+              nz-button
+              nzType="primary"
+              (click)="getconfirmation()"
+            >
+              <span>Deploy</span>
+            </button>
+            &nbsp;
+            <button
+              class="mr-0-5 deploy-button mt-1"
+              nz-button
+              nzType="primary"
+              (click)="router.navigate(['solutiontemplate'])"
+            >
+              <span>Close</span>
+            </button>
+          </div>
+        </div>
+        <div class="col s12 m12 deployment mtop-25">
+          <div class="col s12 m8">
+            <nz-steps [nzCurrent]="current" nzSize="small">
+              <nz-step nzTitle="Basic Detail"> </nz-step>
+              <!-- <nz-step nzTitle="Cost Visualisation">
+                            </nz-step> -->
+              <nz-step nzTitle="Tags"> </nz-step>
+            </nz-steps>
+          </div>
+          <div class="steps-content">
+            <div class="row" *ngIf="current == 0">
+              <div class="col s12">
+                <h2 class="amber-text ml-2">Step 1:</h2>
+                <p class="ml-2 grey-text text-lighten-2">
+                  Select template and tenant for deployment.
+                </p>
+              </div>
+              <nz-spin [nzSpinning]="spinning" [nzSize]="'large'">
+                <form
+                  nz-form
+                  [formGroup]="deploymentForm"
+                  class="deploymentForm ml-2"
+                >
+                  <div class="row">
+                    <div class="col s12 m5">
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzRequired
+                          nzFor="solution"
+                        >
+                          Template Selection
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            [nzDisabled]="service == true"
+                            nzShowSearch
+                            nzAllowClear
+                            id="solution"
+                            placeholder="Select Solution Template"
+                            nzPlaceHolder="Select Solution Template"
+                            (ngModelChange)="onTemplateChange($event)"
+                            formControlName="solution"
+                          >
+                            <nz-option
+                              *ngFor="let data of solutionList"
+                              [nzLabel]="data.solutionname"
+                              [nzValue]="data"
+                            ></nz-option>
+                          </nz-select>
+                          <nz-form-explain
+                            *ngIf="
+                              deploymentForm.get('solution').dirty &&
+                              deploymentForm.get('solution').errors
+                            "
+                          >
+                            Invalid</nz-form-explain
+                          >
+                          <a
+                            class="show-button"
+                            (click)="showSummary = true"
+                            *ngIf="
+                              solutionid != null && solutionid != undefined
+                            "
+                            >Show Details</a
+                          >
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col s12 m5 p-b-25" *ngIf="service == true">
+                      <nz-form-item>
+                        <nz-form-label [nzSm]="8" [nzXs]="8" nzFor="subject">
+                          Subject
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <p class="mt-10">{{ serviceObj.subject }}</p>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col s12 m5 p-b-25">
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzRequired
+                          nzFor="client"
+                        >
+                          {{ subtenantLable }}
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="client"
+                            placeholder="Select"
+                            nzPlaceHolder="Select"
+                            formControlName="client"
+                            (ngModelChange)="onCustomerChange($event)"
+                          >
+                            <nz-option
+                              *ngFor="let data of clientList"
+                              [nzLabel]="data.customername"
+                              [nzValue]="data"
+                            ></nz-option>
+                          </nz-select>
+                          <nz-form-explain
+                            *ngIf="
+                              deploymentForm.get('client').dirty &&
+                              deploymentForm.get('client').errors
+                            "
+                          >
+                            Invalid</nz-form-explain
+                          >
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col s12 m5 p-b-25" *ngIf="networkselection">
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzRequired
+                          nzFor="network"
+                          >Network
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="network"
+                            placeholder="Select Network"
+                            nzPlaceHolder="Select Network"
+                            formControlName="network"
+                          >
+                            <nz-option
+                              *ngFor="let data of networkList"
+                              [nzLabel]="data.networkname"
+                              [nzValue]="data"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'AWS'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzRequired
+                          nzFor="zone"
+                          >Region
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="zone"
+                            placeholder="Select Region"
+                            nzPlaceHolder="Select Region"
+                            formControlName="zone"
+                            (ngModelChange)="
+                              getCostList($event); validateRegion()
+                            "
+                          >
+                            <nz-option
+                              *ngFor="let data of regionList"
+                              [nzLabel]="data.region"
+                              [nzValue]="data"
+                            ></nz-option>
+                          </nz-select>
+                          <nz-form-explain
+                            *ngIf="
+                              deploymentForm.get('zone').dirty &&
+                              deploymentForm.get('zone').errors
+                            "
+                          >
+                            Invalid</nz-form-explain
+                          >
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'ECL2'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzRequired
+                          nzFor="zone"
+                          >Zone
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            [nzDisabled]="zoneObj"
+                            nzShowSearch
+                            nzAllowClear
+                            id="zone"
+                            placeholder="Select Zone"
+                            nzPlaceHolder="Select Zone"
+                            formControlName="zone"
+                          >
+                            <nz-option
+                              *ngFor="let data of ecl2ZoneList"
+                              [nzLabel]="data.zonename"
+                              [nzValue]="data"
+                            ></nz-option>
+                          </nz-select>
+                          <nz-form-explain
+                            *ngIf="
+                              deploymentForm.get('zone').dirty &&
+                              deploymentForm.get('zone').errors
+                            "
+                          >
+                            Invalid</nz-form-explain
+                          >
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col s12 m5 p-b-25" *ngIf="virtualipEnabled">
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="virtualipaddress"
+                          nzRequired
+                        >
+                          Load Balancing Virtual IP</nz-form-label
+                        >
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-input-group>
+                            <input
+                              nz-input
+                              id="virtualipaddress"
+                              formControlName="virtualipaddress"
+                              type="text"
+                            />
+                          </nz-input-group>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col s12 m5 p-b-25">
+                      <nz-form-item>
+                        <nz-form-label
+                          nzRequired
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="servername"
+                        >
+                          Instance Name
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-input-group>
+                            <input
+                              nz-input
+                              placeholder="Instance Name"
+                              formControlName="servername"
+                              type="text"
+                            />
+                          </nz-input-group>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col s12 m5 p-b-25">
+                      <nz-form-item>
+                        <nz-form-label [nzSm]="8" [nzXs]="8" nzFor="arn">
+                          IAM Profile ARN
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-input-group>
+                            <input
+                              nz-input
+                              placeholder="IAM Profile ARN"
+                              formControlName="arn"
+                              type="text"
+                            />
+                          </nz-input-group>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <!-- Required if we are to keep data collection uname password on instance level. -->
+                    <!-- <div class="col s12 m5 p-b-25">
+                                            <nz-form-item>
+                                                <nz-form-label [nzSm]="8" [nzXs]="8" nzFor="serverlogin">
+                                                    Login Id
+                                                </nz-form-label>
+                                                <nz-form-control [nzSm]="16" [nzXs]="16">
+                                                    <nz-input-group>
+                                                        <input nz-input placeholder="Instance Loginid"
+                                                            formControlName="serverlogin" type="text">
+                                                    </nz-input-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col s12 m5 p-b-25">
+                                            <nz-form-item>
+                                                <nz-form-label [nzSm]="8" [nzXs]="8" nzFor="serverpwd">
+                                                    Password
+                                                </nz-form-label>
+                                                <nz-form-control [nzSm]="16" [nzXs]="16">
+                                                    <nz-input-group>
+                                                        <input nz-input placeholder="Instance Password"
+                                                            formControlName="serverpwd" type="password">
+                                                    </nz-input-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div> -->
+                    <div class="col s12 m5 p-b-25">
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="notes"
+                          class="notes"
+                          >Notes
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-input-group>
+                            <textarea
+                              id="notes"
+                              [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                              formControlName="notes"
+                              placeholder="Notes"
+                              type="text"
+                              nz-input
+                            ></textarea>
+                          </nz-input-group>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div [hidden]="paramsList.length == 0">
+                    <h3 class="white-text">Parameters</h3>
+                    <div *ngIf="paramsList.length != 0" class="parameter-table">
+                      <div
+                        formArrayName="parameterArray"
+                        *ngFor="let control of labelParams; let i = index"
+                      >
+                        <div [formGroupName]="i">
+                          <nz-form-item>
+                            <nz-form-label
+                              nzRequired
+                              [nzSm]="9"
+                              [nzXs]="12"
+                              [nzFor]="control.label"
+                            >
+                              <span
+                                style="
+                                  overflow-x: auto !important;
+                                  white-space: pre-wrap !important;
+                                  white-space: -moz-pre-wrap !important;
+                                  white-space: -pre-wrap !important;
+                                  white-space: -o-pre-wrap !important;
+                                  word-wrap: break-word !important;
+                                "
+                                >{{ control.fieldlabel }}
+                                <nz-tooltip nzTitle="{{ control.notes }}">
+                                  <i
+                                    nz-tooltip
+                                    class="anticon anticon-question-circle-o"
+                                  ></i>
+                                </nz-tooltip>
+                              </span>
+                            </nz-form-label>
+                            <nz-form-control [nzSm]="15" [nzXs]="12">
+                              <input
+                                nz-input
+                                [formControlName]="control.label"
+                              />
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div [hidden]="paramsList.length == 0">
+                    <nz-collapse [nzBordered]="false">
+                      <nz-collapse-panel
+                        *ngFor="let panel of panels"
+                        [nzHeader]="panelName"
+                        [nzActive]="panel.active"
+                        (nzActiveChange)="onCollapse($event, '')"
+                      >
+                        <div class="param-table mt-0">
+                          <app-cloudmatiq-data-table
+                            (dataChanged)="dataChanged($event)"
+                            [tableData]="paramsList"
+                            [tableHeader]="paramsHeader"
+                            [tableConfig]="tableConfig"
+                          ></app-cloudmatiq-data-table>
+                        </div>
+                      </nz-collapse-panel>
+                    </nz-collapse>
+                  </div>
+                  <!-- <div [hidden]="costList.length == 0">
+                                    <nz-collapse [nzBordered]="false">
+                                        <nz-collapse-panel *ngFor="let panel of costpanel" [nzHeader]="costpanelName" [nzActive]="panel.active" (nzActiveChange)="onCollapse($event,'cost')">
+                                            <div>
+                                                <nz-form-item>
+                                                    <nz-form-label [nzSm]="12" [nzXs]="12">The Total Cost for this Solution/Month </nz-form-label>
+                                                    <nz-form-control [nzSm]="8" [nzXs]="12" style="margin-top: 11px;">
+                                                        <span style="color:white">{{totalCost |currency}}</span>
+                                                    </nz-form-control>
+                                                </nz-form-item>
+                                            </div>
+                                            <div>
+                                                <h3 class="white-text">Cost Visualisation</h3>
+                                            </div>
+                                            <div class="param-table mt-0">
+                                                <app-cloudmatiq-data-table (dataChanged)="dataChanged($event)" [tableData]="costList" [tableHeader]="costVisualHeader" [tableConfig]="costtableConfig"></app-cloudmatiq-data-table>
+                                                <nz-table #nzTable [nzData]="costList" [nzPageSize]="4">
+                                                    <thead (nzSortChange)="sort($event)" nzSingleSort>
+                                                        <tr>
+                                                            <th class="left-align" nzShowSort nzSortKey="instancename">Template Name</th>
+                                                            <th class="left-align" nzShowSort nzSortKey="costperhour">Cost/Hour</th>
+                                                            <th class="left-align" nzShowSort nzSortKey="costpermonth">Cost/Month</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <ng-template ngFor let-data [ngForOf]="nzTable.data">
+                                                            <tr>
+                                                                <td class="left-align">{{data.instancename}}</td>
+                                                                <td class="left-align">{{data.costperhour |currency}}</td>
+                                                                <td class="left-align">{{data.costpermonth |currency}}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                    </tbody>
+                                                </nz-table>
+                                            </div>
+                                        </nz-collapse-panel>
+                                    </nz-collapse>
+                                </div> -->
+                  <div *ngIf="deploymentForm.value.solution">
+                    <div
+                      nz-col
+                      nzSpan="24"
+                      style="display: flex; justify-content: space-between"
+                    >
+                      <h3 class="solution-title mb-0">Configurations</h3>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'AWS'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="notes"
+                          class="notes"
+                          >Image
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="awsamiid"
+                            placeholder="Select Image"
+                            formControlName="awsamiid"
+                            nzPlaceHolder="Select Image or Add New"
+                            (ngModelChange)="validateRegion('AMI')"
+                          >
+                            <nz-option
+                              *ngFor="let data of amiList"
+                              [nzLabel]="data.aminame"
+                              [nzValue]="data.awsamiid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'ECL2'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="notes"
+                          class="notes"
+                          >Image
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="ecl2imageid"
+                            placeholder="Select Image"
+                            formControlName="ecl2imageid"
+                            nzPlaceHolder="Select Image or Add New"
+                          >
+                            <nz-option
+                              *ngFor="let data of amiList"
+                              [nzLabel]="data.imagename"
+                              [nzValue]="data.ecl2imageid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col s12 m5 p-b-25">
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="notes"
+                          class="notes"
+                          >Volume
+                        </nz-form-label>
+                        <nz-form-control
+                          [nzSm]="16"
+                          [nzXs]="16"
+                          *ngIf="cloudprovider == 'ECL2'"
+                        >
+                          <nz-select
+                            nzMode="multiple"
+                            nzShowSearch
+                            nzAllowClear
+                            id="ecl2volumeid"
+                            nzPlaceHolder="Select Volume or Add New"
+                            formControlName="ecl2volumeid"
+                          >
+                            <nz-option
+                              *ngFor="let data of volumeList"
+                              [nzLabel]="data.volumename"
+                              [nzValue]="data.ecl2volumeid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                        <nz-form-control
+                          [nzSm]="16"
+                          [nzXs]="16"
+                          *ngIf="cloudprovider == 'AWS'"
+                        >
+                          <nz-select
+                            nzMode="multiple"
+                            nzShowSearch
+                            nzAllowClear
+                            id="volumeid"
+                            nzPlaceHolder="Select Volume or Add New"
+                            formControlName="volumeid"
+                          >
+                            <nz-option
+                              *ngFor="let data of volumeList"
+                              [nzLabel]="data.volumename"
+                              [nzValue]="data.volumeid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'ECL2'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="notes"
+                          class="notes"
+                          >Network
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            nzMode="multiple"
+                            nzShowSearch
+                            nzAllowClear
+                            id="ecl2networkid"
+                            nzPlaceHolder="Select Network"
+                            formControlName="ecl2networkid"
+                          >
+                            <nz-option
+                              *ngFor="let data of vpcList"
+                              [nzLabel]="data.networkname"
+                              [nzValue]="data.ecl2networkid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'ECL2'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="notes"
+                          class="notes"
+                        >
+                          VSRX
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="16">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="vsrx"
+                            formControlName="vsrx"
+                            nzPlaceHolder="Select VSRX"
+                          >
+                            <nz-option
+                              *ngFor="let data of vsrxList"
+                              [nzLabel]="data.vsrxname"
+                              [nzValue]="data.vsrxid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'AWS'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="awsvpcid"
+                          class="notes"
+                        >
+                          VPC
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="15" [nzXs]="15">
+                          <nz-select
+                            (ngModelChange)="
+                              $event !== (undefined || null)
+                                ? getSubnetList({ status: 'Active' }, $event)
+                                : getSubnetList({ status: 'Active' });
+                              validateRegion('VPC')
+                            "
+                            nzShowSearch
+                            nzAllowClear
+                            id="awsvpcid"
+                            nzPlaceHolder="Select VPC or Add New"
+                            formControlName="awsvpcid"
+                          >
+                            <nz-option
+                              *ngFor="let data of awsvpcList"
+                              [nzLabel]="data.vpcname"
+                              [nzValue]="data.awsvpcid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                        <i
+                          class="anticon anticon-eye-o"
+                          style="color: #ffcc00"
+                          (click)="openForm('VPC')"
+                        ></i>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'AWS'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="awssubnetd"
+                          class="notes"
+                        >
+                          Subnet
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="15" [nzXs]="15">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="awssubnetd"
+                            placeholder="Select Subnet"
+                            nzPlaceHolder="Select Subnet"
+                            formControlName="awssubnetd"
+                            (ngModelChange)="validateRegion('SUBNET')"
+                          >
+                            <nz-option
+                              *ngFor="let data of subnetList"
+                              [nzLabel]="data.subnetname"
+                              [nzValue]="data.awssubnetd"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                        <i
+                          class="anticon anticon-eye-o"
+                          style="color: #ffcc00"
+                          (click)="openForm('Subnet')"
+                        ></i>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'AWS'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="notes"
+                          class="notes"
+                        >
+                          Security Group
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="13" [nzXs]="13">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="awssecuritygroupid"
+                            nzPlaceHolder="Security Group"
+                            formControlName="awssecuritygroupid"
+                            (ngModelChange)="validateRegion('SG')"
+                          >
+                            <nz-option
+                              *ngFor="let data of sgList"
+                              [nzLabel]="data.securitygroupname"
+                              [nzValue]="data.awssecuritygroupid"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                        <button
+                          (click)="openForm('SG')"
+                          class="ml-1"
+                          nz-button
+                          nzType="primary"
+                        >
+                          <i class="anticon anticon-plus"></i>
+                        </button>
+                      </nz-form-item>
+                    </div>
+                    <div
+                      class="col s12 m5 p-b-25"
+                      *ngIf="cloudprovider == 'AWS'"
+                    >
+                      <nz-form-item>
+                        <nz-form-label
+                          [nzSm]="8"
+                          [nzXs]="8"
+                          nzFor="lbid"
+                          class="notes"
+                        >
+                          Load Balancer
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="15" [nzXs]="15">
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="lbid"
+                            nzPlaceHolder="Load Balancer"
+                            formControlName="lbid"
+                          >
+                            <nz-option
+                              *ngFor="let data of lbList"
+                              [nzLabel]="data.lbname"
+                              [nzValue]="data.lbid"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                        <i
+                          class="anticon anticon-eye-o"
+                          style="color: #ffcc00"
+                          (click)="openForm('LB')"
+                        ></i>
+                      </nz-form-item>
+                    </div>
+                    <!-- <div class="col s12 m5 p-b-25">
+                                            <nz-form-item *ngIf="solutionData.cloudprovider == 'AWS'">
+                                                <nz-form-label [nzSm]="8" [nzXs]="8" nzFor="notes" class="notes">
+                                                    Auto Create SG
+                                                </nz-form-label>
+                                                <nz-form-control [nzSm]="16" [nzXs]="16">
+                                                    <label style="padding-top: 10px;" nz-checkbox formControlName="autocreatesg"></label>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div> -->
+                  </div>
+                </form>
+                <div nz-row *ngIf="variablesToGet.length > 0" class="ml-2 row">
+                  <div
+                    nz-col
+                    nzSpan="24"
+                    class="p-l-45"
+                    style="display: flex; justify-content: space-between"
+                  >
+                    <h3 class="solution-title mb-0">Parameters</h3>
+                  </div>
+                  <div
+                    class="col s12 m5 p-b-25"
+                    nz-col
+                    nzSpan="24"
+                    *ngFor="let param of variablesToGet; index as i"
+                  >
+                    <!-- FIXME: Remove this validation on completing orchestration -->
+                    <!-- *ngIf="!isGroupShare || (isGroupShare && param['fieldlabel'] != 'TMS Version' && param['fieldlabel'] != 'Other Softwares')" -->
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="10"
+                        [nzXs]="910"
+                        nzFor="notes"
+                        class="notes"
+                      >
+                        {{ param["fieldname"] }}
+                      </nz-form-label>
+                      <nz-form-control
+                        [nzSm]="14"
+                        *ngIf="param['datatype'] != 'list'"
+                        [nzXs]="14"
+                      >
+                        <nz-input-group>
+                          <input
+                            *ngIf="param['datatype'] == 'string'"
+                            nz-input
+                            placeholder="Value"
+                            [(ngModel)]="param['fieldvalue']"
+                            [name]="param['fieldname']"
+                          />
+                          <input
+                            *ngIf="param['datatype'] == 'password'"
+                            nz-input
+                            type="password"
+                            placeholder="Value"
+                            [(ngModel)]="param['fieldvalue']"
+                            [name]="param['fieldname']"
+                          />
+                          <nz-radio-group
+                            nzName="radiogroup"
+                            *ngIf="param['datatype'] == 'radio'"
+                            [(ngModel)]="param['fieldvalue']"
+                          >
+                            <label nz-radio nzValue="true">Yes</label>
+                            <label nz-radio nzValue="false">No</label>
+                          </nz-radio-group>
+                        </nz-input-group>
+                      </nz-form-control>
+                      <nz-form-control
+                        [nzSm]="13"
+                        *ngIf="param['datatype'] == 'list'"
+                        [nzXs]="13"
+                      >
+                        <nz-select
+                          nzShowSearch
+                          style="width: 100%"
+                          [(ngModel)]="param['fieldvalue']"
+                          nzAllowClear
+                          nzPlaceHolder="Select"
+                        >
+                          <nz-option
+                            *ngFor="let t of param['fieldoptions']"
+                            [nzLabel]="t"
+                            [nzValue]="t"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </nz-spin>
+            </div>
+            <div class="row" *ngIf="current == -1">
+              <div class="col s12">
+                <h2 class="amber-text ml-2">Step 2:</h2>
+                <p class="ml-2 grey-text text-lighten-2">
+                  Cost visualization for selected template.
+                </p>
+              </div>
+              <div
+                [hidden]="
+                  deploymentForm.value.solution == null ||
+                  costList.length == 0 ||
+                  cloudprovider == 'ECL2'
+                "
+                class="ml-2"
+              >
+                <h3 class="white-text">Cost Visualisation</h3>
+                <div
+                  [hidden]="costList.length == 0"
+                  style="margin-left: -178px"
+                >
+                  <nz-form-item>
+                    <nz-form-label [nzSm]="12" [nzXs]="12"
+                      >The Total Cost for this Solution/Month
+                    </nz-form-label>
+                    <nz-form-control
+                      [nzSm]="8"
+                      [nzXs]="12"
+                      style="margin-top: 11px"
+                    >
+                      <span style="color: #ffcc00">{{
+                        totalCost == "" ? "Not Known" : (totalCost | currency)
+                      }}</span>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div [hidden]="costList.length == 0" class="param-table mt-0">
+                  <!-- <app-cloudmatiq-data-table (dataChanged)="dataChanged($event)" [tableData]="costList" [tableHeader]="costVisualHeader" [tableConfig]="costtableConfig"></app-cloudmatiq-data-table> -->
+                  <nz-table
+                    #nzTable
+                    [nzData]="costList"
+                    [nzShowPagination]="false"
+                  >
+                    <thead (nzSortChange)="sort($event)" nzSingleSort>
+                      <tr>
+                        <th
+                          class="left-align"
+                          nzShowSort
+                          nzSortKey="instancename"
+                        >
+                          Instance Name
+                        </th>
+                        <th
+                          class="left-align"
+                          nzShowSort
+                          nzSortKey="costperhour"
+                        >
+                          Cost/Hour
+                        </th>
+                        <th
+                          class="left-align"
+                          nzShowSort
+                          nzSortKey="costpermonth"
+                        >
+                          Cost/Month
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-template ngFor let-data [ngForOf]="nzTable.data">
+                        <tr>
+                          <td class="left-align">{{ data.instancename }}</td>
+                          <td class="left-align">
+                            {{
+                              data.costperhour == ""
+                                ? "Price not available"
+                                : (data.costperhour | currency)
+                            }}
+                          </td>
+                          <td class="left-align">
+                            {{
+                              data.costpermonth == ""
+                                ? "-"
+                                : (data.costpermonth | currency)
+                            }}
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </tbody>
+                  </nz-table>
+                </div>
+              </div>
+              <div *ngIf="costList.length == 0" class="param-table mt-0">
+                <p style="color: white; text-align: center">
+                  There is not Costs available for the server spec at the moment
+                </p>
+              </div>
+            </div>
+            <div class="row" *ngIf="current == 1">
+              <div class="col s12">
+                <h2 class="amber-text ml-2">Step 2:</h2>
+                <p class="ml-2 grey-text text-lighten-2">
+                  Tag your resource for contentful insights later.
+                </p>
+              </div>
+              <div class="ml-2">
+                <app-cloudmatiq-side-bar
+                  (dataChanged)="tagDrawerChanges($event)"
+                  [(isVisible)]="tagPickerVisible"
+                  [width]="550"
+                  [title]="'Add/Edit Tags'"
+                >
+                  <ng-container class="modal-content">
+                    <app-cloudmatiq-tag-picker
+                      [pickermode]="'combined'"
+                      [currentTags]="tags.length > 0 ? tags : []"
+                      [mode]="'picker'"
+                      [refId]="refId"
+                      [resourceId]="resourceId"
+                      [resourceType]="resourceType"
+                      [cloudProvider]="cloudProvider"
+                      (tagChanges)="onTagChangeEmit($event)"
+                      [validateInputs]="true"
+                      [disableParams]="true"
+                    >
+                    </app-cloudmatiq-tag-picker>
+                  </ng-container>
+                </app-cloudmatiq-side-bar>
+                <div nz-row>
+                  <div
+                    nz-col
+                    nzSpan="24"
+                    style="display: flex; justify-content: space-between"
+                  >
+                    <h3 class="solution-title mb-0">Tags</h3>
+                    <button
+                      (click)="tagPickerVisible = true"
+                      nz-button
+                      nzType="primary"
+                      style="margin: 9px 0"
+                    >
+                      Add/Edit Tags
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="24">
+                    <nz-select
+                      style="width: 150px"
+                      [(ngModel)]="selectedTagType"
+                      (ngModelChange)="tagListChanges($event)"
+                      nzAllowClear
+                      nzPlaceHolder="Selet Tag"
+                    >
+                      <nz-option
+                        *ngFor="let t of tagTypes; index as listindex"
+                        [nzLabel]="t.title"
+                        [nzValue]="t.cndtn"
+                      ></nz-option>
+                    </nz-select>
+                  </div>
+                  <div nz-col nzSpan="24">
+                    <div class="param-table" style="margin-top: 0px">
+                      <app-cloudmatiq-data-table
+                        [tableData]="tagsList"
+                        [tableHeader]="tagTableHeader"
+                        [tableConfig]="tagTableConfig"
+                      >
+                      </app-cloudmatiq-data-table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <h3 class="white-text">Deployment Details</h3> -->
+        </div>
+        <div class="col s12 mt-2">
+          <div class="row">
+            <div *ngIf="current > 0" class="col s12 m6 right-align">
+              <button
+                class="prev-button"
+                (click)="current = current - 1"
+                nz-button
+                nzType="primary"
+                nzTitle="Previous"
+                nzPlacement="bottomLeft"
+                nz-tooltip
+              >
+                <i class="anticon anticon-arrow-left"></i>
+              </button>
+            </div>
+            <div *ngIf="current < 1" class="col s12 m6 left-align">
+              <button
+                class="next-button"
+                (click)="current = current + 1"
+                nz-button
+                nzType="primary"
+                nzTitle="Next"
+                nzPlacement="bottomLeft"
+                nz-tooltip
+              >
+                <i class="anticon anticon-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m8 deployment"></div>
+        <div *ngIf="showSummary" class="col s12 m4 deployment">
+          <nz-drawer
+            id="sidebar-modal"
+            [nzBodyStyle]="{ 'padding-bottom': '55px' }"
+            [nzMaskClosable]="true"
+            [nzWidth]="720"
+            [nzVisible]="showSummary"
+            nzTitle="Solution Summary"
+            (nzOnClose)="closeSummary()"
+          >
+            <app-cloudmatiq-summary-view
+              class="summary summary-details"
+              (closeSummary)="closeSummary($event)"
+              [viewData]="viewData"
+              [summaryTitle]="summaryTitle"
+            >
+            </app-cloudmatiq-summary-view>
+          </nz-drawer>
+        </div>
+      </div>
+    </div>
+    <ng-template #template>
+      <div class="ant-notification-notice-content">
+        <div class="ant-notification-notice-with-icon">
+          <div class="ant-notification-notice-message">Deployment Status</div>
+          <br />
+          <div class="ant-notification-notice-description">
+            Deployment in Progress, once completed you will be notified
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <div *ngIf="confirmationWindow">
+      <nz-modal
+        [nzWidth]="750"
+        [(nzVisible)]="confirmationWindow"
+        [nzTitle]="modalTitle"
+        [nzContent]="modalContent"
+        [nzFooter]="modalFooter"
+        (nzOnCancel)="confirmationWindow = false"
+      >
+        <ng-template #modalTitle> Deployment Details </ng-template>
+
+        <ng-template #modalContent>
+          <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+            <div class="ant-col-md-24 ant-col-lg-8">Template</div>
+            <div class="ant-col-md-24 ant-col-lg-2">:</div>
+            <div class="ant-col-md-24 ant-col-lg-14">
+              {{ deploymentForm.value.solution?.solutionname }}
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+            <div class="ant-col-md-24 ant-col-lg-8">
+              {{ subtenantLable }}
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-2">:</div>
+            <div class="ant-col-md-24 ant-col-lg-14">
+              {{ deploymentForm.value.client?.customername }}
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+            <div class="ant-col-md-24 ant-col-lg-8">Zone</div>
+            <div class="ant-col-md-24 ant-col-lg-2">:</div>
+            <div class="ant-col-md-24 ant-col-lg-14">
+              {{ deploymentForm.value.zone?.region }}
+            </div>
+          </div>
+          <div class="p-t-12 amber-text p-b-10 ant-col-md-24 ant-col-lg-24">
+            Parameters
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+            <div class="ant-col-md-24 ant-col-lg-8">Instance Name</div>
+            <div class="ant-col-md-24 ant-col-lg-2">:</div>
+            <div class="ant-col-md-24 ant-col-lg-14">
+              {{ deploymentForm.value.servername }}
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24 p-t-3">
+            <div class="ant-col-md-24 ant-col-lg-8">IAM Profile ARN</div>
+            <div class="ant-col-md-24 ant-col-lg-2">:</div>
+            <div class="ant-col-md-24 ant-col-lg-14">
+              {{ deploymentForm.value.arn }}
+            </div>
+          </div>
+          <div>
+            <div
+              *ngFor="let data of variablesToGet"
+              class="ant-col-md-24 ant-col-lg-24 p-t-3"
+            >
+              <div class="ant-col-md-24 ant-col-lg-8">
+                {{ data.fieldlabel }}
+              </div>
+              <div class="ant-col-md-24 ant-col-lg-2">:</div>
+              <div
+                *ngIf="data.datatype == 'password'"
+                class="ant-col-md-24 ant-col-lg-14"
+              >
+                <i
+                  style="cursor: pointer; margin-right: 9px"
+                  (click)="data.visible = !data.visible || false"
+                  nz-icon
+                  class="anticon anticon-eye"
+                ></i>
+                <!-- <button nzSize="small" style="margin-right: 13px;"
+                                    (click)="data.visible = !data.visible || false" nz-button nzType="ghost"></button> -->
+                <span *ngIf="data.visible">{{ data.fieldvalue }}</span>
+                <span *ngIf="!data.visible">***********</span>
+              </div>
+              <div
+                *ngIf="data.datatype != 'password'"
+                class="ant-col-md-24 ant-col-lg-14"
+              >
+                {{ data.fieldvalue }}
+              </div>
+            </div>
+          </div>
+          <div class="p-t-12 amber-text ant-col-md-24 ant-col-lg-24">
+            Instance List
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24 customer-collase">
+            <span class="ant-collapse" style="background-color: transparent">
+              <nz-table
+                #nzTable
+                [nzData]="viewData.awssolutions"
+                class="solution-table"
+                [nzShowPagination]="false"
+                [nzFrontPagination]="false"
+              >
+                <thead>
+                  <tr>
+                    <th class="left-align" style="font-size: 12px">Instance</th>
+                    <th class="left-align" style="font-size: 12px">Type</th>
+                    <th class="left-align" style="font-size: 12px">Image</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-template ngFor let-data [ngForOf]="nzTable.data">
+                    <tr>
+                      <td class="left-align" style="color: #bfbfbf">
+                        {{ data.instancename }}
+                      </td>
+                      <td class="left-align" style="color: #bfbfbf">
+                        {{ data.awsinsttype?.instancetypename }}
+                      </td>
+                      <td class="left-align" style="color: #bfbfbf">
+                        {{ data.awsami?.aminame }}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </tbody>
+              </nz-table>
+            </span>
+          </div>
+        </ng-template>
+
+        <ng-template #modalFooter>
+          <button
+            class="m-t-20"
+            nz-button
+            nzType="default"
+            (click)="confirmationWindow = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="m-t-20"
+            nz-button
+            nzType="primary"
+            (click)="saveDeployment(deploymentForm.value, template)"
+          >
+            Confirm
+          </button>
+        </ng-template>
+      </nz-modal>
+    </div>
+    <nz-modal
+      [(nzVisible)]="isVisible"
+      nzTitle="Deployment Progress"
+      (nzOnCancel)="isVisible = false"
+      (nzOnOk)="isVisible = false"
+      class="deployment-progross"
+    >
+      <p *ngFor="let msg of socketmsgs">{{ msg }}</p>
+    </nz-modal>
+  </ng-container>
+</app-cloudmatiq-side-nav>
+<app-cloudmatiq-side-bar
+  [width]="820"
+  (dataChanged)="modalVisible = false"
+  [(isVisible)]="modalVisible"
+  [title]="'Security Group'"
+>
+  <ng-container class="modal-content">
+    <app-cloudmatiq-sg-add-edit
+      *ngIf="modalVisible"
+      [vpcList]="vpcList"
+      [sgObj]="sgObj"
+      (notifySgEntry)="notifySgEntry($event)"
+    >
+    </app-cloudmatiq-sg-add-edit>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+
+<app-cloudmatiq-side-bar
+  (dataChanged)="vpcVisible = false"
+  [(isVisible)]="vpcVisible"
+  [title]="'VPC Details'"
+  [width]="820"
+>
+  <ng-container *ngIf="vpcVisible" class="modal-content">
+    <app-cloudmatiq-vpc-add-edit [vpcObj]="vpcObj" [noEdit]="true">
+    </app-cloudmatiq-vpc-add-edit>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+<app-cloudmatiq-side-bar
+  (dataChanged)="subnetVisible = false"
+  [(isVisible)]="subnetVisible"
+  [title]="'Subnet Details'"
+  [width]="820"
+>
+  <ng-container *ngIf="subnetVisible" class="modal-content">
+    <app-cloudmatiq-subnet-add-edit
+      [subnetObj]="subnetObj"
+      [vpcList]="vpcList"
+      [noEdit]="true"
+    >
+    </app-cloudmatiq-subnet-add-edit>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+
+<app-cloudmatiq-side-bar
+  (dataChanged)="lbVisible = false"
+  [(isVisible)]="lbVisible"
+  [title]="'Load Balancers'"
+  [width]="820"
+>
+  <ng-container *ngIf="lbVisible" class="modal-content">
+    <app-cloudmatiq-lb-add-edit [loadBalancerObj]="lbobj" [noEdit]="true">
+    </app-cloudmatiq-lb-add-edit>
+  </ng-container>
+</app-cloudmatiq-side-bar>

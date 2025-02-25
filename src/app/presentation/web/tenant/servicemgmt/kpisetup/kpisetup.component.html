@@ -1,0 +1,10 @@
+<ng-container class="page-body">
+    <nz-tabset [(nzSelectedIndex)]="selectedIndex">
+      <nz-tab nzTitle="Uptime">
+        <app-cloudmatiq-kpi-uptimelist *ngIf="selectedIndex==0"></app-cloudmatiq-kpi-uptimelist>
+      </nz-tab>
+      <nz-tab nzTitle="Tickets">
+          <app-cloudmatiq-kpi-ticketslist *ngIf="selectedIndex==1"></app-cloudmatiq-kpi-ticketslist>
+      </nz-tab>
+    </nz-tabset>
+  </ng-container>

@@ -1,0 +1,267 @@
+<nz-spin [nzSpinning]="loading">
+  <nz-tabset
+  [nzTabBarExtraContent]="extraTemplate"
+    [nzSelectedIndex]="tabIndex"
+    (nzSelectChange)="tabChanged($event)">
+    <nz-tab nzTitle="Info">
+  <form nz-form [formGroup]="userForm">
+    <div class="row" style="margin-bottom: 0">
+      <nz-form-item *ngIf="isSuperAdmin">
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="tenantid"
+          >Tenant</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            (ngModelChange)="onTenantChange($event)"
+            id="tenantid"
+            placeholder="Select Tenant"
+            nzPlaceHolder="Select Tenant"
+            formControlName="tenantid"
+          >
+            <nz-option
+              *ngFor="let t of tenantList"
+              [nzLabel]="t.tenantname"
+              [nzValue]="t.tenantid"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="email"
+          >Email ID</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="email"
+              placeholder="Email ID"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="fullname"
+          >Full Name</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input
+            nz-input
+            placeholder="Full Name"
+            formControlName="fullname"
+            type="text"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <div *ngIf="!edit">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="password"
+            >Password</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-input-group>
+              <input
+                type="password"
+                nz-input
+                formControlName="password"
+                placeholder="Password"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="roleid"
+          >Role</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="roleid"
+            placeholder="Select Role"
+            nzPlaceHolder="Select Role"
+            formControlName="roleid"
+          >
+            <nz-option
+              *ngFor="let u of userRoleList"
+              [nzLabel]="u.rolename"
+              [nzValue]="u.roleid"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="customerid">{{
+          subtenantLable
+        }}</nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="customerid"
+            placeholder="Select"
+            nzPlaceHolder="Select"
+            formControlName="customerid"
+          >
+            <nz-option
+              *ngFor="let c of customerList"
+              [nzLabel]="c.customername"
+              [nzValue]="c.customerid"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="phone"
+          >Phone No</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input
+            nz-input
+            placeholder="Phone No"
+            formControlName="phone"
+            type="text"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label
+          [nzSm]="24"
+          [nzXs]="12"
+          nzRequired
+          nzFor="secondaryphoneno"
+          >Mobile No</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input
+            nz-input
+            placeholder="Mobile No"
+            formControlName="secondaryphoneno"
+            type="text"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="department"
+          >Department</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="department"
+            placeholder="Select Department"
+            nzPlaceHolder="Select Department"
+            formControlName="department"
+          >
+            <nz-option
+              *ngFor="let c of departmentsList"
+              [nzLabel]="c.keyname"
+              [nzValue]="c.keyvalue"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <!-- <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="secondaryphoneno"></nz-form-label> -->
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <label nz-checkbox formControlName="isapproveryn">Is Approver</label>
+        </nz-form-control>
+      </nz-form-item>
+      <div *ngIf="edit">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+            >Status</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-input-group>
+              <nz-switch
+                class="status"
+                id="status"
+                formControlName="status"
+              ></nz-switch>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div>
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12"
+            >Two Factor Authentication
+          </nz-form-label>
+          <button
+            *ngIf="edit && userForm.value.twofactorauthyn == true"
+            nz-button
+            nzType="primary"
+            style="margin-left: -31px"
+            (click)="resettotp()"
+            nz-tooltip
+            nzTitle="Reset TOTP"
+            nzPlacement="topLeft"
+          >
+            <i class="anticon anticon-reload"></i>
+          </button>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-input-group>
+              <nz-switch
+                class="status"
+                id="twofactorauthyn"
+                formControlName="twofactorauthyn"
+              ></nz-switch>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="right mr-0">
+        <button
+          class="mt-1 save-button"
+          type="submit"
+          nz-button
+          nzType="primary"
+          [nzLoading]="addingparam"
+          (click)="saveOrUpdate(userForm.value)"
+        >
+          {{ button }}
+        </button>
+      </div>
+    </div>
+    <!-- <nz-modal [(nzVisible)]="show" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()">
+        <ng-template #modalTitle>
+            Add Role
+        </ng-template>
+
+        <ng-template #modalContent>
+            <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="rolename">Role Name</nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <input nz-input placeholder="Role Name" formControlName="rolename" type="text">
+                </nz-form-control>
+            </nz-form-item>
+        </ng-template>
+
+        <ng-template #modalFooter>
+            <button nz-button nzType="primary" (click)="handleOk()">Save</button>
+        </ng-template>
+    </nz-modal> -->
+  </form>
+</nz-tab>
+<nz-tab nzTitle="Change Logs" *ngIf="edit">
+  <app-comments
+    *ngIf="tabIndex == 1"
+    [resourceDetails]="userObj"
+    [resourceId]="userObj.refid"
+    [refType]="'history'"
+  ></app-comments>
+</nz-tab>
+</nz-tabset>
+</nz-spin>

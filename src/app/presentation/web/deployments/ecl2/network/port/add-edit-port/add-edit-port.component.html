@@ -1,0 +1,401 @@
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+  <form nz-form [formGroup]="ecl2portForm">
+    <div class="row">
+      <div class="col s4">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="portname"
+            >Port Name</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-input-group>
+              <input
+                [attr.disabled]="inputdisabled"
+                id="portname"
+                formControlName="portname"
+                nz-input
+                type="text"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s4">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="12"
+            nzRequired
+            nzFor="segmentationtype"
+            >Segmentation Type</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              [nzDisabled]="inputdisabled"
+              nzShowSearch
+              nzAllowClear
+              id="segmentationtype"
+              formControlName="segmentationtype"
+            >
+              <nz-option
+                *ngFor="let data of segmentaionTypeList"
+                [nzLabel]="data.keyname"
+                [nzValue]="data.keyvalue"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s4">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="segmentationid"
+            >Segmentation ID</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-input-group>
+              <input
+                [attr.disabled]="inputdisabled"
+                id="segmentationid"
+                formControlName="segmentationid"
+                nz-input
+                type="text"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s4">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="adminstateup" nzRequired
+            >Admin State</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              [nzDisabled]="inputdisabled"
+              nzShowSearch
+              nzAllowClear
+              id="adminstateup"
+              formControlName="adminstateup"
+            >
+              <!-- <nz-option *ngFor="let data of stateupList" [nzLabel]="data.keyname" [nzValue]="data"></nz-option> -->
+              <nz-option nzLabel="UP" nzValue="UP"></nz-option>
+              <nz-option nzLabel="DOWN" nzValue="DOWN"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s4">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="description"
+            >Description</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-input-group>
+              <textarea
+                [attr.disabled]="inputdisabled"
+                id="description"
+                formControlName="description"
+                type="text"
+                nz-input
+              ></textarea>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <!-- <div class="col s12 m11 right-align" style="padding-right: 285px;">
+      <button (click)="addItem('IP')" nz-button nzType="primary">
+        <i class="anticon anticon-plus"></i>
+      </button>
+    </div> -->
+    <div>
+      <div class="row">
+        <div class="col s8">
+          <h3 class="solution-title mb-0">Fixed IP</h3>
+        </div>
+        <div class="col s4 tag-button">
+          <i
+            [style.margin-top.px]="'10'"
+            (click)="addItem('IP')"
+            class="anticon hover-pointer amber-text anticon-plus-circle-o"
+          ></i>
+        </div>
+      </div>
+      <!-- <h3 class="solution-title mb-0">Fixed IP</h3> -->
+      <div formArrayName="fixedIp">
+        <div
+          *ngFor="let item of getFormArray('fixedIp').controls; let i = index"
+        >
+          <div [formGroupName]="i">
+            <div class="row">
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    [nzSm]="24"
+                    [nzXs]="12"
+                    nzFor="subnet_id"
+                    >Subnet</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-select
+                      [nzDisabled]="inputdisabled"
+                      nzShowSearch
+                      nzAllowClear
+                      id="subnet_id"
+                      formControlName="subnet_id"
+                    >
+                      <nz-option
+                        *ngFor="let data of subnetList"
+                        [nzLabel]="data.subnetname"
+                        [nzValue]="data.ecl2subnetid"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    style="text-align: left"
+                    [nzSm]="22"
+                    [nzXs]="12"
+                    nzFor="ip_address"
+                    >IP Address</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="22" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        [attr.disabled]="inputdisabled"
+                        id="ip_address"
+                        formControlName="ip_address"
+                        nz-input
+                        type="text"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s12 m3">
+                <i
+                  [style.margin-top.px]="i == 0 ? '50' : '10'"
+                  (click)="removeItem(i, 'IP')"
+                  class="anticon hover-pointer amber-text anticon-delete"
+                ></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s8">
+          <h3 class="solution-title mb-0">Allowed Address Pairs</h3>
+        </div>
+        <div class="col s4 tag-button">
+          <i
+            [style.margin-top.px]="'10'"
+            (click)="addItem('Address')"
+            class="anticon hover-pointer amber-text anticon-plus-circle-o"
+          ></i>
+        </div>
+      </div>
+      <div formArrayName="addresspair">
+        <div
+          *ngFor="
+            let item of getFormArray('addresspair').controls;
+            let i = index
+          "
+        >
+          <div [formGroupName]="i">
+            <div class="row">
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    style="text-align: left"
+                    [nzSm]="22"
+                    [nzXs]="12"
+                    nzFor="ip_address"
+                    >IP Address</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="22" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        [attr.disabled]="inputdisabled"
+                        id="ip_address"
+                        formControlName="ip_address"
+                        nz-input
+                        type="text"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    style="text-align: left"
+                    [nzSm]="22"
+                    [nzXs]="12"
+                    nzFor="mac_address"
+                    >MAC Address</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="22" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        [attr.disabled]="inputdisabled"
+                        id="mac_address"
+                        formControlName="mac_address"
+                        nz-input
+                        type="text"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s12 m3">
+                <i
+                  [style.margin-top.px]="i == 0 ? '50' : '10'"
+                  (click)="removeItem(i, 'Address')"
+                  class="anticon hover-pointer amber-text anticon-delete"
+                ></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s8">
+          <h3 class="solution-title mb-0">Tags</h3>
+        </div>
+        <div class="col s4 tag-button">
+          <i
+            [style.margin-top.px]="'10'"
+            (click)="addItem('Tag')"
+            class="anticon hover-pointer amber-text anticon-plus-circle-o"
+          ></i>
+        </div>
+      </div>
+      <div formArrayName="porttags">
+        <div
+          *ngFor="let item of getFormArray('porttags').controls; let i = index"
+        >
+          <div [formGroupName]="i">
+            <div class="row">
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    style="text-align: left"
+                    [nzSm]="22"
+                    [nzXs]="12"
+                    nzFor="tagkey"
+                    >Key
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="22" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        [attr.disabled]="inputdisabled"
+                        id="key"
+                        formControlName="tagkey"
+                        nz-input
+                        type="text"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s4">
+                <nz-form-item>
+                  <nz-form-label
+                    *ngIf="i == 0"
+                    style="text-align: left"
+                    [nzSm]="22"
+                    [nzXs]="12"
+                    nzFor="tagvalue"
+                    >Value
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="22" [nzXs]="12">
+                    <nz-input-group>
+                      <input
+                        [attr.disabled]="inputdisabled"
+                        id="value"
+                        formControlName="tagvalue"
+                        nz-input
+                        type="text"
+                      />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col s12 m3">
+                <i
+                  [style.margin-top.px]="i == 0 ? '50' : '10'"
+                  (click)="removeItem(i, 'Tag')"
+                  class="anticon hover-pointer amber-text anticon-delete"
+                ></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col s12" style="text-align:right">
+    <button (click)="addPort()" [disabled]="!ecl2portForm.valid" nz-button nzType="primary">Add Port</button>
+  </div> -->
+    <div class="col s12">
+      <nz-table #nzTable [nzData]="portList" [nzPageSize]="10">
+        <thead>
+          <tr>
+            <th nzWidth="30px">Name</th>
+            <th nzWidth="20px">Segmentation Type</th>
+            <th nzWidth="20px">Segmentation ID</th>
+            <th nzWidth="15px">Status</th>
+            <th class="center-align" nzWidth="15px" nzRight="0px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of nzTable.data">
+            <td>{{ data.portname }}</td>
+            <td>{{ data.segmentationtype }}</td>
+            <td>{{ data.segmentationid }}</td>
+            <td>{{ data.status }}</td>
+            <td class="center-align" nzWidth="15px" nzRight="0px">
+              &nbsp;
+              <a (click)="editPort(data)">
+                <i class="anticon anticon-edit"></i> </a
+              >&nbsp;
+              <a
+                nz-popconfirm
+                nzTitle="Are you sure?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="deletePort(data)"
+              >
+                <i class="anticon anticon-delete"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </form>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="disabled"
+      (click)="saveUpdatePort(ecl2portForm.value)"
+      class="save-button"
+      nz-button
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

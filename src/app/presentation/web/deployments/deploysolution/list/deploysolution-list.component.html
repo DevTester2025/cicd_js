@@ -1,0 +1,497 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <div class="param-table mt-1">
+      <div class="row data-table">
+        <div class="ant-col-md-6 ant-col-lg-6">
+          <nz-select
+            nzShowSearch
+            placeholder="Select Provider"
+            nzPlaceHolder="Select Provider"
+            [(ngModel)]="provider"
+            style="width: 100%"
+            (ngModelChange)="onChange($event)"
+          >
+            <nz-option
+              *ngFor="let i of providerList"
+              [nzLabel]="i.keyname"
+              [nzValue]="i.keyvalue"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+      <div class="ant-col-md-1 ant-col-lg-1 m-l-10">
+        <button nz-button nzType="primary" *ngIf="downloadflag" (click)="download()" title="Download">
+          <i class="anticon anticon-download"></i>
+        </button>
+      </div>
+      <div class="ant-col-md-1 ant-col-lg-1 right" style="text-align: end">
+        <button nz-button nzType="primary" (click)="refresh()" title="Reload">
+          <i class="anticon anticon-reload"></i>
+        </button>
+      </div>
+      <div class="ant-col-md-6 ant-col-lg-6 right">
+        <nz-input-group nzAddOnAfterIcon="anticon anticon-search" title="Click to search">
+          <input type="search" nz-input [(ngModel)]="searchText" (ngModelChange)="globalSearch($event)"
+            placeholder="Search" />
+        </nz-input-group>
+      </div>
+      </div>
+      <div
+        *ngIf="provider == 'AWS'"
+        [style.margin-top]="'5px'"
+        class="table-section deploylist"
+      >
+        <nz-table
+          #nzTable
+          [nzData]="deployList"
+          nzSize="middle"
+          [nzScroll]="{ x: '1400px' }"
+          [nzLoading]="fileloading"
+          [nzShowPagination]="false"
+        >
+          <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+              <th nzWidth="50px" nzLeft="0px" nzShowExpand></th>
+              <th
+                class="left-align"
+                nzWidth="250px"
+                nzLeft="50px"
+                nzShowSort
+                nzSortKey="instancename"
+              >
+                Server Name
+              </th>
+
+              <th class="left-align" nzShowSort nzSortKey="deploystatus">
+                Status
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="solutionname">
+                Template Name
+              </th>
+              <!-- <th class="left-align" nzShowSort nzSortKey="cloudprovider">Provider</th> -->
+              <th nclass="left-align" zShowSort nzSortKey="customername">
+                {{ subtenantLable }} Name
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="zonename">
+                Data Center
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="lastupdatedby">
+                Updated By
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="createddt">
+                Deployment Start
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="lastupdateddt">
+                Deployment End
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="duration">
+                Duration(Min)
+              </th>
+              <th class="center" *ngIf="logFlag" nzWidth="60px" nzRight="0px">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-template ngFor let-data [ngForOf]="nzTable.data">
+              <tr>
+                <td nzLeft="0px" nzShowExpand [(nzExpand)]="data.expand"></td>
+                <td class="left-align" nzLeft="50px">
+                  {{ data.instancename }}
+                  <!-- <nz-spin *ngIf="data.status == 'Deploying'" [nzSize]="'small'"></nz-spin> -->
+                </td>
+                <td class="left-align">
+                  {{ data.deploystatus }}
+                  <b
+                    ><i
+                      *ngIf="data.deploystatus == 'Deploying'"
+                      class="anticon anticon-spin anticon-loading"
+                      style="color: lime; font-size: 20px"
+                    ></i
+                  ></b>
+                </td>
+                <td class="left-align">{{ data.solutionname }}</td>
+                <!-- <td class="left-align">{{data.cloudprovider}}</td> -->
+                <td class="left-align">{{ data.customername }}</td>
+                <td class="left-align">{{ data.zonename }}</td>
+                <td class="left-align">{{ data.lastupdatedby }}</td>
+                <td class="left-align">
+                  {{ data.createddt | date: "dd-MMM-yyyy hh:mm:ss" }}
+                </td>
+                <td class="left-align">
+                  {{ data.lastupdateddt | date: "dd-MMM-yyyy hh:mm:ss" }}
+                </td>
+                <td class="left-align">{{ data.duration }}</td>
+                <td class="center-align" *ngIf="logFlag" nzRight="0px">
+                  <a (click)="dataChanged(data)" title="Log">
+                    <i class="anticon anticon-file"></i>
+                  </a>
+                </td>
+              </tr>
+              <tr [nzExpand]="data.expand" class="server-list">
+                <td nzLeft="0px"></td>
+                <td nzLeft="50px" colspan="3">
+                  <span>
+                    <span class="list">Public DNS (IPv4) :&nbsp;</span
+                    >{{ data.publicdns == null ? "-" : data.publicdns }}</span
+                  ><br /><span>
+                    <span class="list" style="margin-left: 22px"
+                      >IPv4 Public IP :&nbsp;
+                    </span>
+                    <a
+                      [href]="
+                        domSanitizer.bypassSecurityTrustUrl(
+                          'https://' + data.fileUrl
+                        )
+                      "
+                      target="_blank"
+                    >
+                      {{ data.publicipv4 == null ? "-" : data.publicipv4 }}</a
+                    >
+                  </span>
+                  <br />
+                  <span style="margin-left: 17px">
+                    <span class="list">IPv4 Private IP :&nbsp;</span>
+                    {{ data.privateipv4 == null ? "-" : data.privateipv4 }}
+                  </span>
+                  <br />
+                </td>
+                <td colspan="3">
+                  <span>
+                    <span class="list" style="margin-left: 60px"
+                      >VPC ID :&nbsp;</span
+                    >{{ data.vpcname }} &nbsp;({{
+                      data.awsvpcid == null ? "-" : data.awsvpcid
+                    }})
+                  </span>
+                  <br />
+                  <span>
+                    <span class="list" style="margin-left: 45px"
+                      >Subnet ID :&nbsp; </span
+                    >{{ data.subnetname }} &nbsp;({{
+                      data.awssubnetd == null ? "-" : data.awssubnetd
+                    }})
+                  </span>
+                  <br />
+                  <span>
+                    <span class="list" style="margin-left: 12px">
+                      Security groups :&nbsp;</span
+                    >
+                    {{ data.securitygroupname }}&nbsp;({{
+                      data.awssecuritygroupid == null
+                        ? "-"
+                        : data.awssecuritygroupid
+                    }})
+                  </span>
+                  <br />
+                  <span>
+                    <span class="list" style="margin-left: 19px"
+                      >Load Balancer :&nbsp;</span
+                    >
+                    {{ data.lbname }}&nbsp;({{
+                      data.lbdns == null ? "-" : data.lbdns
+                    }})
+                  </span>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </nz-table>
+        <div *ngIf="provider == 'AWS'" class="card-paginator">
+          <nz-pagination 
+          [(nzPageIndex)]="pageIndex" 
+          [nzSize]="'small'" 
+          [nzPageSize]="10" 
+          [nzShowTotal]="totalTemplate"
+            nzShowSizeChanger 
+            [nzPageSizeOptions]="pageCount" 
+            (nzPageSizeChange)="onPageSizeChange($event)"
+            ></nz-pagination>
+        </div>
+        <div class="count-container">
+          <p style="color: #ffcc00">Total Records :{{ totalCount }}</p>
+        </div>
+      </div>
+      <div
+        *ngIf="provider == 'ECL2'"
+        [style.margin-top]="'5px'"
+        class="table-section deploylist"
+      >
+        <nz-table
+          #nzTable
+          [nzData]="deployList"
+          [nzPageSize]="10"
+          nzSize="middle"
+          [nzScroll]="{ x: '1400px' }"
+          [nzLoading]="fileloading"
+        >
+          <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+              <th nzWidth="50px" nzLeft="0px" nzShowExpand></th>
+              <th
+                class="left-align"
+                nzWidth="250px"
+                nzLeft="50px"
+                nzShowSort
+                nzSortKey="instancename"
+              >
+                Server Name
+              </th>
+
+              <th class="left-align" nzShowSort nzSortKey="deploystatus">
+                Status
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="solutionname">
+                Template Name
+              </th>
+              <!-- <th class="left-align" nzShowSort nzSortKey="cloudprovider">Provider</th> -->
+              <th nclass="left-align" zShowSort nzSortKey="customername">
+                {{ subtenantLable }} Name
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="zonename">
+                Data Center
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="lastupdatedby">
+                Updated By
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="createddt">
+                Deployment Start
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="lastupdateddt">
+                Deployment End
+              </th>
+              <th class="left-align" nzShowSort nzSortKey="duration">
+                Duration(Min)
+              </th>
+              <th class="center" *ngIf="logFlag" nzWidth="60px" nzRight="0px">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-template ngFor let-data [ngForOf]="nzTable.data">
+              <tr>
+                <td nzLeft="0px" nzShowExpand [(nzExpand)]="data.expand"></td>
+                <td class="left-align" nzLeft="50px">
+                  {{ data.instancename }}
+                  <!-- <nz-spin *ngIf="data.status == 'Deploying'" [nzSize]="'small'"></nz-spin> -->
+                </td>
+                <td class="left-align">
+                  {{ data.deploystatus }}
+                  <b
+                    ><i
+                      *ngIf="data.deploystatus == 'Deploying'"
+                      class="anticon anticon-spin anticon-loading"
+                      style="color: lime; font-size: 20px"
+                    ></i
+                  ></b>
+                </td>
+                <td class="left-align">{{ data.solutionname }}</td>
+                <!-- <td class="left-align">{{data.cloudprovider}}</td> -->
+                <td class="left-align">{{ data.customername }}</td>
+                <td class="left-align">{{ data.zonename }}</td>
+                <td class="left-align">{{ data.lastupdatedby }}</td>
+                <td class="left-align">
+                  {{ data.createddt | date: "dd-MMM-yyyy hh:mm:ss" }}
+                </td>
+                <td class="left-align">
+                  {{ data.lastupdateddt | date: "dd-MMM-yyyy hh:mm:ss" }}
+                </td>
+                <td class="left-align">{{ data.duration }}</td>
+                <td class="center-align" *ngIf="logFlag" nzRight="0px">
+                  <a (click)="dataChanged(data)" title="Log">
+                    <i class="anticon anticon-file"></i>
+                  </a>
+                  &nbsp;
+                  <a
+                    (click)="viewConsole(data)"
+                    title="Console"
+                    [ngClass]="
+                      data.status == 'Deployed'
+                        ? 'fa fa-desktop monitor-active'
+                        : 'fa fa-desktop monitor-disable'
+                    "
+                  >
+                  </a>
+                </td>
+              </tr>
+              <tr [nzExpand]="data.expand" class="server-list">
+                <td nzLeft="0px"></td>
+                <td nzLeft="50px" colspan="2">
+                  <span class="list">&nbsp; IPv4 Public IP :&nbsp; </span>
+                  <a
+                    [href]="
+                      domSanitizer.bypassSecurityTrustUrl(
+                        'https://' + data.publicipv4
+                      )
+                    "
+                    target="_blank"
+                  >
+                    {{ data.publicipv4 == null ? "-" : data.publicipv4 }}
+                  </a>
+                  <br />
+                  <span>
+                    <span class="list">&nbsp; Server ID :&nbsp;</span
+                    >{{
+                      data.ecl2serverid == null ? "-" : data.ecl2serverid
+                    }}</span
+                  >
+                  <br />
+                  <span>
+                    <span class="list">&nbsp; Server Password :&nbsp;</span
+                    >{{ data.ecl2serverpwd == null ? "-" : "*****" }}</span
+                  >
+                </td>
+
+                <td colspan="2">
+                  <span>
+                    <span class="list"
+                      >&nbsp;&nbsp; IPV4 Private IP :&nbsp;</span
+                    >{{ data.privateipv4 == null ? "-" : data.privateipv4 }}
+                  </span>
+                  <br />
+                  <span>
+                    <span class="list"
+                      ><i class="anticon anticon-check-circle"></i>&nbsp;
+                      Virtual Machine :&nbsp;</span
+                    >{{ data.ecl2serverid == null ? "Pending" : "Active" }}
+                  </span>
+                  <br />
+
+                  <span>
+                    <span class="list"
+                      ><i class="anticon anticon-check-circle"></i>&nbsp;
+                      Network :&nbsp;</span
+                    >{{
+                      data.ecl2serverid == null ? "Pending" : "Active"
+                    }}</span
+                  >
+                </td>
+                <td colspan="2">
+                  <span>
+                    <i
+                      [ngClass]="
+                        data.fwconflictstatus == 'Active'
+                          ? 'anticon anticon-check-circle status-success'
+                          : 'anticon anticon-close-circle status-failed'
+                      "
+                    ></i>
+                    <span class="list"> &nbsp;VSRX :&nbsp;</span>
+                    <a
+                      *ngIf="
+                        data.fwconflictstatus != 'Active' && !data.vsrxstatus
+                      "
+                      (click)="retryvsrx(data)"
+                      >Retry</a
+                    >
+                    &nbsp;<b
+                      ><i
+                        *ngIf="data.vsrxstatus"
+                        class="anticon anticon-spin anticon-loading"
+                        style="color: lime; font-size: 20px"
+                      ></i></b
+                  ></span>
+                  <span *ngIf="data.fwconflictstatus == 'Active'"
+                    >{{ data.fwconflictstatus }} &nbsp;
+                  </span>
+                  <br />
+                  <span>
+                    <i
+                      [ngClass]="
+                        data.lbconflictstatus == 'Active'
+                          ? 'anticon anticon-check-circle status-success'
+                          : 'anticon anticon-close-circle status-failed'
+                      "
+                    ></i>
+                    <span class="list">&nbsp;&nbsp;Load Balancer :&nbsp;</span>
+                    <a
+                      *ngIf="
+                        data.lbconflictstatus != 'Active' && !data.lbstatus
+                      "
+                      (click)="retryLb(data)"
+                      >Retry</a
+                    >
+                    &nbsp;<i
+                      *ngIf="data.lbstatus"
+                      class="anticon anticon-spin anticon-loading"
+                      style="color: lime; font-size: 20px"
+                    ></i
+                  ></span>
+                  <span *ngIf="data.lbconflictstatus == 'Active'">
+                    {{ data.lbconflictstatus }}</span
+                  >
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </nz-table>
+      </div>
+      <div
+        *ngIf="provider != 'ECL2' && provider != 'AWS'"
+        [style.margin-top]="'5px'"
+        class="table-section deploylist"
+      >
+        <app-cloudmatiq-data-table
+          [tableData]="deployList"
+          [tableHeader]="tableHeader"
+          [tableConfig]="tableConfig"
+        >
+        </app-cloudmatiq-data-table>
+        <div>
+          <p class="count-container">Total Records : {{totalCount}}</p>
+      </div>
+      </div>
+    </div>
+  </ng-container>
+  <nz-drawer
+    id="sidebar-modal"
+    [nzBodyStyle]="{
+      'padding-bottom': '55px',
+      height: 'calc(100% - 55px)',
+      overflow: 'auto'
+    }"
+    [nzMaskClosable]="true"
+    [nzWidth]="750"
+    [nzVisible]="isVisible"
+    nzTitle="Log"
+    (nzOnClose)="isVisible = !isVisible"
+  >
+    <pre
+      style="
+        color: white;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+      "
+      >{{ file }}</pre
+    >
+    <div class="footer">
+      <button
+        type="button"
+        (click)="isVisible = !isVisible"
+        class="ant-btn ant-btn-primary"
+      >
+        <span>Close</span>
+      </button>
+    </div>
+  </nz-drawer>
+  <!-- <nz-modal [(nzVisible)]="isVisible" class="deploy-modal" nzTitle="Log" (nzOnCancel)="isVisible=false" (nzOnOk)="isVisible=false">
+        <p>{{serverLog}}</p>
+    </nz-modal> -->
+</app-cloudmatiq-side-nav>

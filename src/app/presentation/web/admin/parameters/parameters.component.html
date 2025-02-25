@@ -1,0 +1,650 @@
+<app-cloudmatiq-side-bar
+  (dataChanged)="rightbarChanged($event)"
+  [(isVisible)]="isVisible"
+  [title]="formTitle"
+>
+
+  <ng-container class="modal-content">
+    <nz-tabset
+[nzTabBarExtraContent]="extraTemplate"
+  [nzSelectedIndex]="tabIndex"
+  (nzSelectChange)="tabChanged($event)">
+  <nz-tab nzTitle="Info">
+    <form nz-form [formGroup]="paramsForm" (ngSubmit)="addParam()">
+      <div class="row" style="margin-bottom: 0">
+        <div
+          *ngIf="
+            paramsForm.get('paramtype').value == 'Tenant' ||
+            paramsForm.get('paramtype').value == 'SubTenant'
+          "
+        >
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="tenantid"
+              >Tenant</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                (ngModelChange)="onTenantChange($event)"
+                id="tenantid"
+                placeholder="Select Tenant"
+                nzPlaceHolder="Select Tenant"
+                formControlName="tenantid"
+              >
+                <nz-option
+                  *ngFor="let t of tenantList"
+                  [nzLabel]="t.tenantname"
+                  [nzValue]="t.tenantid"
+                ></nz-option>
+              </nz-select>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('tenantid').dirty &&
+                  paramsForm.get('tenantid').errors
+                "
+                >Select tenant</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div *ngIf="paramsForm.get('paramtype').value == 'SubTenant'">
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="24"
+              [nzXs]="24"
+              nzRequired
+              nzFor="customerid"
+              >{{ subtenantLable }}</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Select"
+                id="customerid"
+                formControlName="customerid"
+              >
+                <nz-option
+                  *ngFor="let c of customersList"
+                  [nzLabel]="c.customername"
+                  [nzValue]="c.customerid"
+                >
+                </nz-option>
+              </nz-select>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('customerid').dirty &&
+                  paramsForm.get('customerid').errors
+                "
+                >Select {{ subtenantLable }}</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div *ngIf="paramsForm.get('paramtype').value == 'Template'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="templateid"
+              >Template</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                placeholder="Select Template"
+                nzPlaceHolder="Select Template"
+                id="templateid"
+                formControlName="templateid"
+              >
+                <nz-option
+                  *ngFor="let s of solutionsList"
+                  [nzLabel]="s.solutionname"
+                  [nzValue]="s.solutionid"
+                >
+                </nz-option>
+              </nz-select>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('templateid').dirty &&
+                  paramsForm.get('templateid').errors
+                "
+                >Select template</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div *ngIf="paramsForm.get('paramtype').value == 'Script'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="scriptid"
+              >Script</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Select Script"
+                id="scriptid"
+                formControlName="scriptid"
+              >
+                <nz-option
+                  *ngFor="let s of scriptsList"
+                  [nzLabel]="s.scriptname"
+                  [nzValue]="s.scriptid"
+                ></nz-option>
+              </nz-select>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('scriptid').dirty &&
+                  paramsForm.get('scriptid').errors
+                "
+                >Select Script</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div *ngIf="paramsForm.get('paramtype').value !== 'Variable'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="fieldname">
+              <span
+                >Name
+                <nz-tooltip
+                  nzTitle="If Type is Script, The name should match with param name in the Script"
+                >
+                  <i nz-tooltip class="anticon anticon-question-circle-o"></i>
+                </nz-tooltip>
+              </span>
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="fieldname"
+                  placeholder="Enter Parameter Name"
+                  formControlName="fieldname"
+                  nz-input
+                  type="text"
+                />
+              </nz-input-group>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('fieldname').touched &&
+                  paramsForm.get('fieldname').dirty &&
+                  paramsForm.get('fieldname').errors
+                "
+              >
+                Field name required</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div *ngIf="paramsForm.get('paramtype').value == 'Variable'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="fieldname">
+              Variable
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="fieldname"
+                  placeholder="Enter Variable Name"
+                  formControlName="fieldname"
+                  nz-input
+                  type="text"
+                />
+              </nz-input-group>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('fieldname').touched &&
+                  paramsForm.get('fieldname').dirty &&
+                  paramsForm.get('fieldname').errors
+                "
+              >
+                Variable must start with v_</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div>
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="fieldname">
+              <span>Data Type </span>
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                id="datatype"
+                nzPlaceHolder="Data Type"
+                formControlName="datatype"
+                (change)="(tagTypeChange)"
+              >
+                <nz-option
+                  *ngFor="let data of dataTypes; index as i"
+                  [nzLabel]="data"
+                  [nzValue]="data"
+                ></nz-option>
+              </nz-select>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('fieldname').touched &&
+                  paramsForm.get('fieldname').dirty &&
+                  paramsForm.get('fieldname').errors
+                "
+              >
+                Field name required</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div *ngIf="paramsForm.get('paramtype').value == 'Variable'">
+          <nz-form-item>
+            <nz-form-label
+              nzRequired
+              [nzSm]="24"
+              [nzXs]="24"
+              nzFor="fieldlabel"
+            >
+              <span>
+                Label
+                <nz-tooltip
+                  nzTitle="Label for the input field displayed in deployment screen"
+                >
+                  <i nz-tooltip class="anticon anticon-question-circle-o"></i>
+                </nz-tooltip>
+              </span>
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="fieldlabel"
+                  placeholder="Enter Variable Label"
+                  formControlName="fieldlabel"
+                  nz-input
+                  type="text"
+                />
+              </nz-input-group>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('fieldlabel').touched &&
+                  paramsForm.get('fieldlabel').dirty &&
+                  paramsForm.get('fieldlabel').errors
+                "
+              >
+                Parameter label required</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div *ngIf="paramsForm.get('paramtype').value != 'Variable'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="fieldvalue"
+              >Value</nz-form-label
+            >
+            <nz-form-control [nzSm]="16" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="fieldvalue"
+                  placeholder="Enter Parameter Value"
+                  formControlName="fieldvalue"
+                  nz-input
+                  type="text"
+                />
+              </nz-input-group>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('fieldvalue').dirty &&
+                  paramsForm.get('fieldvalue').errors
+                "
+              >
+                Parameter value required</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div>
+          <nz-form-item *ngIf="paramsForm.value.datatype != 'date'">
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="fieldoptions"
+              >Option (s)</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="12">
+              <nz-input-group>
+                <input
+                  *ngIf="
+                    !paramsForm.value || paramsForm.value.datatype == 'string'
+                  "
+                  id="fieldoptions"
+                  placeholder="Enter Parameter Value"
+                  formControlName="fieldoptions"
+                  nz-input
+                  type="text"
+                />
+                <input
+                  *ngIf="
+                    !paramsForm.value || paramsForm.value.datatype == 'number'
+                  "
+                  id="fieldoptions"
+                  placeholder="Enter Parameter Value"
+                  formControlName="fieldoptions"
+                  nz-input
+                  type="number"
+                />
+                <input
+                  *ngIf="
+                    !paramsForm.value || paramsForm.value.datatype == 'password'
+                  "
+                  id="fieldoptions"
+                  placeholder="Enter Parameter Value"
+                  formControlName="fieldoptions"
+                  nz-input
+                  type="password"
+                />
+                <nz-select
+                  *ngIf="
+                    paramsForm.value && paramsForm.value.datatype == 'list'
+                  "
+                  style="width: 90%"
+                  formControlName="fieldoptions"
+                  nzMode="tags"
+                  nzPlaceHolder="Value"
+                >
+                  <div *ngIf="paramsForm.value.datatype == 'date'">
+                    <nz-date-picker
+                      formControlName="fieldoptions"
+                      [nzFormat]="'dd/MM/yyyy'"
+                    ></nz-date-picker>
+                  </div>
+                </nz-select>
+                <div nz-row *ngIf="paramsForm.value.datatype == 'range'">
+                  <div nz-col nzSpan="12">
+                    <input
+                      placeholder="From"
+                      formControlName="rng_from"
+                      nz-input
+                      type="text"
+                    />
+                  </div>
+                  <div nz-col nzSpan="12">
+                    <input
+                      placeholder="To"
+                      formControlName="rng_to"
+                      nz-input
+                      type="text"
+                    />
+                  </div>
+                </div>
+                <nz-select
+                  *ngIf="paramsForm.value.datatype == 'boolean'"
+                  style="width: 100%"
+                  formControlName="fieldoptions"
+                  nzPlaceHolder="Value (s)"
+                >
+                  <nz-option nzLabel="Yes" nzValue="Yes"> </nz-option>
+                  <nz-option nzLabel="No" nzValue="No"> </nz-option>
+                </nz-select>
+              </nz-input-group>
+            </nz-form-control>
+            <nz-form-explain
+              *ngIf="
+                paramsForm.get('fieldvalue').dirty &&
+                paramsForm.get('fieldvalue').errors
+              "
+            >
+              Parameter value required</nz-form-explain
+            >
+          </nz-form-item>
+          <nz-form-item *ngIf="paramsForm.value.datatype == 'date'">
+            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="lookupvalues"
+              >Option (s)</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="12">
+              <nz-input-group>
+                <nz-date-picker
+                  formControlName="fieldoptions"
+                  [nzFormat]="'dd/MM/yyyy'"
+                ></nz-date-picker>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <!-- <div *ngIf="paramsForm.get('paramtype').value == 'Script'">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="forminput">
+                            <span>
+                                User Input ?
+                                <nz-tooltip nzTitle="If set to Yes, User needs to input the value during deployment">
+                                    <i nz-tooltip class="anticon anticon-question-circle-o"></i>
+                                </nz-tooltip>
+                            </span>
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="16" [nzXs]="24">
+                            <nz-select id="forminput" nzPlaceholder="Select Form Input" formControlName="forminput">
+                                <nz-option nzLabel="True" nzValue="true"></nz-option>
+                                <nz-option nzLabel="False" nzValue="false"></nz-option>
+                            </nz-select>
+                            <nz-form-explain *ngIf="paramsForm.get('forminput').dirty && paramsForm.get('forminput').errors">Select Script</nz-form-explain>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div> -->
+        <div *ngIf="paramsForm.get('paramtype').value == 'Script'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="orderno">
+              <span>
+                Order
+                <nz-tooltip
+                  nzTitle="Based on the order inputted param will be passed to script"
+                >
+                  <i nz-tooltip class="anticon anticon-question-circle-o"></i>
+                </nz-tooltip>
+              </span>
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24" [nzLg]="6">
+              <nz-input-number
+                placeholder="Parameter Position"
+                formControlName="orderno"
+                [nzMin]="0"
+                [nzMax]="25"
+                [nzStep]="1"
+              ></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div>
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="notes" class="notes"
+              >Notes</nz-form-label
+            >
+
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <textarea
+                  id="notes"
+                  formControlName="notes"
+                  placeholder="Some Notes.."
+                  type="text"
+                  nz-input
+                ></textarea>
+              </nz-input-group>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('notes').dirty &&
+                  paramsForm.get('notes').errors
+                "
+                >Notes required
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="right mr-0 save-button">
+          <button
+            class="mt-1"
+            type="submit"
+            nz-button
+            nzType="primary"
+            [nzLoading]="addingparam || updatingparam"
+            [title]="formTitle == 'Update' ? 'Update' : 'Save'"
+          >
+            {{ formTitle == 'Update' ? 'Update' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </nz-tab>
+  <nz-tab nzTitle="Change Logs"  *ngIf="this.formTitle == 'Update' && isChangeLog">
+    <app-comments
+      *ngIf="tabIndex == 1"
+      [resourceDetails]="updateParamValue"
+      [resourceId]="updateParamValue.refid"
+      [refType]="'history'"
+    >
+  </app-comments>
+  </nz-tab>
+  </nz-tabset>
+  </ng-container>
+
+</app-cloudmatiq-side-bar>
+<app-cloudmatiq-side-nav *ngIf="hideSideNav == false" [blockUI]="parameterlist">
+  <ng-container class="page-body param-section">
+    <div class="row mb-0 param-section">
+      <div class="col s12 m4">
+        <div class="mt-0 ml-0">
+          <form>
+            <nz-form-item class="mt-1">
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="paramtype"
+                >Type</nz-form-label
+              >
+              <nz-form-control [nzSm]="16" [nzXs]="24">
+                <nz-select
+                  name="selectparamtype"
+                  (ngModelChange)="onParamTypeChange($event)"
+                  [(ngModel)]="paramtype"
+                  id="paramtype"
+                  nzPlaceHolder="Parameter Type"
+                >
+                  <nz-option nzLabel="Global" nzValue="Global"></nz-option>
+                  <nz-option nzLabel="Tenant" nzValue="Tenant"></nz-option>
+                  <nz-option
+                    [nzLabel]="subtenantLable"
+                    [nzValue]="subtenantLable"
+                  ></nz-option>
+                  <nz-option nzLabel="Template" nzValue="Template"></nz-option>
+                  <nz-option nzLabel="Script" nzValue="Script"></nz-option>
+                  <nz-option nzLabel="Variable" nzValue="Variable"></nz-option>
+                </nz-select>
+                <nz-form-explain
+                  *ngIf="
+                    paramsForm.get('paramtype').dirty &&
+                    paramsForm.get('paramtype').errors
+                  "
+                  >Select any one category</nz-form-explain
+                >
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+        </div>
+      </div>
+      <div class="col s12 m8">
+        <div class="right mt-1 mr-0">
+          <!-- updateParam.status = false;updateParam.title = 'Add ' + paramtype + ' Parameter';resetParamForm(paramtype);isVisibleTop = !isVisibleTop -->
+          <!-- <button (click)="rightbar = !rightbar" nz-button nzType="primary" class="mr-0-5">
+                        <i class="anticon anticon-plus"></i>Add Parameter</button> -->
+
+          <button
+            *ngIf="createParameter"
+            nz-button
+            nzType="primary"
+            (click)="showModal()"
+          >
+            <i class="anticon anticon-plus"></i>{{ buttonText }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="paramsList.length > 0" class="row param-table">
+      <app-cloudmatiq-data-table
+        [noResult]="'No Parameters found'"
+        (dataChanged)="dataChanged($event)"
+        [tableData]="paramsList"
+        [tableHeader]="paramsHeader"
+        [selectedcolumns]="selectedcolumns"
+        [tableConfig]="tableConfig"
+        [totalCount]= "totalCount"
+        [searchText]="searchText"
+      ></app-cloudmatiq-data-table>
+    </div>
+    <div *ngIf="paramsList.length == 0" class="row param-table">
+      <app-cloudmatiq-data-table
+        [noResult]="'No Parameters found'"
+        (dataChanged)="dataChanged($event)"
+        [tableData]="paramsList"
+        [tableHeader]="paramsHeader"
+        [selectedcolumns]="selectedcolumns"
+        [tableConfig]="tableConfig"
+        [totalCount]= "totalCount"
+        [searchText]="searchText"
+      ></app-cloudmatiq-data-table>
+    </div>
+    <!-- <nz-modal [(nzVisible)]="isVisible" class="sidebar-modal" nzTitle="Modal Title" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()" [nzOkLoading]="isOkLoading">
+            <ng-content select=".modal-content"></ng-content>
+          </nz-modal> -->
+  </ng-container>
+</app-cloudmatiq-side-nav>
+
+<div *ngIf="hideSideNav == true" [style.padding.px]="tableOnly ? '0' : '15'">
+  <div *ngIf="!tableOnly" class="row mb-0 param-section">
+    <div class="col s12 m4">
+      <div class="mt-0 ml-0">
+        <form>
+          <nz-form-item class="mt-1">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="paramtype"
+              >Type</nz-form-label
+            >
+            <nz-form-control [nzSm]="16" [nzXs]="24">
+              <nz-select
+                name="selectparamtype"
+                (ngModelChange)="onParamTypeChange($event)"
+                [(ngModel)]="paramtype"
+                id="paramtype"
+                nzPlaceHolder="Parameter Type"
+              >
+                <nz-option nzLabel="Tenant" nzValue="Tenant"></nz-option>
+                <nz-option nzLabel="Customer" nzValue="SubTenant"></nz-option>
+                <nz-option nzLabel="Template" nzValue="Template"></nz-option>
+                <nz-option nzLabel="Script" nzValue="Script"></nz-option>
+                <nz-option nzLabel="Variable" nzValue="Variable"></nz-option>
+              </nz-select>
+              <nz-form-explain
+                *ngIf="
+                  paramsForm.get('paramtype').dirty &&
+                  paramsForm.get('paramtype').errors
+                "
+                >Select any one category</nz-form-explain
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </div>
+    <div class="col s12 m8">
+      <div class="right mt-1 mr-0">
+        <!-- updateParam.status = false;updateParam.title = 'Add ' + paramtype + ' Parameter';resetParamForm(paramtype);isVisibleTop = !isVisibleTop -->
+        <!-- <button (click)="rightbar = !rightbar" nz-button nzType="primary" class="mr-0-5">
+                    <i class="anticon anticon-plus"></i>Add Parameter</button> -->
+
+        <button nz-button nzType="primary" (click)="showModal()">
+          <i class="anticon anticon-plus"></i>{{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row param-table">
+    <app-cloudmatiq-data-table
+      (dataChanged)="dataChanged($event)"
+      [tableData]="paramsList"
+      [tableHeader]="paramsHeader"
+      [selectedcolumns]="selectedcolumns"
+      [tableConfig]="tableConfig"
+      [totalCount]= "totalCount"
+      [searchText]="searchText"
+    ></app-cloudmatiq-data-table>
+  </div>
+</div>

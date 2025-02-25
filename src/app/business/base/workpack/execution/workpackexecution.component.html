@@ -1,0 +1,52 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+  (dataChanged)="rightbarWorkflowChanged($event)"
+  [(isVisible)]="isWorkflowVisible"
+  [title]="workflowformTitle"
+  [width]="820"
+>
+  <ng-container class="modal-content">
+    <!-- <app-workflow-add-edit *ngIf="isWorkflowVisible" (notifyNewEntry)="notifySelectionEntry($event)" [operationMode]="'WKPACK_MAPPING'" [operationRef]="selectedWorkflowTask" [resoruceTitle]="resoruceTitle"></app-workflow-add-edit> -->
+    <app-workflow-add-edit *ngIf="isWorkflowVisible" (notifyWorkflowSelectionEntry)="notifyWorkflowSelectionEntry($event)" [operationMode]="'WKPACK_MAPPING'" [operationRef]="selectedWorkflowTask" [resoruceTitle]="resoruceTitle" mode="workflow-assign"></app-workflow-add-edit>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <div class="row">
+      <div class="col s12">
+        <div
+          class="col s6 m2 mt-1 right right-align"
+        >
+          <!-- <button
+            *ngIf="visibleadd"
+            nz-button
+            nzType="primary"
+            (click)="showModal()"
+          >
+            <i class="anticon anticon-plus"></i>{{ buttonText }}
+          </button> -->
+        </div>
+      </div>
+    </div>
+    <div class="row param-table" *ngIf="!loading">
+      <div class="p-10">
+        <app-cloudmatiq-data-table
+        (dataChanged)="dataChangedExecution($event)"
+          [tableData]="executionList"
+          [tableHeader]="executionHeader"
+          [selectedcolumns]="selectedcolumns"
+          [tableConfig]="tableConfig"
+          [totalCount]="totalCount"
+        >
+        </app-cloudmatiq-data-table>
+        <!-- <app-cloudmatiq-data-table
+          [tableData]="workflowList"
+          [tableHeader]="globalLogHeader"
+          [tableConfig]="tableConfig"
+        >
+        </app-cloudmatiq-data-table> -->
+      </div>
+    </div>
+   
+    
+  </ng-container>
+</app-cloudmatiq-side-nav>

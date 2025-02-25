@@ -1,0 +1,31 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="rightbarChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-addedit-request-management
+        (notifyRequestEntry)="notifyRequestEntry(); isVisible = false"
+      ></app-addedit-request-management>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <div class="row param-table">
+      <div class="row">
+        <div class="col s12 m2 left left-align">
+          <button nz-button nzType="primary" (click)="redirectToCreate()">
+            <i class="anticon anticon-plus"></i>Add
+          </button>
+        </div>
+        <app-cloudmatiq-data-table
+          (dataChanged)="dataChanged($event)"
+          [tableData]="requestList"
+          [tableHeader]="tableHeader"
+          [tableConfig]="tableconfig"
+          [totalCount]="totalCount"
+        ></app-cloudmatiq-data-table>
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

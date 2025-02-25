@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col s12 m2 right right-align" *ngIf="create">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="showAddForm()"
+      >
+        <i class="anticon anticon-plus"></i>Add
+      </button>
+    </div>
+  </div>
+  <div class="param-table" style="margin-top: 0px">
+    <app-cloudmatiq-data-table
+      (dataChanged)="dataChanged($event)"
+      [tableData]="uptimeList"
+      [tableHeader]="tableHeader"
+      [tableConfig]="tableConfig"
+    ></app-cloudmatiq-data-table>
+    <app-cloudmatiq-side-bar
+    (dataChanged)="closeDrawer()"
+    [(isVisible)]="isVisibleAddEdit"
+    [title]="title"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-kpi-uptimeaddedit
+        [selectedObj]="selectedObj"
+        (notifyUptimeEntry)="notifyUptimeEntry($event)"
+      >
+      </app-cloudmatiq-kpi-uptimeaddedit>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  </div>

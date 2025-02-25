@@ -1,0 +1,109 @@
+<nz-spin [nzSpinning]="loading">
+<div class="row" id="eventdetail">
+  <div class="col s2 m2">Event Date</div>
+  <div class="col s1 m1">:</div>
+  <div class="col s8 m8">
+    {{ selectedEvent?.eventdate | date: "dd-MMM-yyyy" }}
+  </div>
+</div>
+<div class="row" id="eventdetail">
+  <div class="col s2 m2">Event Module</div>
+  <div class="col s1 m1">:</div>
+  <div class="col s8 m8">{{ selectedEvent?.module }}</div>
+</div>
+<div class="row" id="eventdetail">
+  <div class="col s2 m2">Event Type</div>
+  <div class="col s1 m1">:</div>
+  <div class="col s8 m8">{{ selectedEvent?.eventtype }}</div>
+</div>
+<div class="row" id="eventdetail">
+  <div class="col s2 m2">Severity</div>
+  <div class="col s1 m1">:</div>
+  <div class="col s8 m8">{{ selectedEvent?.severity }}</div>
+</div>
+<div class="row" id="eventdetail" *ngIf="selectedEvent?.providerrefid">
+  <div class="col s2 m2">Instance ID</div>
+  <div class="col s1 m1">:</div>
+  <div class="col s8 m8">
+    <a (click)="showInstance(selectedEvent.providerrefid)">{{
+      selectedEvent.providerrefid
+    }}</a>
+  </div>
+</div>
+<div class="row" id="eventdetail">
+  <div class="col s2 m2">Created by</div>
+  <div class="col s1 m1">:</div>
+  <div class="col s8 m8">{{ selectedEvent?.createdby }}</div>
+</div>
+<div class="row" id="eventdetail">
+  <div class="col s2 m2">Created date</div>
+  <div class="col s1 m1">:</div>
+  <div class="col s8 m8">
+    {{ selectedEvent?.createddt | date: "dd-MMM-yyyy" }}
+  </div>
+</div>
+<div class="row" id="eventdetail">
+  <div class="col s2 m2">Notes</div>
+  <div class="col s1 m1">:</div>
+  <div
+    class="col s8 m8"
+    *ngIf="selectedEvent?.referencetype"
+    [innerHTML]="selectedEvent?.notes"
+  ></div>
+</div>
+<div class="row" id="eventdetail" *ngIf="isReference">
+  <div class="col s2 m2">References</div>
+</div>
+<div nz-row class="row" id="eventdetail" *ngIf="isReference">
+  <div nz-col nzSpan="20">
+    <input nz-input placeholder="Add Link" type="url" [(ngModel)]="reference" />
+  </div>
+  <div nz-col nzSpan="4">
+    <button
+      (click)="referencesList.push(reference); reference = ''; updateEventLog()"
+      nz-button
+      nzType="primary"
+    >
+      <i class="anticon anticon-plus"></i>
+    </button>
+  </div>
+</div>
+<app-cloudmatiq-side-bar
+  (dataChanged)="onChanged($event)"
+  [(isVisible)]="showDetails"
+  [title]="'Asset Details'"
+  [width]="1200"
+>
+  <ng-container *ngIf="instanceObj" class="modal-content">
+    <app-cloudmatiq-server-detail
+      [instanceref]="instanceObj"
+      (showDrillDown)="viewServerDetail = false; notifyDetailEntry(event)"
+    >
+    </app-cloudmatiq-server-detail>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+<div nz-row *ngIf="referencesList.length > 0" style="padding: 0 9px">
+  <div
+    nz-col
+    nzSpan="24"
+    *ngFor="let r of referencesList; let i = index"
+    style="
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      color: white;
+    "
+  >
+    <a [href]="r" target="_blank">{{ r }}</a>
+    <!-- <p>{{ r }}</p> -->
+    <div>
+      <!-- <i class="anticon anticon-link" (click)="openURL(r)"></i> -->
+      <i
+        class="anticon anticon-delete"
+        (click)="referencesList.splice(i, 1); updateEventLog()"
+        style="margin-left: 11px"
+      ></i>
+    </div>
+  </div>
+</div>
+</nz-spin>

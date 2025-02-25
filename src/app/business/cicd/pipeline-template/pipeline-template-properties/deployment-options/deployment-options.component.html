@@ -1,0 +1,416 @@
+<form nz-form [formGroup]="deploymentForm">
+  <div class="">
+    <h3 class="solution-title mb-0 underline">Backup Artifacts</h3>
+    <nz-form-item>
+      <nz-form-label nzFor="storagetype" nzRequired [nzSpan]="6"
+        >Storage Type
+      </nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-input-group>
+          <nz-radio-group formControlName="storagetype">
+            <label nz-radio nzValue="FTP">FTP</label>
+            <label nz-radio nzValue="StorageObjects">Storage Objects</label>
+          </nz-radio-group></nz-input-group
+        ></nz-form-control
+      >
+    </nz-form-item>
+    <div *ngIf="deploymentForm.value.storagetype == 'FTP'">
+      <nz-form-item>
+        <nz-form-label nzFor="username" nzRequired [nzSpan]="6"
+          >Username</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="username"
+              placeholder="Username"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="password" nzRequired [nzSpan]="6"
+          >Password</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group>
+            <input
+              type="password"
+              nz-input
+              formControlName="password"
+              placeholder="Password"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="ip" nzRequired [nzSpan]="6">IP</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="ip"
+              placeholder="{{ cmdb_vm_ip }}"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div *ngIf="deploymentForm.value.storagetype != 'FTP'">
+      <nz-form-item>
+        <nz-form-label nzFor="provider" nzRequired [nzSpan]="6"
+          >Provider</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-form-control>
+            <nz-select
+              style="width: 90%"
+              nzId="provider"
+              formControlName="provider"
+              nzPlaceHolder="Select Provider"
+            >
+              <nz-option
+                *ngFor="let u of cloudproviderList; index as ti"
+                [nzLabel]="u.keyname"
+                [nzValue]="u.keyvalue"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="region" nzRequired [nzSpan]="6"
+          >Region</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-form-control>
+            <nz-select
+              style="width: 90%"
+              nzId="region"
+              formControlName="region"
+              nzPlaceHolder="Select region"
+            >
+              <nz-option
+                *ngFor="let u of regionList; index as ti"
+                [nzLabel]="u.zonename"
+                [nzValue]="u.zonename"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="endpoint" [nzSpan]="6" nzRequired
+          >Endpoint</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="endpoint"
+              placeholder="Endpoint"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="folder" nzRequired [nzSpan]="6"
+          >Folder Location</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="folder"
+              placeholder="Folder Location"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="accesskey" nzRequired [nzSpan]="6"
+          >Access key</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="accesskey"
+              placeholder="Access Key"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="secretkey" nzRequired [nzSpan]="6"
+          >Secret key</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group>
+            <input
+              type="text"
+              nz-input
+              formControlName="secretkey"
+              placeholder="Secret Key"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="ant-col-md-24 ant-col-lg-24 p-b-50">
+    <h3 class="solution-title mb-0 underline">Disaster Recovery</h3>
+    <nz-form-item>
+      <nz-form-label nzFor="autoswitch" nzRequired [nzSpan]="6"
+        >Auto Switch</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-switch formControlName="autoswitch"></nz-switch>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzFor="action" nzRequired [nzSpan]="6"
+        >Action</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-input-group>
+          <nz-radio-group formControlName="action">
+            <label nz-radio nzValue="Yes">Setup DR</label>
+            <label nz-radio nzValue="No">Skip & Proceed</label>
+          </nz-radio-group></nz-input-group
+        ></nz-form-control
+      >
+    </nz-form-item>
+    <nz-form-item *ngIf="deploymentForm.value.action == 'Yes'">
+      <nz-form-label nzFor="orchestration" nzRequired [nzSpan]="6"
+        >Orchestration</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          style="width: 90%"
+          nzId="orchestration"
+          formControlName="orchestration"
+          nzPlaceHolder="Select Orchestration"
+        >
+          <nz-option
+            *ngFor="let u of orchestrationList; index as ti"
+            [nzLabel]="u.orchname"
+            [nzValue]="u.orchid"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+
+  <div class="ant-col-md-24 ant-col-lg-24 p-b-50">
+    <h3 class="solution-title mb-0 underline">Deployment Options</h3>
+    <nz-form-item>
+      <nz-form-label nzFor="type" nzRequired [nzSpan]="6">Deployment Type</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-input-group>
+          <nz-radio-group formControlName="type">
+            <label nz-radio nzValue="BG">Blue - Green</label>
+            <label nz-radio nzValue="C">Canary Based</label>
+          </nz-radio-group></nz-input-group
+        ></nz-form-control
+      >
+    </nz-form-item>
+    <nz-form-item *ngIf="deploymentForm.value.type == 'C'">
+      <nz-form-label nzFor="frequency" nzRequired [nzSpan]="6"
+        >Percentage(%)</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number
+          formControlName="frequency"
+          [nzMin]="2"
+          style="width: 86%; margin-left: 12px"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+    <!-- Instance selection form -->
+    <nz-form-item *ngIf="deploymentForm.value.type == 'BG'">
+      <nz-form-label nzFor="customers" nzRequired [nzSpan]="6"
+        >Customer</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          formControlName="customers"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Customer"
+          style="width: 90%"
+          (ngModelChange)="onCustomerChange($event)"
+        >
+          <nz-option
+            *ngFor="let t of customersList; index as ti"
+            [nzLabel]="t.customername"
+            [nzValue]="t.customerid"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="deploymentForm.value.type == 'BG'">
+      <nz-form-label nzFor="accounts" nzRequired [nzSpan]="6"
+        >Account</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          formControlName="accounts"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Account ID"
+          style="width: 90%"
+          (ngModelChange)="onAccountChange($event)"
+        >
+          <nz-option
+            *ngFor="let t of accountsList; index as ti"
+            [nzLabel]="t.name"
+            [nzValue]="t.id"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="deploymentForm.value.type == 'BG'">
+      <nz-form-label nzFor="tag" nzRequired [nzSpan]="6">Tag</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          formControlName="tag"
+          (ngModelChange)="tagChanged($event)"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Tag"
+          style="width: 90%"
+        >
+          <nz-option
+            *ngFor="let t of tagList; index as ti"
+            [nzLabel]="t.tagname"
+            [nzValue]="t.tagid"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="deploymentForm.value.type == 'BG'">
+      <nz-form-label nzFor="tagvalue" nzRequired [nzSpan]="6"
+        >Tag Values</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <input
+          *ngIf="(selectedTag | json) == '{}'"
+          nz-input
+          placeholder="Value"
+          disabled
+          style="width: 88%"
+        />
+        <nz-select
+          *ngIf="
+            selectedTag && selectedTag.tagtype && selectedTag.tagtype == 'list'
+          "
+          formControlName="tagvalue"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Value"
+          style="width: 90%"
+        >
+          <nz-option
+            *ngFor="let t of selectedTag.lookupvalues; index as ti"
+            [nzLabel]="t"
+            [nzValue]="t"
+          >
+          </nz-option>
+        </nz-select>
+        <nz-select
+          *ngIf="
+            selectedTag &&
+            selectedTag.tagtype &&
+            selectedTag.tagtype == 'boolean'
+          "
+          formControlName="tagvalue"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Value"
+          style="width: 90%"
+        >
+          <nz-option nzLabel="Yes" nzValue="Yes"> </nz-option>
+          <nz-option nzLabel="No" nzValue="No"> </nz-option>
+        </nz-select>
+        <nz-date-picker
+          *ngIf="
+            selectedTag && selectedTag.tagtype && selectedTag.tagtype == 'date'
+          "
+          nzFormat="dd-MMM-yyyy"
+          formControlName="tagvalue"
+          style="width: 90%"
+        ></nz-date-picker>
+        <input
+          *ngIf="
+            selectedTag && selectedTag.tagtype && selectedTag.tagtype == 'text'
+          "
+          formControlName="tagvalue"
+          nz-input
+          placeholder="Value"
+          style="width: 88%"
+        />
+        <nz-input-number
+          *ngIf="
+            selectedTag &&
+            selectedTag.tagtype &&
+            selectedTag.tagtype == 'number'
+          "
+          formControlName="tagvalue"
+          style="width: 88%"
+        ></nz-input-number>
+        <nz-input-number
+          *ngIf="
+            selectedTag && selectedTag.tagtype && selectedTag.tagtype == 'range'
+          "
+          [(ngModel)]="filters.tagvalue"
+          [nzMin]="selectedTag.min"
+          [nzMax]="selectedTag.max"
+        >
+        </nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="deploymentForm.value.type == 'BG'">
+      <nz-form-label nzFor="instance" nzRequired [nzSpan]="6"
+        >Instance</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          formControlName="instance"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Select Instance"
+          style="width: 90%"
+          nzMode="multiple"
+        >
+          <nz-option
+            *ngFor="let t of instance"
+            [nzLabel]="t.instancename"
+            [nzValue]="t.instancerefid"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</form>
+<button
+  nz-button
+  nzType="primary"
+  class="left"
+  (click)="formValidate()"
+>
+ Save
+</button>

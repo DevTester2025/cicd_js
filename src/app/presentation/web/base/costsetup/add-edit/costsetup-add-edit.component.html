@@ -1,0 +1,250 @@
+<nz-spin [nzSpinning]="loading">
+  <form nz-form [formGroup]="costForm">
+    <div class="row">
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="12"
+            nzRequired
+            nzFor="cloudprovider"
+            >Provider</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              formControlName="cloudprovider"
+              style="width: 95%"
+              nzAllowClear
+              nzShowSearch
+              nzPlaceHolder="Provider"
+              (ngModelChange)="providerChanges(costForm.value.cloudprovider)"
+            >
+              <nz-option
+                *ngFor="let t of providerList; index as ti"
+                [nzLabel]="t.label"
+                [nzValue]="t.value"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label nzRequired [nzSm]="23" [nzXs]="12" nzFor="region"
+            >Zone</nz-form-label
+          >
+          <nz-form-control [nzSm]="23" [nzXs]="12">
+            <nz-select
+              formControlName="region"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Zone"
+              style="width: 95%"
+            >
+              <nz-option
+                *ngFor="let t of zoneList; index as ti"
+                [nzLabel]="t.label"
+                [nzValue]="t.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <nz-form-item>
+      <nz-form-label nzRequired [nzSm]="24" [nzXs]="12" nzFor="resourcetype"
+        >Asset</nz-form-label
+      >
+      <nz-form-control [nzSm]="24" [nzXs]="12">
+        <nz-select
+          formControlName="resourcetype"
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Asset"
+          nzShowSearch
+          (ngModelChange)="
+            assetChanges(
+              costForm.value.cloudprovider,
+              costForm.value.resourcetype
+            )
+          "
+        >
+          <nz-option
+            *ngFor="let t of assetTypes; index as ti"
+            [nzLabel]="t.title"
+            [nzValue]="t.value"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="plantype">
+        Plan Type
+      </nz-form-label>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <nz-select
+          *ngIf="selectPlan"
+          formControlName="plantype"
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Plan type"
+          nzShowSearch
+        >
+          <nz-option
+            *ngFor="let t of planList; index as ti"
+            [nzLabel]="t.label"
+            [nzValue]="t.value"
+          >
+          </nz-option>
+        </nz-select>
+        <nz-input-group *ngIf="!selectPlan">
+          <input
+            id="plantype"
+            placeholder="Plan Type"
+            formControlName="plantype"
+            nz-input
+            type="text"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="image">
+        Image
+      </nz-form-label>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <nz-select
+          formControlName="image"
+          [nzDisabled]="costForm.value.resourcetype != 'ASSET_INSTANCE'"
+          nzShowSearch
+          style="width: 95%"
+          nzAllowClear
+          nzPlaceHolder="Image"
+        >
+          <nz-option
+            *ngFor="let t of imageList; index as ti"
+            [nzLabel]="t.label"
+            [nzValue]="t.value"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <div class="row">
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="24"
+            nzRequired
+            nzFor="pricingmodel"
+          >
+            Pricing Model
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-select
+              formControlName="pricingmodel"
+              nzShowSearch
+              style="width: 95%"
+              nzAllowClear
+              nzPlaceHolder="Pricing model"
+            >
+              <nz-option
+                *ngFor="let t of pricingList; index as ti"
+                [nzLabel]="t.label"
+                [nzValue]="t.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="23" [nzXs]="24" nzRequired nzFor="unit">
+            Unit
+          </nz-form-label>
+          <nz-form-control [nzSm]="22" [nzXs]="24">
+            <nz-select
+              formControlName="unit"
+              nzShowSearch
+              style="width: 95%"
+              nzAllowClear
+              nzPlaceHolder="Unit"
+            >
+              <nz-option
+                *ngFor="let t of unitList; index as ti"
+                [nzLabel]="t.label"
+                [nzValue]="t.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="currency">
+            Currency
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-select
+              formControlName="currency"
+              nzShowSearch
+              style="width: 95%"
+              nzAllowClear
+              nzPlaceHolder="Currency"
+            >
+              <nz-option
+                *ngFor="let t of currencyList; index as ti"
+                [nzLabel]="t.label"
+                [nzValue]="t.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s12 m6">
+        <nz-form-item>
+          <nz-form-label
+            [nzSm]="23"
+            [nzXs]="24"
+            nzRequired
+            nzFor="priceperunit"
+          >
+            Price Per Unit
+          </nz-form-label>
+          <nz-form-control [nzSm]="23" [nzXs]="24">
+            <nz-input-group>
+              <input
+                id="priceperunit"
+                placeholder="Price Per Unit"
+                formControlName="priceperunit"
+                nz-input
+                type="text"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      (click)="saveUpdateScript(costForm.value)"
+      class="save-button"
+      nz-button
+      [nzLoading]="disabled"
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

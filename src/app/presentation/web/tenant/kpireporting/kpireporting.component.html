@@ -1,0 +1,28 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <div class="row param-table">
+       <!-- #OP_B632 -->
+      <div class="row">
+        <div class="col s12 m2 left left-align">
+          <button
+            *ngIf="visibleadd"
+            nz-button
+            nzType="primary"
+            (click)="addConfig()"
+          >
+            <i class="anticon anticon-plus"></i>Add
+          </button>
+        </div>
+
+        <app-cloudmatiq-data-table
+          (dataChanged)="dataChanged($event)"
+          [tableData]="kpireportingList"
+          [tableHeader]="tableHeader"
+          [selectedcolumns]="selectedcolumns"
+          [tableConfig]="tableconfig"
+          [totalCount]="totalCount"
+        ></app-cloudmatiq-data-table>
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

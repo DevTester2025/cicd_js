@@ -1,0 +1,94 @@
+<nz-spin [nzSpinning]="loading">
+  <nz-tabset
+  [nzTabBarExtraContent]="extraTemplate"
+    [nzSelectedIndex]="tabIndex"
+    (nzSelectChange)="tabChanged($event)">
+    <nz-tab nzTitle="Info">
+  <form nz-form [formGroup]="productForm">
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="productname"
+        >Product Name
+      </nz-form-label>
+      <nz-form-control [nzSm]="24" [nzXs]="12">
+        <nz-input-group>
+          <input
+            id="productname"
+            placeholder="Product Name"
+            formControlName="productname"
+            nz-input
+            type="text"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="productcode"
+        >Product code
+      </nz-form-label>
+      <nz-form-control [nzSm]="24" [nzXs]="12">
+        <nz-input-group>
+          <input
+            id="productcode"
+            placeholder="Product Code"
+            formControlName="productcode"
+            nz-input
+            type="text"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="servertype"
+        >Server Type
+      </nz-form-label>
+      <nz-form-control [nzSm]="24" [nzXs]="12">
+        <nz-input-group>
+          <input
+            id="servertype"
+            placeholder="Server Type"
+            formControlName="servertype"
+            nz-input
+            type="text"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+        >Status</nz-form-label
+      >
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <nz-input-group>
+          <nz-switch
+            class="status"
+            id="status"
+            formControlName="status"
+          ></nz-switch>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-tab>
+<nz-tab nzTitle="Change Logs" *ngIf="productObj.productid !== undefined && productObj.productid !== null && isChangelogs">
+  <app-comments
+    *ngIf="tabIndex == 1"
+    [resourceDetails]="productObj"
+    [resourceId]="productObj.refid"
+    [refType]="'history'"
+  ></app-comments>
+</nz-tab>
+</nz-tabset>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button *ngIf="tabIndex == 0"
+      [disabled]="!productForm.valid || disabled"
+      (click)="saveUpdateProduct()"
+      class="save-button"
+      nz-button
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,343 @@
+<nz-spin [nzSpinning]="loading" [nzTip]="" [nzSize]="'large'">
+  <div class="row">
+    <div class="col s4">
+      <nz-form-label>SLA Template</nz-form-label>
+      <nz-input-group>
+        <nz-select
+          style="width: 100%"
+          [(ngModel)]="slatempid"
+          (ngModelChange)="onSelect($event)"
+          nzShowSearch
+          nzPlaceHolder="Select"
+        >
+          <nz-option
+            *ngFor="let option of slatempList"
+            [nzLabel]="option.slaname"
+            [nzValue]="option.id"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-input-group>
+    </div>
+    <div class="row">
+      <div class="col s12" style="padding-top: 28px">
+        <h4 class="amber-text">Incident SLA</h4>
+        <div>
+          <table id="grouptable" aria-label="Incident SLA Value">
+            <thead>
+              <th width="12%">Priority</th>
+              <th width="10%">Response Time (Mins)</th>
+              <th width="10%">Resolution Time (Hrs)</th>
+              <th width="20%">Notes</th>
+              <th width="25%">Tag</th>
+              <th width="25%">
+                Tag value
+                <span style="float: right"
+                  ><i
+                    class="anticon anticon-plus"
+                    (click)="addRow('INCIDENTSLA')"
+                    style="color: #ffcc00"
+                  ></i
+                ></span>
+              </th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of incidentslaList; let i = index">
+                <td>
+                  <nz-select
+                    [(ngModel)]="t.incidentslaid"
+                    nzAllowClear
+                    [nzShowSearch]="true"
+                    nzPlaceHolder="Select"
+                    style="margin-left: -13px; width: 100%"
+                  >
+                    <nz-option
+                      *ngFor="let data of incidentsla"
+                      [nzLabel]="data.priority"
+                      [nzValue]="data.id"
+                    ></nz-option>
+                  </nz-select>
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.responsetime"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.resolutiontime"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.notes"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <nz-select
+                    [(ngModel)]="t.tagid"
+                    nzAllowClear
+                    [nzShowSearch]="true"
+                    nzPlaceHolder="Choose"
+                    (ngModelChange)="onTagSelect(t, i, 'INCIDENTSLA')"
+                    style="margin-left: -13px; width: 100%"
+                  >
+                    <nz-option
+                      *ngFor="let data of tagList"
+                      [nzLabel]="data.tagname"
+                      [nzValue]="data.tagid"
+                    ></nz-option>
+                  </nz-select>
+                </td>
+                <td>
+                  <input
+                    style="width: 86%"
+                    nz-input
+                    placeholder="Value"
+                    [nzAutocomplete]="auto"
+                    [(ngModel)]="t.tagvalue"
+                  />
+                  <nz-autocomplete nzBackfill #auto>
+                    <nz-auto-option
+                      *ngFor="let option of t.tagValues"
+                      [nzValue]="option.tagvalue"
+                    >
+                      {{ option.tagvalue }}
+                    </nz-auto-option>
+                  </nz-autocomplete>
+                  <span style="float: right"
+                    ><i
+                      class="anticon anticon-delete"
+                      (click)="deleteRow('INCIDENTSLA', i)"
+                      style="color: #ffcc00; padding-top: 12px"
+                    ></i
+                  ></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s12" style="padding-top: 28px">
+        <h4 class="amber-text">Availability SLA</h4>
+        <div>
+          <table id="grouptable" aria-label="Availability SLA Value">
+            <thead>
+              <th width="12%">Uptime (%)</th>
+              <th width="10%">RPO (Hrs)</th>
+              <th width="10%">RTO (Hrs)</th>
+              <th width="20%">Notes</th>
+              <th width="25%">Tag</th>
+              <th width="25%">
+                Tag value
+                <span style="float: right"
+                  ><i
+                    class="anticon anticon-plus"
+                    (click)="addRow('AVAILABILITYSLA')"
+                    style="color: #ffcc00"
+                  ></i
+                ></span>
+              </th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of availabilityslaList; let i = index">
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.uptimeprcnt"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.rpo"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.rto"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.notes"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <nz-select
+                    [(ngModel)]="t.tagid"
+                    nzAllowClear
+                    [nzShowSearch]="true"
+                    nzPlaceHolder="Choose"
+                    (ngModelChange)="onTagSelect(t, i, 'AVAILABILITYSLA')"
+                    style="margin-left: -13px; width: 100%"
+                  >
+                    <nz-option
+                      *ngFor="let data of tagList"
+                      [nzLabel]="data.tagname"
+                      [nzValue]="data.tagid"
+                    ></nz-option>
+                  </nz-select>
+                </td>
+                <td>
+                  <input
+                    style="width: 86%"
+                    nz-input
+                    placeholder="Value"
+                    [nzAutocomplete]="auto"
+                    [(ngModel)]="t.tagvalue"
+                  />
+                  <nz-autocomplete nzBackfill #auto>
+                    <nz-auto-option
+                      *ngFor="let option of t.tagValues"
+                      [nzValue]="option.tagvalue"
+                    >
+                      {{ option.tagvalue }}
+                    </nz-auto-option>
+                  </nz-autocomplete>
+                  <span style="float: right"
+                    ><i
+                      class="anticon anticon-delete"
+                      (click)="deleteRow('AVAILABILITYSLA', i)"
+                      style="color: #ffcc00; padding-top: 12px"
+                    ></i
+                  ></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s12" style="padding-top: 28px">
+        <h4 class="amber-text">Service Credits</h4>
+        <div>
+          <table id="grouptable" aria-label="Service Credits Value">
+            <thead>
+              <th width="12%">From (%)</th>
+              <th width="10%">To (%)</th>
+              <th width="10%">Credits (%)</th>
+              <th width="20%">Notes</th>
+              <th width="25%">Tag</th>
+              <th width="25%">
+                Tag value
+                <span style="float: right"
+                  ><i
+                    class="anticon anticon-plus"
+                    (click)="addRow('SERVICECREDITS')"
+                    style="color: #ffcc00"
+                  ></i
+                ></span>
+              </th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of servicecreditList; let i = index">
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.utmin"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.utmax"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.servicecredit"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <input
+                    nz-input
+                    [(ngModel)]="t.notes"
+                    style="margin: 0 0 0 1px"
+                  />
+                </td>
+                <td>
+                  <nz-select
+                    [(ngModel)]="t.tagid"
+                    nzAllowClear
+                    [nzShowSearch]="true"
+                    nzPlaceHolder="Choose"
+                    (ngModelChange)="onTagSelect(t, i, 'SERVICECREDITS')"
+                    style="margin-left: -13px; width: 100%"
+                  >
+                    <nz-option
+                      *ngFor="let data of tagList"
+                      [nzLabel]="data.tagname"
+                      [nzValue]="data.tagid"
+                    ></nz-option>
+                  </nz-select>
+                </td>
+                <td>
+                  <input
+                    style="width: 86%"
+                    nz-input
+                    placeholder="Value"
+                    [nzAutocomplete]="auto"
+                    [(ngModel)]="t.tagvalue"
+                  />
+                  <nz-autocomplete nzBackfill #auto>
+                    <nz-auto-option
+                      *ngFor="let option of t.tagValues"
+                      [nzValue]="option.tagvalue"
+                    >
+                      {{ option.tagvalue }}
+                    </nz-auto-option>
+                  </nz-autocomplete>
+                  <span style="float: right"
+                    ><i
+                      class="anticon anticon-delete"
+                      (click)="deleteRow('SERVICECREDITS', i)"
+                      style="color: #ffcc00; padding-top: 12px"
+                    ></i
+                  ></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+        </div>
+      </div>
+    </div>
+
+    <div class="right mr-0">
+      <button
+        (click)="saveOrUpdate()"
+        class="mt-1 save-button"
+        type="submit"
+        nz-button
+        nzType="primary"
+        [nzLoading]="updating"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</nz-spin>

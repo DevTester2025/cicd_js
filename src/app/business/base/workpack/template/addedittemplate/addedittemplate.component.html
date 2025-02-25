@@ -1,0 +1,348 @@
+<ng-container>
+  <app-cloudmatiq-side-nav [blockUI]="loading">
+    <div class="page-body">
+      <ng-container *ngTemplateOutlet="contentpanel">
+      </ng-container>
+    </div>
+    <!--  -->
+  </app-cloudmatiq-side-nav>
+</ng-container>
+<ng-template #contentpanel>
+  <div class="page-body">
+    <app-cloudmatiq-side-bar (dataChanged)="rightbarChanged($event)" [(isVisible)]="isVisible" [title]="formTitle"
+      [width]="500">
+      <ng-container class="modal-content">
+        <!-- <app-addedittasktemplate [tasktemplateObj]="tasktemplateObj" [taskMode]="taskMode" [taskTemplateFields]="taskResource"
+          (notifyNewEntry)="notifyNewTaskEntry($event)">
+        </app-addedittasktemplate> -->
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <app-cloudmatiq-side-bar (dataChanged)="resourceDetailMenuVisible = !resourceDetailMenuVisible"
+      [(isVisible)]="resourceDetailMenuVisible" [width]="920" title="Task Details">
+      <ng-container *ngIf="resourceDetailMenuVisible" class="modal-content">
+        <add-edit-tasktemplete-assets [selectedTaskResourceID]="selectedTaskResourceID"
+          [(selectedResource)]="selectedTaskResource" [(resourceDetails)]="resourceDetails"
+          [referringAssetDetails]="referringAssetDetails" (onEmitTagClick)="onSideBarTagClick(true)"
+          [(isAddForm)]="isAddForm" [recordData]="selectedTaskResource" (notifyNewEntry)="notifyTaskEntry($event)"
+          [(selectedTaskEdit)]="selectedTaskEdit">
+        </add-edit-tasktemplete-assets>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <app-cloudmatiq-side-bar (dataChanged)="isTreeVisible=false;" [(isVisible)]="isTreeVisible"
+      [title]="'Template Selection'" [width]="820">
+      <ng-container class="modal-content">
+        <app-workpackselection (notifyTaskSelection)="notifyTaskSelection($event)">
+        </app-workpackselection>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <nz-tabset [nzSelectedIndex]="tabIndex" (nzSelectChange)="tabChanged($event)"
+      [nzTabBarExtraContent]="extraTemplate">
+      <ng-template #extraTemplate>
+        <div nz-col nzSpan="24">
+          <div class="right-align">
+            <button style="margin-top: 5px; margin-right: 4px;" nzSize="small" nz-button
+              [disabled]="!visibleAdd && !visibleEdit" (click)="addRecordDetail()" [nzLoading]="saveLoading"
+              nzType="primary" *ngIf="tabIndex === 0">
+              Save
+            </button>
+            <button nzSize="small" nz-button (click)="close()" nzType="primary" class="ml-1">
+              <i class="anticon anticon-close"></i>
+            </button>
+            &nbsp;&nbsp;
+          </div>
+        </div>
+      </ng-template>
+      <nz-tab nzTitle="Info">
+        <div style="height: 100%; width: 100%">
+          <div nz-col nzspan="24">
+            <div nz-row>
+              <div class="left left-align" nz-col nzSpan="16" style="text-align: end">
+
+                <nz-select *ngIf="isEdit && isExecutableVersion" nzShowSearch nzAllowClear
+                  nzPlaceHolder="Work-Pack Status" style="width: 200px;margin-right: 15px;"
+                  [(ngModel)]="executionStatus">
+                  <nz-option *ngFor="let p of executionStatusList" [nzValue]="p" [nzLabel]="p"></nz-option>
+                </nz-select>
+
+                <nz-select *ngIf="(visibleEdit  || visibleAdd) && !isExecutableVersion" nzShowSearch nzAllowClear
+                  nzPlaceHolder="Work-Pack Status" style="width: 250px;margin-right: 15px;"
+                  [(ngModel)]="workpackStatus">
+                  <nz-option *ngFor="let p of workpackOperationType" [nzValue]="p" [nzLabel]="p"></nz-option>
+                </nz-select>
+                <nz-select nzPlaceHolder="Select Watchlist" nzShowSearch [(ngModel)]="selectedValue" nzMode="multiple"
+                  nzAllowClear style="width: 265px;margin-right: 15px" [nzDisabled]="isView">
+                  <nz-option *ngFor="let option of watchListWorkPack" [nzValue]="option.value"
+                    [nzLabel]="option.label"></nz-option>
+                </nz-select>
+                <div class="right right-align">
+                </div>
+              </div>
+              <div class="left left-align" nz-col nzSpan="6" style="text-align: end">
+
+              </div>
+            </div>
+          </div>
+          <div nz-col nzspan="24">
+            <div nz-row class="dynamic-form">
+              <ng-container *ngFor="let o of resourceData; let idx = index">
+
+                <div nz-col [nzSpan]="o.fieldtype == 'Textarea' ? 24 : 6" *ngIf="o.fieldtype != 'AUTOGEN'" [ngClass]="{
+                    'col s6 ': o.fieldtype != 'Textarea',
+                    'col s12 ': o.fieldtype == 'Textarea'
+                  }">
+                  <nz-form-item *ngIf="o.operationtype == cmdbOperationType[0]">
+                    <nz-form-label [nzSm]="12" class="left-align" [nzXs]="12" nzFor="title">
+                      {{ o.fieldname }}
+                    </nz-form-label>
+                    <div class="formspan" *ngIf="
+                        o.fieldtype == 'Text' ||
+                        o.fieldtype == 'Integer' ||
+                        o.fieldtype == 'Float' ||
+                        o.fieldtype == 'URL'
+                      ">
+                      <nz-input-group>
+                        <input nz-input
+                          [readonly]="(isExecutableVersion || isPublished) && (!visibleAdd && !visibleEdit)"
+                          placeholder="Enter value" [(ngModel)]="o.fieldvalue" />
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Password'">
+                      <nz-input-group>
+                        <input nz-input
+                          [readonly]="(isExecutableVersion && isPublished) || (!visibleAdd && !visibleEdit)"
+                          type="password" placeholder="Enter value" [(ngModel)]="o.fieldvalue" />
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Password'">
+                      <nz-input-group>
+                        <input nz-input
+                          [readonly]="(isExecutableVersion && isPublished) || (!visibleAdd && !visibleEdit)"
+                          type="password" placeholder="Enter value" [(ngModel)]="o.fieldvalue" />
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Date'">
+                      <nz-input-group>
+                        <nz-date-picker
+                          [nzDisabled]="(isExecutableVersion || isPublished) && (!visibleAdd && !visibleEdit)"
+                          [(ngModel)]="o.fieldvalue"></nz-date-picker>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'DateTime'">
+                      <nz-input-group>
+                        <nz-date-picker [(ngModel)]="o.fieldvalue"
+                          [nzDisabled]="(isExecutableVersion || isPublished) && (!visibleAdd && !visibleEdit)"
+                          [nzShowTime]="{ nzHideDisabledOptions: true }"
+                          nzFormat="dd-MM-yyyy HH:mm:ss"></nz-date-picker>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Select' || o.fieldtype == 'STATUS'">
+                      <nz-input-group>
+                        <nz-select [nzDisabled]="(isExecutableVersion || isPublished) && (!visibleAdd && !visibleEdit)"
+                          nzShowSearch nzAllowClear nzPlaceHolder="Select" [(ngModel)]="o.fieldvalue">
+                          <nz-option *ngFor="let p of o.defaultValues" [nzValue]="p" [nzLabel]="p"></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Boolean'">
+                      <nz-radio-group nzName="radiogroup" [(ngModel)]="o.fieldvalue">
+                        <label nz-radio nzValue="true">True</label>
+                        <label nz-radio nzValue="false">False</label>
+                      </nz-radio-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'REFERENCE'">
+                      <nz-select [nzDisabled]="(isExecutableVersion || isPublished) && (!visibleAdd && !visibleEdit)"
+                        nzShowSearch [(ngModel)]="o.fieldvalue" nzMode="multiple" nzAllowClear nzPlaceHolder="Select">
+                        <nz-option *ngFor="let p of o.defaultValues" [nzValue]="p" [nzLabel]="p.name"></nz-option>
+                      </nz-select>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Reference Tag'">
+                      <nz-input-group>
+                        <input [readonly]="(isExecutableVersion || isPublished) && (!visibleAdd && !visibleEdit)"
+                          nz-input [(ngModel)]="o.fieldvalue" placeholder="Enter value" />
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan p-t-40" *ngIf="o.fieldtype == 'Textarea'">
+                      <p-editor [(ngModel)]="o.fieldvalue"
+                        [readonly]="(isExecutableVersion || isPublished) && (!visibleAdd && !visibleEdit)"
+                        [style]="{ height: '200px' }"></p-editor>
+                      <!-- <textarea rows="4" nz-input [(ngModel)]="o.fieldvalue" placeholder="Enter the value"></textarea> -->
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'DOCUMENT'">
+                      <nz-input-group>
+                        <input type="file" (change)="onFile($event, o)" />
+                      </nz-input-group>
+                      <ul class="download-badge-list custom-flex-start">
+                        <li class="custom-flex-end" *ngFor="
+                            let imgDir of displayPreviewList(o);
+                            let inneridx = index
+                          ">
+
+                          <a *ngIf="isEdit" (click)="downloadFile(imgDir,o)"><i
+                              class="anticon anticon-download"></i></a>
+                          <a (click)="removeImage(o, inneridx)"><i class="anticon anticon-delete"></i></a>
+                        </li>
+                      </ul>
+                    </div>
+                  </nz-form-item>
+                  <nz-form-item *ngIf="o.operationtype == cmdbOperationType[1]">
+                    <nz-form-label [nzSm]="24" class="left-align" [nzXs]="12" nzFor="title">
+                      {{ o.fieldname }}
+                    </nz-form-label>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Date'">
+                      <nz-input-group>
+                        <nz-date-picker [nzDisabled]="isPublished || (!visibleAdd && !isEdit)"
+                          [(ngModel)]="o.fieldvalue"></nz-date-picker>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan"
+                      *ngIf="o.fieldtype == 'Select'  && o.fieldname == workpackDefaultAttr[0].fieldname">
+                      <!-- executor -->
+                      <nz-input-group>
+                        <nz-select nzShowSearch [nzDisabled]="isPublished || (!visibleAdd && !isEdit)" nzAllowClear
+                          nzPlaceHolder="Select" [(ngModel)]="o.fieldvalue">
+                          <nz-option *ngFor="let p of   " [nzValue]="p.userid" [nzLabel]="p.fullname"></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan"
+                      *ngIf="o.fieldtype == 'Select' && o.fieldname == workpackDefaultAttr[2].fieldname">
+                      <!-- execution result -->
+                      <nz-input-group>
+                        <nz-select [nzDisabled]="(!isExcecutorLogin && isPublished && !visibleAdd ) && !isEdit"
+                          nzShowSearch nzAllowClear nzPlaceHolder="Select" [(ngModel)]="o.fieldvalue">
+                          <nz-option *ngFor="let p of o.defaultValues" [nzValue]="p" [nzLabel]="p"></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan"
+                      *ngIf="o.fieldtype == 'Select' && o.fieldname != workpackDefaultAttr[0].fieldname && o.fieldname != workpackDefaultAttr[2].fieldname">
+                      <nz-input-group>
+                        <nz-select [nzDisabled]="!isEdit && isPublished && !visibleAdd" nzShowSearch nzAllowClear
+                          nzPlaceHolder="Select" [(ngModel)]="o.fieldvalue">
+                          <nz-option *ngFor="let p of o.defaultValues" [nzValue]="p" [nzLabel]="p"></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Textarea'">
+                      <p-editor [readonly]="(!isExcecutorLogin && isPublished && !visibleAdd) && !isEdit"
+                        [(ngModel)]="o.fieldvalue" [style]="{ height: '200px' }"></p-editor>
+                    </div>
+                  </nz-form-item>
+                  <nz-form-item *ngIf="o.operationtype == cmdbOperationType[2]">
+                    <nz-form-label [nzSm]="24" class="left-align" [nzXs]="12" nzFor="title">
+                      {{ o.fieldname }}
+                    </nz-form-label>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Date'">
+                      <nz-input-group>
+                        <nz-date-picker [nzDisabled]="isPublished || (!visibleAdd && !isEdit)"
+                          [(ngModel)]="o.fieldvalue"></nz-date-picker>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan"
+                      *ngIf="o.fieldtype == 'Select'  && o.fieldname == workpackDefaultAttr[4].fieldname">
+                      <nz-input-group>
+                        <nz-select nzShowSearch [nzDisabled]="isPublished || (!visibleAdd && !isEdit)" nzAllowClear
+                          nzPlaceHolder="Select" [(ngModel)]="o.fieldvalue">
+                          <nz-option *ngFor="let p of usersList" [nzValue]="p.userid"
+                            [nzLabel]="p.fullname"></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan"
+                      *ngIf="o.fieldtype == 'Select' && o.fieldname != workpackDefaultAttr[6].fieldname">
+
+                      <nz-input-group>
+                        <nz-select [nzDisabled]="(!isReviewerLogin && isPublished && !visibleAdd) && !isEdit"
+                          nzShowSearch nzAllowClear nzPlaceHolder="Select" [(ngModel)]="o.fieldvalue">
+                          <nz-option *ngFor="let p of o.defaultValues" [nzValue]="p" [nzLabel]="p"></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan"
+                      *ngIf="o.fieldtype == 'Select' && o.fieldname != workpackDefaultAttr[4].fieldname && o.fieldname != workpackDefaultAttr[6].fieldname">
+                      {{o.fieldname}}
+                      <nz-input-group>
+                        <nz-select [nzDisabled]="isPublished && !isEdit && !visibleAdd" nzShowSearch nzAllowClear
+                          nzPlaceHolder="Select" [(ngModel)]="o.fieldvalue">
+                          <nz-option *ngFor="let p of o.defaultValues" [nzValue]="p" [nzLabel]="p"></nz-option>
+                        </nz-select>
+                      </nz-input-group>
+                    </div>
+                    <div class="formspan" *ngIf="o.fieldtype == 'Textarea'">
+                      <p-editor [readonly]="(!isReviewerLogin && isPublished && !visibleAdd) && !isEdit"
+                        [(ngModel)]="o.fieldvalue" [style]="{ height: '200px' }"></p-editor>
+                    </div>
+                  </nz-form-item>
+                </div>
+                <!-- <div class="clearfix" *ngIf="!IsDecimalExist(idx/4)"></div> -->
+              </ng-container>
+              <div class="clearfix"></div>
+            </div>
+            <div class="clearfix m-t-20"></div>
+            <div class="workflow-section" *ngIf="isEdit && isExecutableVersion">
+              <app-workflow-add-edit [workflow_config]="workflow_config" *ngIf="isWorkflowVisible"
+                (notifyNewEntry)="notifyWorkflowUpfateEntry($event)" [operationMode]="'WKPACK_MAPPING'"
+                [operationRef]="selectedWorkflowTask"></app-workflow-add-edit>
+            </div>
+            <div class="right-align">
+              <button *ngIf="visiblePublish" [disabled]="isPublished || !visibleAdd" (click)="isTreeVisible=true"
+                class="ant-btn ng-star-inserted ant-btn-primary" nz-button nz-dropdown>
+                <span>Select Task Template</span>
+              </button>
+            </div>
+            <div *ngFor="let k of objectKeys(taskTemplates)" class="p-t-10 p-b-10">
+              <nz-collapse>
+                <nz-collapse-panel
+                  [nzHeader]="taskTemplates[k].selectedWorkpackTitle ? taskTemplates[k].selectedWorkpackTitle : 'Task Template Section'">
+                  <div nz-row nzType="flex" nzJustify="end">
+                    <div nz-col nzSpan="6">
+                      <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                        <p style="color:#fff; margin: revert">{{taskTemplates[k].selectedWorkpackTitle ?
+                          taskTemplates[k].selectedWorkpackTitle : 'Task Template Section'}}</p>
+                      </nz-input-group>
+                    </div>
+                    <div nz-col nzSpan="12"> </div>
+                    <div nz-col nzSpan="6">
+                      <button [disabled]="selectedTaskResource.length == 0 || !visibleAdd || !visibleAdd" nzSize="small"
+                        nz-button (click)="openAddView(k)" nzType="primary" class="ml-1">
+                        <i class="anticon anticon-plus"></i>
+                      </button>
+                      <button nz-button nzType="primary" class="ml-1" *ngIf="visibleDelete"
+                        (click)="deleteTask(taskTemplates[k])">
+                        <i class="anticon anticon-delete"></i>
+                      </button>
+                      <button nz-button nzType="primary" class="ml-1" (click)="refresh()">
+                        <i class="anticon anticon-reload"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="clearfix"></div>
+                  <app-takstemplateList [isExecutableVersion]="isExecutableVersion"
+                    [selectedTaskResourceId]="selectedTaskResourceId"
+                    [selectedTaskResourceName]="taskTemplates[k]?.reference"
+                    (notifyTaskEditEntry)="notifyTaskEditEntry($event)"></app-takstemplateList>
+                </nz-collapse-panel>
+              </nz-collapse>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Comments" *ngIf="isEdit">
+        <app-cloudmatiq-asset-comments *ngIf="tabIndex == 1" [(resourceDetails)]="resourceDetails"
+          [(resourceId)]="resourceId"></app-cloudmatiq-asset-comments>
+      </nz-tab>
+      <nz-tab nzTitle="Documents" *ngIf="isEdit">
+        <app-cloudmatiq-asset-docs *ngIf="tabIndex == 2" [(resourceDetails)]="resourceDetails"
+          [(resourceId)]="resourceId"></app-cloudmatiq-asset-docs>
+      </nz-tab>
+      <nz-tab nzTitle="History" *ngIf="isEdit">
+        <app-cloudmatiq-asset-history *ngIf="tabIndex == 3" [(resourceDetails)]="resourceDetails"
+          [(resourceId)]="resourceId"></app-cloudmatiq-asset-history>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</ng-template>
+<ng-template #emptycontentpanel>
+
+</ng-template>

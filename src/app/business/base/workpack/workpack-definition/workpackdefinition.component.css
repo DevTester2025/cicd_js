@@ -1,0 +1,30 @@
+.workpack-tree-selection{
+    color: #fff;
+    margin-top: 0px;
+    min-height: calc( 80vh );
+    overflow-y: auto;
+}
+.workpack-tree-selection .node-content-wrapper:hover {
+    background: #e1eff9 !important;
+    color: #1c2e3c;
+}
+
+.contextmenu-container{
+    z-index: 99999;
+    position: absolute;
+}
+.contextmenu-container ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 150px;
+}
+.contextmenu-container ul li {
+    margin: 0;
+    padding: 0.714em 0.857em;
+    color: #333333;
+    background-color: #f4f4f4;
+    font-weight: 500;
+    border-bottom: solid 1px #5c677338;
+    cursor: pointer;
+}

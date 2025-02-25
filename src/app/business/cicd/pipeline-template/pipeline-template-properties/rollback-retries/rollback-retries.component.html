@@ -1,0 +1,113 @@
+<form nz-form [formGroup]="rrForm">
+  <div class="ant-col-md-24 ant-col-lg-24 p-b-50" *ngIf="propertiesName !== 'RETRY'">
+    <h3 class="solution-title mb-0 underline" *ngIf="isShowHideFields">Rollback</h3>
+    <nz-form-item>
+      <nz-form-label nzFor="rollbackOption" [nzSpan]="6" nzRequired
+        >Rollback Options</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          style="width: 90%"
+          nzId="rollbackOption"
+          formControlName="rollbackOption"
+          nzShowSearch
+          nzPlaceHolder="Select Rollback Option"
+        >
+          <nz-option nzValue="snapshot" nzLabel="Snapshot"></nz-option>
+          <nz-option nzValue="orchestrator" nzLabel="Orchestrator"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="rrForm.value.rollbackOption === 'orchestrator'">
+      <nz-form-label nzFor="orchestratorSelect" [nzSpan]="6">Orchestrator</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          style="width: 90%"
+          nzId="orchestratorSelect"
+          nzPlaceHolder="Select Orchestrator"
+          formControlName="orchestrator"
+        >
+        <nz-option
+        *ngFor="let data of orchestrationList"
+        [nzLabel]="data.orchname"
+        [nzValue]="data.orchid"
+      ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzFor="rollbackMethod" [nzSpan]="6" nzRequired
+        >Rollback Action</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18" class="mt-10">
+        <nz-input-group>
+          <nz-radio-group formControlName="rollbackMethod">
+            <label nz-radio nzValue="automatic">Automatic</label>
+            <label nz-radio nzValue="notify">Notify & Perform</label>
+          </nz-radio-group></nz-input-group
+        ></nz-form-control
+      >
+    </nz-form-item>
+    <nz-form-item *ngIf="rrForm.value.rollbackMethod === 'notify'">
+      <nz-form-label nzFor="notifiersSelect" [nzSpan]="6" nzRequired
+        >Notifiers</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          style="width: 90%"
+          nzId="notifiersSelect"
+          nzMode="multiple"
+          formControlName="notifiers"
+          nzPlaceHolder="Select notifiers"
+          [disabled]="rrForm.value.rollbackMethod !== 'notify'"
+        >
+          <nz-option
+            *ngFor="let u of usersList; index as ti"
+            [nzLabel]="u.fullname"
+            [nzValue]="u.userid"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+
+  <div class="ant-col-md-24 ant-col-lg-24 p-b-50" *ngIf="propertiesName !== 'ROLLBACK'">
+    <h3 class="solution-title mb-0 underline" *ngIf="isShowHideFields">Retries</h3>
+
+    <nz-form-item>
+      <nz-form-label nzFor="timeInterval" [nzSpan]="6" nzRequired
+        >Time Interval</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number
+          formControlName="retryTimeInterval"
+          [nzMin]="300"
+          style="width: 86%; margin-left: 12px"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzFor="retryCount" [nzSpan]="6" nzRequired
+        >Retry Count</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number
+          formControlName="retryCount"
+          [nzMin]="2"
+          style="width: 86%; margin-left: 12px"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</form>
+<button
+  nz-button
+  nzType="primary"
+  class="left"
+  (click)="formValidate()"
+>
+ Save
+</button>

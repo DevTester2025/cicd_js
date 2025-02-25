@@ -1,0 +1,114 @@
+<div class="row data-table card-toggle-btn">
+  <div *ngIf="listType == 'list'" class="col s12 m3 right right-align mr-0">
+    <button
+      nz-button
+      class="m-r-3"
+      (click)="downloadAssets()"
+      title="Download as CSV"
+    >
+      <i class="anticon anticon-download" onclick=""></i>
+    </button>
+  </div>
+  <div class="col s12 m6 left ml-0">
+    <button
+      (click)="listType = 'chart'"
+      [ngClass]="{ 'active-btn': listType === 'chart' }"
+      nz-button
+      nzType="primary"
+    >
+      <i class="anticon anticon-line-chart"></i>
+    </button>
+    <button
+      (click)="listType = 'list'"
+      [ngClass]="{ 'active-btn': listType === 'list' }"
+      nz-button
+      nzType="primary"
+    >
+      <i class="anticon anticon-bars"></i>
+    </button>
+  </div>
+</div>
+<div class="col s12 m12 left" style="width: 100%">
+  <div nz-col nzSpan="4" class="chartDetails">
+    <p>
+      Resource Type<br />
+      <span>{{ utiltype || "-" }}</span>
+    </p>
+  </div>
+  <div nz-col nzSpan="3" class="chartDetails">
+    <p>
+      Provider<br />
+      <span>{{ cloudprovider || "-" }}</span>
+    </p>
+  </div>
+  <div nz-col nzSpan="5" class="chartDetails">
+    <p>
+      Customer<br />
+      <span>{{ subtenantname || "-" }}</span>
+    </p>
+  </div>
+  <div nz-col nzSpan="8" class="chartDetails">
+    <p>
+      Instance<br />
+      <span>{{ instancename || "-" }}</span>
+    </p>
+  </div>
+  <div nz-col nzSpan="3" class="chartDetails">
+    <p>
+      Instance Type<br />
+      <span>{{ instancetyperefid || "-" }}</span>
+    </p>
+  </div>
+</div>
+<div nz-row *ngIf="listType == 'chart'" class="p-t-80">
+  <div
+    nz-col
+    style="height: 100%"
+    *ngIf="chartOptions"
+    style="
+      height: 95%;
+      background: rgba(128, 128, 128, 0.212) !important;
+      padding: 13px 0;
+      margin-top: 13px;
+    "
+  >
+    <apx-chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [xaxis]="chartOptions.xaxis"
+      [stroke]="chartOptions.stroke"
+      [tooltip]="chartOptions.tooltip"
+      [dataLabels]="chartOptions.dataLabels"
+      [legend]="chartOptions.legend"
+      [markers]="chartOptions.markers"
+      [grid]="chartOptions.grid"
+      [yaxis]="chartOptions.yaxis"
+      [title]="chartOptions.title"
+    ></apx-chart>
+  </div>
+</div>
+<div *ngIf="listType == 'list'" style="padding-top: 20px">
+  <div>
+    <nz-table
+      #filterTable
+      [nzData]="chartDataList"
+      [nzShowPagination]="true"
+      style="width: 97.5%"
+    >
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>{{ configs.utilkeyTitle }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of filterTable.data">
+          <td>{{ data.on }}</td>
+          <td>{{ data.time }}</td>
+          <td>{{ data.mean }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

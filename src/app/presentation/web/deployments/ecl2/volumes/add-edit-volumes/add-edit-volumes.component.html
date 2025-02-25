@@ -1,0 +1,72 @@
+<nz-spin [nzSpinning]="loading">
+  <form nz-form [formGroup]="ecl2volumeForm">
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="volumename"
+        >Volume Name</nz-form-label
+      >
+      <nz-form-control [nzSm]="24" [nzXs]="12">
+        <nz-input-group>
+          <input
+            id="volumename"
+            placeholder="Volume Name"
+            formControlName="volumename"
+            nz-input
+            type="text"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="sizeingb">
+        Volume Size ( GB )</nz-form-label
+      >
+      <nz-form-control [nzSm]="24" [nzXs]="12">
+        <nz-input-group>
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="sizeingb"
+            nzPlaceHolder="Select Volume Size ( GB )"
+            formControlName="sizeingb"
+            style="width: 100%"
+          >
+            <nz-option
+              *ngFor="let data of volumeSizeList"
+              [nzLabel]="data.keyname"
+              [nzValue]="data"
+            ></nz-option>
+          </nz-select>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="description"
+        >Description</nz-form-label
+      >
+      <nz-form-control [nzSm]="24" [nzXs]="12">
+        <nz-input-group>
+          <textarea
+            id="description"
+            formControlName="description"
+            placeholder="Description"
+            type="text"
+            nz-input
+          ></textarea>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="!ecl2volumeForm.valid || disabled"
+      (click)="saveOrUpdate(ecl2volumeForm.value)"
+      class="save-button"
+      nz-button
+      nzType="primary"
+    >
+      Save
+    </button>
+  </div>
+</div>

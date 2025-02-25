@@ -1,0 +1,7 @@
+::ng-deep .ant-confirm-body .ant-confirm-content {
+    color: #fafafa !important;
+  }
+
+::ng-deep .ant-modal-content {
+  width: 100vh;
+}

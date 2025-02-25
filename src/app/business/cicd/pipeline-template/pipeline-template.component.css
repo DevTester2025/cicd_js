@@ -1,0 +1,67 @@
+.pipeline-template {
+  .pipeline-template-hrd {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .header-title {
+      color: #aabb11;
+      font-size: 14px;
+      margin: 0px;
+    }
+
+    p {
+      font-size: 13px;
+      margin-bottom: 0px;
+    }
+
+    .add-pipeline-btn-box {
+      display: flex;
+      color: white;
+    }
+
+    .add-pipeline-btn {
+      margin: 0px;
+    }
+  }
+
+  hr {
+    margin: 2px 0px 0px 0px;
+  }
+}
+
+.filter-hdr {
+  color: lightgray;
+  font-size: 14px;
+}
+
+.filter-input {
+  width: 100%;
+  margin: 10px 0px 10px 0px;
+}
+
+.template-table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #5c6672;
+}
+
+.template-row {
+  display: table-row;
+  cursor: pointer;
+  background-color: #5c6672;
+  color: white;
+}
+
+.template-cell {
+  display: table-cell;
+  padding: 10px;
+  border-bottom: 1px solid #444b54;
+}
+
+.template-row:hover {
+  background-color: #ccc;
+  color: black;
+}

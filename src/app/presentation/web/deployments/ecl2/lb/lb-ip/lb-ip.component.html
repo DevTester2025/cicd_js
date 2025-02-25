@@ -1,0 +1,208 @@
+<nz-spin [nzSpinning]="loading">
+  <form nz-form [formGroup]="ecl2lbipForm">
+    <div class="row" style="margin-bottom: 0">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="ipaddress" nzRequired
+          >Virtual IP Address</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="ipaddress" type="text" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="netmask" nzRequired
+          >Netmask</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="netmask" type="text" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="type"
+          >IP Type
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="type"
+            placeholder="Select"
+            formControlName="type"
+          >
+            <nz-option
+              *ngFor="let data of ipTypeList"
+              [nzLabel]="data.keyname"
+              [nzValue]="data.keyvalue"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vrid" nzRequired
+          >VRID</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="vrid" type="number" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="icmpresponse"
+          >ICMP Response
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="icmpresponse"
+            placeholder="Select"
+            formControlName="icmpresponse"
+          >
+            <nz-option
+              *ngFor="let data of icmpResponseList"
+              [nzLabel]="data.keyname"
+              [nzValue]="data.keyvalue"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="arpresponse"
+          >ARP Response
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="arpresponse"
+            placeholder="Select"
+            formControlName="arpresponse"
+          >
+            <nz-option
+              *ngFor="let data of arpResponseList"
+              [nzLabel]="data.keyname"
+              [nzValue]="data.keyvalue"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="td" nzRequired
+          >Traffic Domain</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="td" type="number" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="tag" nzRequired
+          >Tag</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="tag" type="number" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="state"
+          >State
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label id="state" formControlName="state" nz-checkbox></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="arp"
+          >ARP
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label id="arp" formControlName="arp" nz-checkbox></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="icmp"
+          >ICMP
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label id="icmp" formControlName="icmp" nz-checkbox></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="vserver"
+          >Virtual Server
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label id="vserver" formControlName="vserver" nz-checkbox></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <!-- <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="decrementttl">Decrement TTL
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label id="decrementttl" formControlName="decrementttl" nz-checkbox></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item> -->
+      <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="hostroute"
+          >Host Route
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label
+              id="hostroute"
+              formControlName="hostroute"
+              nz-checkbox
+            ></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="mgmtaccess"
+          >Management Access
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label
+              id="mgmtaccess"
+              formControlName="mgmtaccess"
+              nz-checkbox
+            ></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired nzFor="snmp"
+          >SNMP
+        </nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="12">
+          <nz-input-group>
+            <label id="snmp" formControlName="snmp" nz-checkbox></label>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </form>
+</nz-spin>
+
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="!ecl2lbipForm.valid"
+      (click)="saveOrUpdate(ecl2lbipForm.value)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

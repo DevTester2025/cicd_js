@@ -1,0 +1,154 @@
+<div class="alert-notification">
+  <form nz-form [formGroup]="ntfForm">
+    <nz-form-item>
+      <nz-form-label nzFor="eventType" [nzSpan]="6" nzRequired
+        >Event Type</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          style="width: 90%"
+          nzId="eventType"
+          formControlName="eventType"
+          nzShowSearch
+          nzPlaceHolder="Select Event Type"
+          nzAllowClear
+        >
+          <nz-option nzValue="Success" nzLabel="Success"></nz-option>
+          <nz-option nzValue="Failure" nzLabel="Failure"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzFor="notifiers" [nzSpan]="6" nzRequired
+        >Notifiers</nz-form-label
+      >
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          style="width: 90%"
+          nzId="notifiers"
+          nzMode="multiple"
+          formControlName="notifiers"
+          nzShowSearch
+          nzPlaceHolder="Select notifiers"
+          nzAllowClear
+        >
+          <nz-option
+            *ngFor="let n of usersList; index as u"
+            [nzLabel]="n.label"
+            [nzValue]="n.value"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <div *ngIf="ntfForm.value.eventType === 'Failure'">
+      <nz-form-item>
+        <nz-form-label nzFor="remediationType" [nzSpan]="6" nzRequired
+          >Remediation Type</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-select
+            style="width: 90%"
+            nzId="remediationType"
+            formControlName="remediationType"
+            nzShowSearch
+            nzPlaceHolder="Select Remediation Type"
+            nzAllowClear
+          >
+            <nz-option nzValue="Script" nzLabel="Script"></nz-option>
+            <nz-option
+              nzValue="Orchestration"
+              nzLabel="Orchestration"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="ntfForm.value.remediationType === 'Script'">
+        <nz-form-label nzFor="remediationType" [nzSpan]="6" nzRequired
+          >Script</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-select
+            style="width: 90%"
+            nzId="Script"
+            formControlName="script"
+            nzShowSearch
+            nzPlaceHolder="Select Script"
+            nzAllowClear
+          >
+            <nz-option
+              *ngFor="let data of scriptList"
+              [nzLabel]="data.scriptname"
+              [nzValue]="data.scriptid"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="ntfForm.value.remediationType === 'Orchestration'">
+        <nz-form-label nzFor="remediationType" [nzSpan]="6" nzRequired
+          >Orchestration</nz-form-label
+        >
+        <nz-form-control [nzSpan]="18">
+          <nz-select
+            style="width: 90%"
+            nzId="Orchestration"
+            formControlName="orchestration"
+            nzShowSearch
+            nzPlaceHolder="Select Orchestration"
+            nzAllowClear
+          >
+            <nz-option
+              *ngFor="let data of orchestrationList"
+              [nzLabel]="data.orchname"
+              [nzValue]="data.orchid"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="right-align">
+      <button nz-button nzType="primary" (click)="addRow()">
+        <i
+        class="anticon anticon-plus"
+      ></i>
+      </button>
+    </div>
+    <div nz-row class="mt-3 p-b-100">
+      <nz-table
+        #nzTable
+        [nzLoading]="dataLoading"
+        [nzData]="configuredNotifications"
+        [nzScroll]="{ x: '650px' }"
+      >
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>notifiers</th>
+            <th>Configuration</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of nzTable.data; let i = index">
+            <td>{{ data["type"] }}</td>
+            <td>{{ getReceiversFor(data["notifiers"]) }}</td>
+            <td>{{ getConfigurationLabels(data["configuration"]) }}</td>
+            <td>
+              <a
+                  title="Delete"
+                  nz-popconfirm
+                  nzTitle="Are you sure, delete notification?"
+                  nzOkText="Ok"
+                  nzCancelText="Cancel"
+                  (nzOnConfirm)="deleteNotification(i)"
+                >
+                  <i class="anticon anticon-delete"></i>
+                </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </form>
+</div>

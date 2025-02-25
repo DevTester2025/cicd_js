@@ -1,0 +1,116 @@
+<nz-spin nzSimple nzTip="Loading..." [nzSpinning]="loading" [nzSize]="'small'">
+  <div *ngIf="!loading">
+    <h4 class="amber-text">Command status</h4>
+    <div class="cloudasset">
+      <div class="row">
+        <h4 class="white-text text-lighten-3 ml-1">
+          <div class="col s12 m2">Overall status</div>
+          <div class="grey-text">: {{ commandobj.Status }}</div>
+        </h4>
+      </div>
+      <div class="clearfix"></div>
+      <div class="row">
+        <h4 class="white-text text-lighten-3 ml-1">
+          <div class="col s12 m2">Detailed status</div>
+          <div class="grey-text">: {{ commandobj.StatusDetails }}</div>
+        </h4>
+      </div>
+      <div class="row">
+        <h4 class="white-text text-lighten-3 ml-1">
+          <div class="col s12 m2"># targets</div>
+          <div class="grey-text">: {{ commandobj.TargetCount }}</div>
+        </h4>
+      </div>
+      <div class="row">
+        <h4 class="white-text text-lighten-3 ml-1">
+          <div class="col s12 m2"># completed</div>
+          <div class="grey-text">: {{ commandobj.CompletedCount }}</div>
+        </h4>
+      </div>
+      <div class="row">
+        <h4 class="white-text text-lighten-3 ml-1">
+          <div class="col s12 m2"># error</div>
+          <div class="grey-text">: {{ commandobj.ErrorCount }}</div>
+        </h4>
+      </div>
+      <div class="row">
+        <h4 class="white-text text-lighten-3 ml-1">
+          <div class="col s12 m2"># delivery timed out</div>
+          <div class="grey-text">: {{ commandobj.DeliveryTimedOutCount }}</div>
+        </h4>
+      </div>
+    </div>
+    <h4 class="amber-text">Targets & Outputs</h4>
+    <nz-collapse class="asset-tag-collapse">
+      <nz-collapse-panel
+        *ngFor="let c of commandList"
+        [nzHeader]="c.InstanceId + ' ' +'('+ c.InstanceName +')'"
+        [nzActive]="c.active"
+        [nzDisabled]="c.disabled"
+      >
+        <div class="row">
+          <div class="col">
+            <div>
+              <b class="amber-text">Instance Name: </b>{{ c.InstanceName }}
+            </div>
+            <div>
+              <b class="amber-text">Document Name: </b>{{ c.DocumentName }}
+            </div>
+            <div><b class="amber-text">Status : </b>{{ c.Status }}</div>
+            <div>
+              <b class="amber-text">Detailed status :</b>
+              {{ c.StatusDetails }}
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+        <br />
+        <b class="amber-text">Output</b>
+        <div class="clearfix"></div>
+        <br />
+
+        <nz-collapse class="asset-tag-collapse">
+          <nz-collapse-panel
+            *ngFor="let p of c.CommandPlugins; let i = index"
+            nzHeader="Step {{ i + 1 }} : Command description and status"
+            [nzActive]="p.active"
+            [nzDisabled]="p.disabled"
+          >
+            <div class="row">
+              <div class="col">
+                <div><b class="amber-text">Status : </b>{{ p.Status }}</div>
+                <div>
+                  <b class="amber-text">Detailed status : </b
+                  >{{ p.StatusDetails }}
+                </div>
+                <div><b class="amber-text">Step Name: </b>{{ p.Name }}</div>
+              </div>
+              <div class="col p-l-45">
+                <div>
+                  <b class="amber-text">Response Code :</b> {{ p.ResponseCode }}
+                </div>
+                <div>
+                  <b class="amber-text">Start time :</b>
+                  {{
+                    p.ResponseStartDateTime | date: "dd-MM-yyyy HH:mm:ss zzzz"
+                  }}
+                </div>
+
+                <div>
+                  <b class="amber-text">Finish time :</b>
+                  {{
+                    p.ResponseFinishDateTime | date: "dd-MM-yyyy HH:mm:ss zzzz"
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+            <b class="amber-text">Output</b>
+            <div class="clearfix"></div>
+            <pre>{{ p.Output }}</pre>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </div>
+</nz-spin>

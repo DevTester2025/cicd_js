@@ -1,0 +1,756 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <nz-tabset
+      [nzTabBarExtraContent]="extraTemplate"
+      [nzSelectedIndex]="tabIndexNo"
+      (nzSelectChange)="tabChanged($event)"
+    >
+      <ng-template #extraTemplate>
+        <div nz-col nzSpan="24" *ngIf="!ExecuteTemplate">
+          <div class="right-align">
+            <button nzSize="small" nz-button (click)="close()" nzType="primary">
+              <i class="anticon anticon-close"></i>
+            </button>
+            &nbsp;&nbsp;
+          </div>
+        </div>
+      </ng-template>
+      <nz-tab nzTitle="Info">
+    <form nz-form>
+      <div
+        class="col s12 m12 service-edit"
+        *ngIf="serviceObj.workflow != null"
+      >
+        <h3 class="white-text mb-0">Approval Chain</h3>
+        <app-workflow-approvers [id]="requestid">
+        </app-workflow-approvers>
+        <!-- <div class="serviceform">
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="create-service ant-col-md-24 ant-col-lg-24">
+              <div class="ant-col-lg-4"></div>
+              <div class="ant-col-md-6 ant-col-lg-12">
+                <nz-table
+                  #basicTable
+                  [nzShowPagination]="false"
+                  nzSize="medium"
+                  [nzData]="approverChain"
+                >
+                  <thead>
+                    <tr>
+                      <th class="left-align">Approver Level</th>
+                      <th class="left-align">Name</th>
+                      <th class="left-align">Action</th>
+                      <th class="center-align">Due Date</th>
+                      <th class="left-align">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let data of basicTable.data"
+                      [ngClass]="{
+                        'status-pending': data.apprvstatus === 'Pending',
+                        'status-rejected': data.apprvstatus === 'Rejected',
+                        'status-approved': data.apprvstatus === 'Approved'
+                      }"
+                    >
+                      <td class="left-align">Level {{ data.approverlevel }}</td>
+                      <td class="left-align">{{ data.touser?.fullname }}</td>
+                      <td class="left-align">{{ data.apprvstatus }}</td>
+                      <td class="center-align">
+                        {{
+                          data.duedate != null
+                            ? (data.duedate | date: "dd-MMM-yyyy")
+                            : "To be determined"
+                        }}
+                      </td>
+                      <td style="width: 35%">
+                        {{ data.notes != null ? data.notes : "-" }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <div class="col s12 m12 service-edit">
+        <h3 class="white-text mb-0">Basic Details</h3>
+        <div class="serviceform">
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="create-service ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Service Name</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ catalogObj.catalogname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <!-- <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isSolution">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Cloud Provider</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ catalogObj.solution?.cloudprovider }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="referenceno"
+                  >Reference No.</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.referenceno }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="create-service ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >{{ subtenantLable }} Name</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.customer?.customername }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12">Group name</nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ catalogObj.group?.keyname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24" style="clear: both">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="subject"
+                  >Title</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.subject }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24" style="clear: both">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="subject"
+                  >Assignee</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.assignee?.fullname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="ant-col-md-24 ant-col-lg-24" style="clear: both">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="subject"
+                  >Workflow</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.workflow?.wrkflowname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="ant-col-md-24 ant-col-lg-24" style="clear: both">
+            <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="">watchlist</nz-form-label>
+            <nz-form-control  [nzSm]="8" [nzXs]="12" style="width: 22%">
+            <nz-select
+              name="watchlistSelect"
+              nzPlaceHolder="Watchlist"
+              nzShowSearch
+              [(ngModel)]="selectedValue"
+              nzMode="multiple"
+              nzAllowClear
+              [nzDisabled]="isView"
+              style="max-height: 70px; overflow-y: auto"
+            >
+              <nz-option
+                *ngFor="let option of watchList"
+                [nzValue]="option.value"
+                [nzLabel]="option.label"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+          </div>
+          
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12">Start Date</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <span>{{catalogObj.startdate|date:'dd-MMM-yyyy'}}</span>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24 create-service">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12">Publish Date</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <span>{{catalogObj.publishdate|date:'dd-MMM-yyyy'}}</span>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24 create-service">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12">End Date</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <span>{{catalogObj.enddate|date:'dd-MMM-yyyy'}}</span>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div> -->
+          <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isSolution">
+            <div
+              *ngIf="
+                catalogObj.catalogimage != undefined &&
+                catalogObj.catalogimage != null
+              "
+              class="ant-col-md-24 ant-col-lg-24"
+              style="clear: both"
+            >
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Service Image</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <a
+                    (click)="
+                      onPreview(catalogObj.catalogimage, 'Service Image')
+                    "
+                  >
+                    <img class="imgs" [src]="catalogObj.catalogimage" alt="" />
+                  </a>
+                  <a
+                    *ngIf="catalogdownload"
+                    href="{{ catalogObj.catalogimage }}"
+                    target="_blank"
+                    style="margin-left: 20px"
+                    download
+                    >Download</a
+                  >
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              *ngIf="
+                catalogObj.catalogola != undefined &&
+                catalogObj.catalogola != null
+              "
+              class="ant-col-md-24 ant-col-lg-24"
+            >
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Service Catalog</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <a
+                    (click)="
+                      onPreview(catalogObj.catalogola, 'Service Catalog')
+                    "
+                  >
+                    <img class="imgs" [src]="catalogObj.catalogola" alt="" />
+                  </a>
+                  <a
+                    *ngIf="oladownload"
+                    href="{{ catalogObj.catalogola }}"
+                    target="_blank"
+                    style="margin-left: 20px"
+                    download
+                    >Download</a
+                  >
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div
+              *ngIf="
+                catalogObj.archdiagram != undefined &&
+                catalogObj.archdiagram != null
+              "
+              class="ant-col-md-24 ant-col-lg-24"
+            >
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Architectural View</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <a
+                    (click)="
+                      onPreview(catalogObj.archdiagram, 'Architectural View')
+                    "
+                  >
+                    <img class="imgs" [src]="catalogObj.archdiagram" alt="" />
+                  </a>
+                  <a
+                    *ngIf="archdownload"
+                    href="{{ catalogObj.archdiagram }}"
+                    target="_blank"
+                    type="application/*"
+                    style="margin-left: 20px"
+                    download
+                    >Download</a
+                  >
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m12 service-edit" *ngIf="isSolution">
+        <h3 class="white-text mb-0">Costs</h3>
+        <div class="serviceform">
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <div class="create-service ant-col-md-24 ant-col-lg-24">
+              <div class="ant-col-lg-4"></div>
+              <div *ngIf="solutionData" class="ant-col-md-6 ant-col-lg-12">
+                <app-costsummary
+                  [solutionData]="solutionData"
+                  [disableEdit]="true"
+                ></app-costsummary>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m12 service-edit clear">
+        <h3 class="white-text mb-0">Characteristics</h3>
+        <div class="serviceform edit-form" *ngIf="isSolution">
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >High Availability</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ catalogObj.ha }} %</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Description</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <nz-input-group>
+                    <p class="desc">
+                      This is a standard deployment of
+                      {{ catalogObj.solution?.solutionname }} with the following
+                      characteristics
+                    </p>
+                    <p class="desc">{{ catalogObj.description }}</p>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12">Estimated Cost (One Time)</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <span>{{catalogObj.estimatedcost |currency}}</span>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12">Setup Cost (One Time)</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <span>{{catalogObj.setupcost |currency}}</span>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12">Running Cost (Monthly)</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <span>{{catalogObj.runningcost|currency}}</span>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <div class="ant-col-md-24 ant-col-lg-24">
+                            <nz-form-item>
+                                <nz-form-label [nzSm]="8" [nzXs]="12">Other Costs (Professional Services, Support, etc)</nz-form-label>
+                                <nz-form-control [nzSm]="8" [nzXs]="12">
+                                    <span>{{catalogObj.othercost|currency}}</span>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div> -->
+
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Automated Deployment</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{
+                    catalogObj.autodeployyn == "Y" ? "Yes" : "No"
+                  }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="department"
+                  >Department Name</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.departments?.keyname }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+          </div>
+
+          <div class="ant-col-md-24 ant-col-lg-24">
+            <!-- <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >System Require Approval</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ catalogObj.approvalyn == "Y" ? "Yes" : "No" }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div> -->
+
+            <!-- <div class="ant-col-md-24 ant-col-lg-24 creative-service">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >No. of Levels of Approval</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ catalogObj.noofapprovers }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24 creative-service">
+              <div
+                *ngFor="let obj of catalogObj?.srmcatalogaprvr; let i = index"
+              >
+                <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="12"
+                    >Approver {{ i + 1 }}</nz-form-label
+                  >
+                  <nz-form-control [nzSm]="8" [nzXs]="12">
+                    <span>{{ obj.approver?.fullname }}</span
+                    >&nbsp;&nbsp;&nbsp;
+                    <span>{{ obj.approver?.email }}</span>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div> -->
+            <div class="ant-col-md-24 ant-col-lg-24 creative-service">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Deployment Progress</nz-form-label
+                >
+                <nz-form-control [nzSm]="4" [nzXs]="8">
+                  <nz-progress
+                    [nzPercent]="serviceObj.progresspercent == null ? 0 : serviceObj.progresspercent"
+                    [nzStatus]="getProgressStatus(serviceObj.srstatus)"
+                  >
+                  </nz-progress>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="emailyn"
+                  >Do you want to be notified via email?</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.emailyn == "Y" ? "Yes" : "No" }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Is it a urgent request?</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.urgentyn == "Y" ? "Yes" : "No" }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12"
+                  >Budget Available?</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.budget == "Y" ? "Yes" : "No" }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="deploystdate"
+                  >Start Date of Deployment
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{
+                    serviceObj.deploystdate | date: "dd-MMM-yyyy"
+                  }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="ant-col-md-24 ant-col-lg-24">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="decommdate"
+                  >Decommissioning Date
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <span>{{ serviceObj.decommdate | date: "dd-MMM-yyyy" }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="ant-col-md-24 ant-col-lg-24" *ngIf="!isApprover">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="notes"
+                  >Notes to the Operation Team
+                </nz-form-label>
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <p class="desc">{{ serviceObj.notes }}</p>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="ant-col-md-24 ant-col-lg-24" *ngIf="isApprover">
+              <nz-form-item>
+                <nz-form-label [nzSm]="8" [nzXs]="12" nzRequired nzFor="notes"
+                  >Notes</nz-form-label
+                >
+                <nz-form-control [nzSm]="8" [nzXs]="12">
+                  <textarea
+                    nz-input
+                    placeholder=""
+                    [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                    [value]="notes"
+                    (input)="notes = $event.target.value"
+                  ></textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <!-- <div class="ant-col-md-24 ant-col-lg-24" style="margin-left: 55px">
+              <nz-collapse [nzBordered]="false">
+                <nz-collapse-panel
+                  *ngFor="let panel of panels"
+                  [nzHeader]="panelName"
+                  [nzActive]="panel.active"
+                  (nzActiveChange)="onCollapse($event)"
+                >
+                  <nz-timeline *ngFor="let notes of notesList">
+                    <nz-timeline-item style="color: white"
+                      >{{ notes.notes }}
+                      <br />
+                      <span
+                        class="desc"
+                        style="font-style: italic; font-size: 12px"
+                        >{{ notes.lastupdateddt | date : "dd-MMM-yyyy hh:mm:ss" }}
+                        &nbsp;&nbsp;&nbsp;&nbsp;From:
+                        {{ notes.fromuser?.fullname }}
+                        {{notes.touserid==null?'':&nbsp;'To:'}}
+                        {{ notes.touser?.fullname }}</span
+                      >
+                    </nz-timeline-item>
+                  </nz-timeline>
+                </nz-collapse-panel>
+              </nz-collapse>
+            </div> -->
+          </div>
+        </div>
+        <div *ngIf="isOrchestration">
+            <app-cloudmatiq-run-orch 
+              [isTemplateShowHide]="true"
+              [orchid]="orchid" 
+              (serviceRequestEntry)="serviceRequestEntry($event)" 
+              [module]="module"
+              [refid]="refid"
+              [isViewMode]="editMode"
+              [isEditMode]="editMode"
+              >
+            </app-cloudmatiq-run-orch>
+          </div>
+        <!-- <div class="col s12 m12 right-align clear save-button">
+          <button
+            *ngIf="isApprover == true"
+            nz-button
+            (click)="approve(notes)"
+            class="service-button mt-1 mr-1"
+            nzType="primary"
+          >
+            <span>Approve</span>
+          </button>
+          <button
+            nz-button
+            (click)="close()"
+            class="service-button mt-1 mr-1"
+            nzType="primary"
+          >
+            <span>Close</span>
+          </button>
+        </div> -->
+        <div>
+          <nz-modal
+          [(nzVisible)]="isExecutionVisible"
+          nzTitle="Are you sure that you want to reject this request?"
+          nzOkText="Reject"
+          nzCancelText="Cancel"
+          (nzOnOk)="requestRejection()"
+          (nzOnCancel)="handleCancel()"
+        >
+          <ng-container>
+            <nz-form-item>
+              <nz-form-label
+                class="left left-align"
+                [nzSm]="24"
+                  nzRequired
+                  [nzXs]="24"
+                >Comments</nz-form-label
+              >
+              <div *ngIf="isExecutionVisible">
+                <textarea
+                  [(ngModel)]="comments"
+                  placeholder="Add comments"
+                  (ngModelChange)="comments = $event"
+                  type="text"
+                  nz-input
+                  [ngModelOptions]="{standalone: true}"
+                ></textarea>
+              </div>
+            </nz-form-item>
+          </ng-container>
+        </nz-modal>
+        </div> 
+        <div class="row right" *ngIf="isApprover">
+          <div class="col s12 md4">
+            <button
+              class="save-button-1"
+              nz-button
+              nzType="primary"
+              (click)="approveRequest()"
+            >
+              Approve
+            </button>
+          </div>
+        </div>
+        <div class="row right" *ngIf="isApprover">
+          <div class="col s12 md4">
+            <button
+              class="save-button"
+              nz-button
+              nzType="primary"
+              (click)="rejectRequest()"
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+        <div class="row right" *ngIf="executor">
+          <div class="col s12 md4">
+            <button
+              class="save-button"
+              nz-button
+              nzType="primary"
+              (click)="executeRequest()"
+            >
+              Execute
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <nz-modal
+      [nzVisible]="previewVisible"
+      [nzTitle]="previewTitle"
+      [nzContent]="modalContent"
+      [nzFooter]="modalFooter"
+      [nzClosable]="false"
+    >
+      <ng-template #modalContent>
+        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" alt="previewImage" />
+      </ng-template>
+      <ng-template #modalFooter>
+        <button nz-button nzType="default" (click)="previewVisible = false">
+          Close
+        </button>
+      </ng-template>
+    </nz-modal>
+  </nz-tab>
+    <nz-tab nzTitle="Comments">
+      <app-comments
+        *ngIf="tabIndexNo == 1"
+        [resourceDetails]="serviceObj"
+        [resourceId]="serviceObj.srvrequestid"
+        [refType]="'comments'"
+      ></app-comments>
+    </nz-tab>
+    <nz-tab nzTitle="Documents">
+      <app-comments
+        *ngIf="tabIndexNo == 2"
+        [resourceDetails]="serviceObj"
+        [resourceId]="serviceObj.srvrequestid"
+        [documentType]="true"
+        [refType]="'documents'"
+      ></app-comments>
+    </nz-tab>
+    <nz-tab nzTitle="Notifications">
+      <div nz-row class="mt-3 ant-col-md-24 ant-col-lg-24">
+        <nz-table
+          #nzTable
+          [nzData]="notificationList"
+          [nzScroll]="{ x: '650px' }"
+        >
+          <thead>
+            <tr>
+              <th id="Receiver">Receiver</th>
+              <th id="Notes">Notes</th>
+              <th id="Notify_via">Notify via</th>
+              <th id="Updated_Date" class="center-align">Updated Date</th>
+              <th id="Status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of nzTable.data; let i = index">
+              <td>{{ receivername[i] }}</td>
+              <td>{{ data.notes }}</td>
+              <td>{{ data.contenttype }}</td>
+              <td class="center-align">{{ data.lastupdateddt }}</td>
+              <td>{{ data.status }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="History">
+      <app-comments
+        *ngIf="tabIndexNo == 4"
+        [resourceDetails]="serviceObj"
+        [resourceId]="serviceObj.srvrequestid"
+        [refType]="'history'"
+      ></app-comments>
+    </nz-tab>
+    </nz-tabset>
+  </ng-container>
+</app-cloudmatiq-side-nav>

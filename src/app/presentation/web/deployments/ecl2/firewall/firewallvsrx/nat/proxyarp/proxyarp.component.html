@@ -1,0 +1,104 @@
+<!-- <app-cloudmatiq-side-bar (dataChanged)="onChanged($event)" [(isVisible)]="isVisible" [title]="ProxyARPNAT" [width]="320"> -->
+<nz-spin [nzSpinning]="loading">
+  <form nz-form [formGroup]="proxynatForm">
+    <div class="row" style="margin-bottom: 0">
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="interface" nzRequired
+            >Select Interface
+          </nz-form-label>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-select
+              [nzDisabled]="inputdisabled"
+              nzShowSearch
+              nzAllowClear
+              id="interface"
+              placeholder="Select Zone"
+              formControlName="interface"
+            >
+              <nz-option
+                *ngFor="let data of interfaceList"
+                [nzLabel]="data.vsrxinterfaceunitslot"
+                [nzValue]="data.vsrxinterfaceunitslot"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    &nbsp;
+    <div class="row" style="margin-bottom: 0">
+      <h4 class="solution-title mb-0">IPV4 Address Range</h4>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="fromaddress" nzRequired
+            >From Address</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <input
+              [attr.disabled]="inputdisabled"
+              nz-input
+              formControlName="fromaddress"
+              type="text"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col s6">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="toaddress" nzRequired
+            >To Address</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <input
+              [attr.disabled]="inputdisabled"
+              nz-input
+              formControlName="toaddress"
+              type="text"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</nz-spin>
+<!-- </app-cloudmatiq-side-bar> -->
+<!-- <div class="col s12 right-align">
+  <button nz-button nzType="primary" (click)="showModal()">
+    <i class="anticon anticon-plus"></i>Add
+  </button>
+</div> -->
+&nbsp; &nbsp;
+
+<div class="col s12">
+  <nz-table #nzTable [nzData]="proxynatList" [nzPageSize]="10">
+    <thead>
+      <tr>
+        <th nzWidth="25px">Interface</th>
+        <th nzWidth="25px">From Range</th>
+        <th nzWidth="25px">To Range</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of nzTable.data">
+        <td>{{ data.interface }}</td>
+        <td>{{ data.fromaddress }}</td>
+        <td>{{ data.toaddress }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="disabled || inputdisabled"
+      (click)="saveOrUpdate(proxynatForm.value)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

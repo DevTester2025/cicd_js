@@ -1,0 +1,1042 @@
+<app-cloudmatiq-side-nav [blockUI]="gatheringData">
+  <app-cloudmatiq-side-bar
+    [(width)]="rightbarWidth"
+    (dataChanged)="dataChanged($event)"
+    [(isVisible)]="rightbar"
+    [title]="rightbarTitle"
+  >
+    <ng-container class="modal-content">
+      <app-vpc-add
+        (addorupdateVPC)="addVPC($event)"
+        *ngIf="rightbarcontent == 'VPC'"
+      >
+      </app-vpc-add>
+      <app-ami-add
+        (addorupdateAmi)="addAMI($event)"
+        *ngIf="rightbarcontent == 'AMI'"
+      >
+      </app-ami-add>
+      <app-script-add-edit
+        [scriptObj]="scriptObj"
+        (notifyScriptEntry)="notifyScriptEntry($event)"
+        *ngIf="rightbarcontent == 'scripts'"
+      >
+      </app-script-add-edit>
+      <app-subnet-add
+        [vpcList]="vpcList"
+        [zonesList]="zonesList"
+        (addorupdateSubnet)="addSubnet($event)"
+        *ngIf="rightbarcontent == 'subnet'"
+      >
+      </app-subnet-add>
+      <app-sg-add
+        class="group"
+        (addorupdateSg)="addSecurityGroup($event)"
+        *ngIf="rightbarcontent == 'securitygroup'"
+        [vpcList]="vpcList"
+      >
+      </app-sg-add>
+
+      <app-vpc-add
+        (addorupdateVPC)="addVPC($event)"
+        *ngIf="rightbarcontent == 'VPC'"
+      >
+      </app-vpc-add>
+      <app-ami-add
+        (addorupdateAmi)="addAMI($event)"
+        *ngIf="rightbarcontent == 'AMI'"
+      >
+      </app-ami-add>
+      <form
+        *ngIf="rightbarcontent == 'scripts'"
+        nz-form
+        [formGroup]="scriptForm"
+      >
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="scriptname"
+            >Script Name</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-input-group>
+              <input
+                id="scriptname"
+                formControlName="scriptname"
+                nz-input
+                type="text"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="scripttype"
+            >Script Type</nz-form-label
+          >
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="scripttype"
+            placeholder="Select Platform"
+            nzPlaceHolder="Select Type"
+            formControlName="scripttype"
+          >
+            <nz-option nzLabel="Select File" nzValue="file"></nz-option>
+            <nz-option nzLabel="Command" nzValue="command"></nz-option>
+          </nz-select>
+        </nz-form-item>
+        <nz-form-item *ngIf="scriptForm.get('scripttype').value == 'command'">
+          <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="notes"
+            >Command</nz-form-label
+          >
+          <nz-form-control [nzSm]="16" [nzXs]="12">
+            <nz-input-group>
+              <input
+                id="commandblock"
+                formControlName="commandblock"
+                nz-input
+                type="text"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item *ngIf="scriptForm.get('scripttype').value == 'file'">
+          <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="notes"
+            >Select File</nz-form-label
+          >
+          <nz-form-control [nzSm]="16" [nzXs]="12">
+            <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="handleFile">
+              <button nz-button>
+                <i class="anticon anticon-upload"></i>
+                <span>Select File</span>
+              </button>
+            </nz-upload>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+      <div *ngIf="rightbarcontent == 'scripts'" class="row right">
+        <div class="col s12 md4">
+          <button
+            (click)="addScript()"
+            class="save-button"
+            nz-button
+            nzType="primary"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      <app-subnet-add
+        [vpcList]="vpcList"
+        [zonesList]="zonesList"
+        (addorupdateSubnet)="addSubnet($event)"
+        *ngIf="rightbarcontent == 'subnet'"
+      >
+      </app-subnet-add>
+      <app-sg-add
+        (addorupdateSg)="addSecurityGroup($event)"
+        *ngIf="rightbarcontent == 'securitygroup'"
+        [vpcList]="vpcList"
+        class="security-group"
+      >
+      </app-sg-add>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <nz-drawer
+    id="sidebar-modal"
+    [nzBodyStyle]="{ 'padding-bottom': '55px' }"
+    [nzMaskClosable]="true"
+    [nzWidth]="820"
+    [nzVisible]="showSLA"
+    nzTitle="Service Level Agreement"
+    (nzOnClose)="showSLA = !showSLA"
+  >
+    <app-sla-add [slaList] (addorupdateSLA)="addSLA($event)"> </app-sla-add>
+  </nz-drawer>
+  <nz-drawer
+    id="sidebar-modal"
+    [nzBodyStyle]="{ 'padding-bottom': '55px' }"
+    [nzMaskClosable]="true"
+    [nzWidth]="820"
+    [nzVisible]="showSummary"
+    nzTitle="Solution Summary"
+    (nzOnClose)="showSummary = !showSummary"
+  >
+    <app-cloudmatiq-summary-view
+      *ngIf="solutionTemplateData"
+      [style.width]="'100%'"
+      class="deploymentForm"
+      (closeSummary)="closeSummary($event)"
+      [viewData]="solutionTemplateData"
+      [summaryTitle]="'Solution Summary'"
+    >
+    </app-cloudmatiq-summary-view>
+  </nz-drawer>
+  <ng-container class="page-body">
+    <div class="col s12 m12 right-align">
+      <button
+        class="close"
+        [hidden]="current == 4"
+        (click)="router.navigate(['solutiontemplate'])"
+        nz-button
+        nzType="primary"
+        nzTitle="Close"
+        nzPlacement="bottomLeft"
+        nz-tooltip
+      >
+        <i class="anticon anticon-close"></i>
+      </button>
+    </div>
+
+    <div class="ml-1">
+      <div class="row">
+        <div class="col s12">
+          <nz-steps [nzCurrent]="current" nzSize="small">
+            <nz-step nzTitle="Basic Detail"> </nz-step>
+            <nz-step nzTitle="Instances"> </nz-step>
+            <nz-step nzTitle="Load Balancers"> </nz-step>
+            <nz-step nzTitle="Parameters"> </nz-step>
+            <nz-step nzTitle="Summary"> </nz-step>
+          </nz-steps>
+          <div class="steps-content">
+            <div [hidden]="current !== 0">
+              <div class="row">
+                <div class="col s12">
+                  <h2 class="amber-text ml-2">Step 1:</h2>
+                  <p class="ml-2 grey-text text-lighten-2">
+                    Define basic details of the solution template to be created.
+                    This will be your quick go through on deployment screen.
+                  </p>
+                </div>
+                <div class="col s12 m8">
+                  <form nz-form [formGroup]="snameForm">
+                    <h4 class="amber-text ml-2">Solution Template</h4>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="solutionname"
+                      >
+                        Solution Name
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="solutionname"
+                            placeholder="Solution Name"
+                            formControlName="solutionname"
+                            nz-input
+                            type="text"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="clientid"
+                        >{{ subtenantLable }}
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzShowSearch
+                          nzAllowClear
+                          id="clientid"
+                          nzPlaceHolder="Select"
+                          formControlName="clientid"
+                        >
+                          <nz-option
+                            *ngFor="let data of clientList"
+                            [nzLabel]="data.customername"
+                            [nzValue]="data.customerid"
+                          >
+                          </nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="cloudprovider"
+                      >
+                        Select Provider
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzShowSearch
+                          nzAllowClear
+                          id="cloudprovider"
+                          placeholder="Select Provider"
+                          nzPlaceHolder="Select Provider"
+                          formControlName="cloudprovider"
+                        >
+                          <nz-option nzLabel="AWS" nzValue="AWS"></nz-option>
+                          <nz-option
+                            nzLabel="Google"
+                            nzValue="google"
+                          ></nz-option>
+                          <nz-option
+                            nzLabel="Azure"
+                            nzValue="azure"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="notes"
+                        >Notes</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="notes"
+                            placeholder="Notes"
+                            formControlName="notes"
+                            nz-input
+                            type="text"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <h4 class="amber-text ml-2">Service Level Agreement</h4>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="slaname"
+                        >Select SLA
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzShowSearch
+                          nzAllowClear
+                          id="slaname"
+                          placeholder="Select SLA"
+                          nzPlaceHolder="Select SLA"
+                          formControlName="slaname"
+                        >
+                          <nz-option
+                            *ngFor="let data of SLAList"
+                            [nzLabel]="data.keyname"
+                            [nzValue]="data.keyvalue"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                      <button
+                        (click)="showSLA = !showSLA"
+                        class="ml-1"
+                        nz-button
+                        nzType="primary"
+                      >
+                        <i class="anticon anticon-plus"></i>
+                      </button>
+                    </nz-form-item>
+                    <h4 class="amber-text ml-2">Notification Options</h4>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="eventtype"
+                        >Event Type</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzMode="multiple"
+                          nzShowSearch
+                          nzAllowClear
+                          id="eventtype"
+                          placeholder="Notification"
+                          nzPlaceHolder="Select Notification"
+                          formControlName="eventtype"
+                        >
+                          <nz-option
+                            nzLabel="Solution Deployment"
+                            nzValue="SOLUTIONDEPLOYMENT"
+                          ></nz-option>
+                          <nz-option
+                            nzLabel="Template Change"
+                            nzValue="TEMPLATECHANGE"
+                          >
+                          </nz-option>
+                          <nz-option
+                            nzLabel="Customer Configuration Change"
+                            nzValue="CUSTOMERCONFIGCHANGE"
+                          ></nz-option>
+                          <nz-option
+                            nzLabel="VM Deployment"
+                            nzValue="VMDEPLOYMENT"
+                          >
+                          </nz-option>
+                          <nz-option
+                            nzLabel="Cloud Changes"
+                            nzValue="CLOUDCHANGES"
+                          >
+                          </nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="modeofnotification"
+                      >
+                        Mode of Notification</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzMode="multiple"
+                          nzShowSearch
+                          nzAllowClear
+                          id="modeofnotification"
+                          placeholder="Notification"
+                          nzPlaceHolder="Select Mode of Notifications"
+                          formControlName="modeofnotification"
+                        >
+                          <nz-option
+                            nzLabel="Email"
+                            nzValue="EMAIL"
+                          ></nz-option>
+                          <nz-option nzLabel="SMS" nzValue="SMS"></nz-option>
+                          <nz-option
+                            nzLabel="On Dashboard"
+                            nzValue="ONDASHBOARD"
+                          ></nz-option>
+                          <nz-option
+                            nzLabel="Audio"
+                            nzValue="AUDIO"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="configuration"
+                      >
+                        Configuration</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzMode="multiple"
+                          nzShowSearch
+                          nzAllowClear
+                          id="configuration"
+                          placeholder="Notification"
+                          nzPlaceHolder="Configuration"
+                          formControlName="configuration"
+                        >
+                          <nz-option
+                            nzLabel="Timeout"
+                            nzValue="TIMEOUT"
+                          ></nz-option>
+                          <nz-option
+                            nzLabel="Repeat"
+                            nzValue="REPEAT"
+                          ></nz-option>
+                          <nz-option
+                            nzLabel="Alarm Threshold"
+                            nzValue="ALARMTHRESHOLD"
+                          >
+                          </nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="status"
+                        >Status</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-switch
+                            class="status"
+                            id="status"
+                            formControlName="status"
+                          >
+                          </nz-switch>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </form>
+                </div>
+                <div class="col s12 mt-2 center-align">
+                  <button
+                    [nzLoading]="snameFormLoading"
+                    [disabled]="!snameForm.valid || snameFormLoading"
+                    (click)="addoreditSolution()"
+                    class="next-button"
+                    nz-button
+                    nzType="primary"
+                    nzTitle="Next"
+                    nzPlacement="bottomLeft"
+                    nz-tooltip
+                  >
+                    <i class="anticon anticon-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div [hidden]="current !== 1">
+              <div class="row">
+                <div class="col s12">
+                  <h2 class="amber-text ml-2">Step 2:</h2>
+                  <p class="ml-2 grey-text text-lighten-2">
+                    Fine tweak the server based on the requirement. Add volumes,
+                    Security Groups and so on.
+                  </p>
+                </div>
+                <div class="col s12">
+                  <app-cloudmatiq-aws-server
+                    (continue)="
+                      getSubnetList();
+                      getSecurityGroupList();
+                      current = current + 1
+                    "
+                    [editMode]="editMode"
+                    [stData]="solutionTemplateData"
+                    (serversList)="addeditServers($event)"
+                    (openAddEditForm)="openAddEditForm($event)"
+                    (addAMI)="addAMI($event)"
+                  >
+                  </app-cloudmatiq-aws-server>
+                </div>
+                <div class="col s12 mt-2">
+                  <div class="row">
+                    <div class="col s12 m6 right-align">
+                      <button
+                        (click)="current = current - 1"
+                        class="prev-button"
+                        nz-button
+                        nzType="primary"
+                        nzTitle="Previous"
+                        nzPlacement="bottomLeft"
+                        nz-tooltip
+                      >
+                        <i class="anticon anticon-arrow-left"></i>
+                      </button>
+                    </div>
+                    <div class="col s12 m6 left-align">
+                      <button
+                        [disabled]="_serverList.length < 1"
+                        (click)="
+                          getSubnetList();
+                          getSecurityGroupList();
+                          current = current + 1
+                        "
+                        class="next-button"
+                        nz-button
+                        nzType="primary"
+                        nzTitle="Next"
+                        nzPlacement="bottomLeft"
+                        nz-tooltip
+                      >
+                        <i class="anticon anticon-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div [hidden]="current !== 2" class="mt-1">
+              <div class="row">
+                <div class="col s12">
+                  <h2 class="amber-text ml-2">Step 3:</h2>
+                  <p class="ml-2 grey-text text-lighten-2">
+                    Make sure to manage load on each server equally. Add as much
+                    as loadbalancer required and assign them to servers created.
+                  </p>
+                </div>
+                <div class="col s12 m8">
+                  <form nz-form [formGroup]="loadBalancerForm">
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="lbname"
+                        >New Load Balancer Name
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="lbname"
+                            placeholder="Load Balancer Name"
+                            formControlName="lbname"
+                            nz-input
+                            type="text"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="listeners"
+                        >Listeners
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          style="width: 100%"
+                          formControlName="listeners"
+                          [nzSize]="size"
+                          nzMode="tags"
+                          nzPlaceHolder="Please select"
+                        >
+                          <nz-option nzLabel="80" nzValue="80"></nz-option>
+                          <nz-option nzLabel="443" nzValue="443"></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="certificatearn"
+                      >
+                        Certificate ACM
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="certificatearn"
+                            placeholder="Certificate"
+                            formControlName="certificatearn"
+                            nz-input
+                            type="text"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="assignlb"
+                        >Assign LB to
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-select
+                            formControlName="assignlb"
+                            nzMode="multiple"
+                            class="width-100"
+                            nzShowSearch
+                            nzAllowClear
+                            id="assignlb"
+                            placeholder="Public IP"
+                            nzPlaceHolder="Select Servers"
+                          >
+                            <nz-option
+                              *ngFor="let i of _serverList"
+                              [nzLabel]="i.instancename"
+                              [nzValue]="i.awssolutionid"
+                            >
+                            </nz-option>
+                          </nz-select>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="subnetid"
+                        >Subnet
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzShowSearch
+                          nzAllowClear
+                          id="subnetid"
+                          placeholder="Select Subnet"
+                          nzPlaceHolder="Select Subnet"
+                          formControlName="subnetid"
+                        >
+                          <nz-option
+                            *ngFor="let data of subnetList"
+                            [nzLabel]="data.subnetname"
+                            [nzValue]="data.subnetid"
+                          >
+                          </nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="securitygroupid"
+                      >
+                        Security Group
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-select
+                          nzShowSearch
+                          nzAllowClear
+                          id="securitygroupid"
+                          nzPlaceHolder="Security Group"
+                          formControlName="securitygroupid"
+                        >
+                          <nz-option
+                            *ngFor="let data of securityGroupList"
+                            [nzLabel]="data.securitygroupname"
+                            [nzValue]="data.securitygroupid"
+                          ></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="securitypolicy"
+                      >
+                        Security Policy
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="securitypolicy"
+                            placeholder="Security Policy"
+                            nzPlaceHolder="Security Policy"
+                            formControlName="securitypolicy"
+                          >
+                            <nz-option
+                              nzLabel="ELBSecurityPolicy-2016-08"
+                              nzValue="ELBSecurityPolicy-2016-08"
+                            ></nz-option>
+                            <nz-option
+                              nzLabel="ELBSecurityPolicy-FS-2018-06"
+                              nzValue="ELBSecurityPolicy-FS-2018-06"
+                            ></nz-option>
+                            <nz-option
+                              nzLabel="ELBSecurityPolicy-TLS-1-2-2017-01"
+                              nzValue="ELBSecurityPolicy-TLS-1-2-2017-01"
+                            ></nz-option>
+                            <nz-option
+                              nzLabel="ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+                              nzValue="ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+                            ></nz-option>
+                            <nz-option
+                              nzLabel="ELBSecurityPolicy-TLS-1-1-2017-01"
+                              nzValue="ELBSecurityPolicy-TLS-1-1-2017-01"
+                            ></nz-option>
+                            <nz-option
+                              nzLabel="ELBSecurityPolicy-2015-05"
+                              nzValue="ELBSecurityPolicy-2015-05"
+                            ></nz-option>
+                            <nz-option
+                              nzLabel="ELBSecurityPolicy-TLS-1-0-2015-04"
+                              nzValue="ELBSecurityPolicy-TLS-1-0-2015-04"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSm]="8" [nzXs]="12" nzFor="notes"
+                        >Notes</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <input
+                            id="notes"
+                            placeholder="Notes"
+                            formControlName="notes"
+                            nz-input
+                            type="text"
+                          />
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <h4 class="amber-text ml-2">Health Check</h4>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="hcport"
+                        >Health Check Port
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-input-number
+                            class="w-100"
+                            id="hcport"
+                            nzPlaceHolder="Health Check Port"
+                            formControlName="hcport"
+                            [nzStep]="1"
+                          ></nz-input-number>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="hcinterval"
+                        >Health Check Interval
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-select
+                            nzShowSearch
+                            nzAllowClear
+                            id="hcinterval"
+                            placeholder="Public IP"
+                            nzPlaceHolder="Health Check Interval"
+                            formControlName="hcinterval"
+                          >
+                            <nz-option
+                              [nzLabel]="'10'"
+                              [nzValue]="10"
+                            ></nz-option>
+                            <nz-option
+                              [nzLabel]="'30'"
+                              [nzValue]="30"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="hctimeout"
+                        >Health Check Timeout
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-input-number
+                            id="hctimeout"
+                            [nzMin]="2"
+                            [nzMax]="60"
+                            nzPlaceHolder="Health Check Timeout"
+                            formControlName="hctimeout"
+                            [nzStep]="1"
+                          ></nz-input-number>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="hchealthythreshold"
+                      >
+                        Healthy Check Threshold</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-input-number
+                            id="hchealthythreshold"
+                            [nzMin]="2"
+                            [nzMax]="10"
+                            nzPlaceHolder="Health Check Healthy Threshold"
+                            formControlName="hchealthythreshold"
+                            [nzStep]="1"
+                          >
+                          </nz-input-number>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label
+                        [nzSm]="8"
+                        [nzXs]="12"
+                        nzRequired
+                        nzFor="hcunhealthythreshold"
+                        >Unhealthy Check Threshold</nz-form-label
+                      >
+                      <nz-form-control [nzSm]="12" [nzXs]="12">
+                        <nz-input-group>
+                          <nz-input-number
+                            id="hcunhealthythreshold"
+                            [nzMin]="2"
+                            [nzMax]="10"
+                            nzPlaceHolder="Unhealthy Check Threshold"
+                            formControlName="hcunhealthythreshold"
+                            [nzStep]="1"
+                          >
+                          </nz-input-number>
+                        </nz-input-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </form>
+                  <div class="center-align mr-5">
+                    <nz-dropdown>
+                      <button
+                        style="width: 115px"
+                        class="loadbalancer"
+                        nz-button
+                        nz-dropdown
+                      >
+                        <span>Save</span>
+                        <i class="anticon anticon-down"></i>
+                      </button>
+                      <ul nz-menu>
+                        <li
+                          [nzDisabled]="!loadBalancerForm.valid"
+                          (click)="addLoadBalancer()"
+                          nz-menu-item
+                        >
+                          <a>Save Load Balancer</a>
+                        </li>
+                        <li (click)="getSolutionData('', true)" nz-menu-item>
+                          <a>Skip</a>
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+                <div
+                  *ngIf="_loadbalancersList.length > 0"
+                  class="col s12 m4 pl-2 pr-2"
+                >
+                  <h4 class="amber-text">Load Balancers</h4>
+                  <table
+                    *ngIf="_loadbalancersList && _loadbalancersList.length > 0"
+                    style="width: 100%"
+                  >
+                    <tr *ngFor="let lb of _loadbalancersList; let i = index">
+                      <td *ngIf="lb.lbname" class="white-text">
+                        {{ lb.lbname }}
+                      </td>
+                      <td *ngIf="lb.lbname">
+                        <i
+                          (click)="editLB(lb)"
+                          class="anticon hover-pointer amber-text anticon-edit ml-2"
+                        ></i>
+                        <i
+                          (click)="removeLB(lb, i)"
+                          class="anticon hover-pointer amber-text anticon-delete ml-1"
+                        ></i>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="col s12 mt-2">
+                  <div class="row">
+                    <div class="col s12 m6 right-align">
+                      <button
+                        class="prev-button"
+                        (click)="current = current - 1"
+                        nz-button
+                        nzType="primary"
+                        nzTitle="Previous"
+                        nzPlacement="bottomLeft"
+                        nz-tooltip
+                      >
+                        <i class="anticon anticon-arrow-left"></i>
+                      </button>
+                    </div>
+                    <div class="col s12 m6 left-align">
+                      <button
+                        class="next-button"
+                        (click)="current = current + 1"
+                        nz-button
+                        nzType="primary"
+                        nzTitle="Next"
+                        nzPlacement="bottomLeft"
+                        nz-tooltip
+                      >
+                        <i class="anticon anticon-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="current == 3" class="mt-1 center">
+              <app-parameters
+                [customQuery]="paramQuery"
+                [hideSideNav]="true"
+              ></app-parameters>
+              <div class="col s12 m6 left-align">
+                <button
+                  class="prev-button"
+                  (click)="current = current - 1"
+                  nz-button
+                  nzType="primary"
+                  nzTitle="Next"
+                  nzPlacement="bottomLeft"
+                  nz-tooltip
+                >
+                  <i class="anticon anticon-arrow-left"></i>
+                </button>
+                <button
+                  [nzLoading]="fetchingSummary"
+                  class="next-button"
+                  (click)="getSolutionData('', true)"
+                  nz-button
+                  nzType="primary"
+                  nzTitle="Next"
+                  nzPlacement="bottomLeft"
+                  nz-tooltip
+                >
+                  <i class="anticon anticon-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+            <div [hidden]="current !== 4" class="mt-1 center">
+              <i
+                style="font-size: 32px"
+                class="anticon anticon-check-circle-o green-text text-lighten-2"
+              ></i>
+              <h2 class="white-text">Created successfully</h2>
+              <h4 class="mt-1 grey-text text-lighten-3">
+                Solution
+                <a
+                  href="javascript:;"
+                  (click)="showSummary = !showSummary"
+                  class="amber-text"
+                  >{{ snameForm.get("solutionname").value }}</a
+                >
+                is ready to use.
+              </h4>
+              <div class="row mt-2">
+                <button
+                  (click)="router.navigate(['solutiontemplate/create'])"
+                  nz-button
+                  nzType="primary"
+                >
+                  Add Another Template
+                </button>
+              </div>
+              <div class="row">
+                <span class="pa-2 white-text">( OR )</span>
+              </div>
+              <div class="row">
+                <button
+                  (click)="router.navigate(['solutiontemplate'])"
+                  nz-button
+                  nzType="primary"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

@@ -1,0 +1,155 @@
+<nz-spin [nzSpinning]="loading">
+  <div>
+    <form nz-form [formGroup]="groupForm">
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSm]="24" [nzXs]="24" nzFor="groupname">
+          Rightsize Group Name</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-input-group>
+            <input
+              id="groupname"
+              placeholder="Rightsize Group Name"
+              formControlName="groupname"
+              nz-input
+              type="text"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="maintwindowids"
+          >Maintenance Window
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            formControlName="maintwindowids"
+            style="width: 95%"
+            nzAllowClear
+            nzMode="multiple"
+            nzPlaceHolder="Maintenance Window"
+            nzShowSearch
+          >
+            <nz-option
+              *ngFor="let t of windowList; index as ti"
+              [nzLabel]="t.label"
+              [nzValue]="t.value"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <h4 _ngcontent-c22="" class="amber-text">Self Healing</h4>
+      <div class="row">
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="cpuutil">
+              CPU Utilization (%)
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="cpuutil"
+                  placeholder="CPU Utilization"
+                  formControlName="cpuutil"
+                  nz-input
+                  type="number"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="memoryutil">
+              Memory Utilization (%)
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="memoryutil"
+                  placeholder="Memory Utilization"
+                  formControlName="memoryutil"
+                  nz-input
+                  type="number"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="duration">
+          Duration
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            formControlName="duration"
+            style="width: 95%"
+            nzAllowClear
+            nzPlaceHolder="Duration"
+            nzShowSearch
+          >
+            <nz-option
+              *ngFor="let t of durationList; index as ti"
+              [nzLabel]="t.label"
+              [nzValue]="t.value"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <h4 _ngcontent-c22="" class="amber-text">Notification</h4>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="userids">
+          Users to be notified
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            formControlName="userids"
+            nzMode="multiple"
+            style="width: 95%"
+            nzAllowClear
+            nzPlaceHolder="User's"
+            nzShowSearch
+          >
+            <nz-option
+              *ngFor="let t of usersList; index as ti"
+              [nzLabel]="t.label"
+              [nzValue]="t.value"
+            >
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <div *ngIf="edit">
+        <nz-form-item>
+          <nz-form-label [nzSm]="24" [nzXs]="24" nzFor="status"
+            >Status</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <nz-input-group>
+              <nz-switch
+                class="status"
+                id="status"
+                formControlName="status"
+              ></nz-switch>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </form>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button
+          (click)="saveUpdate(groupForm.value)"
+          class="save-button"
+          nz-button
+          nzType="primary"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-spin>

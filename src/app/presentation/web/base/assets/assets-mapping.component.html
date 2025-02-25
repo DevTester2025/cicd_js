@@ -1,0 +1,44 @@
+<nz-spin [nzSpinning]="getCustomer" [nzTip]="loadermessage" [nzSize]="'large'">
+  <form nz-form [formGroup]="tenantForm" [nzLayout]="'vertical'">
+    <div class="col s12 m11">
+      <nz-form-label
+        style="text-align: left"
+        [nzSm]="22"
+        [nzXs]="11"
+        nzFor="customerid"
+      >
+        {{ subtenantLable }}</nz-form-label
+      >
+    </div>
+    <div class="col s12 m12">
+      <nz-select [nzDisabled]="readOnly"
+        formControlName="customer"
+        nzMode="multiple"
+        class="width-100"
+        nzShowSearch
+        nzAllowClear
+        id="customer"
+        placeholder="Select tenants"
+        nzPlaceHolder="Select tenants"
+      >
+        <nz-option
+          *ngFor="let i of customersList"
+          [nzLabel]="i.customername"
+          [nzValue]="i.customerid"
+        ></nz-option>
+      </nz-select>
+    </div>
+  </form>
+  <div class="right mr-0" *ngIf="!readOnly">
+    <button
+      (click)="saveAssetMapping(tenantForm.value.customer)"
+      class="mt-1 save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+      [nzLoading]="addingparam"
+    >
+      Save
+    </button>
+  </div>
+</nz-spin>

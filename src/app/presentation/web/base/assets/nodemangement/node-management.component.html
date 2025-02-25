@@ -1,0 +1,253 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <div nz-row nzType="flex" nzAlign="middle">
+      <div nz-col nzSpan="24">
+        <div nz-row>
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label
+                class="left-align"
+                [nzSm]="24"
+                [nzXs]="12"
+                nzFor="rtype"
+                nzRequired
+                >Region
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="12">
+                <nz-select
+                  id="rtype"
+                  [(ngModel)]="region"
+                  style="width: 90%"
+                  nzAllowClear
+                  nzPlaceHolder="Choose Region"
+                  nzShowSearch
+                  (ngModelChange)="changeForm()"
+                >
+                  <nz-option
+                    *ngFor="let z of regionList"
+                    [nzValue]="z.zonename"
+                    [nzLabel]="z.zonename"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label
+                class="left-align"
+                [nzSm]="24"
+                [nzXs]="12"
+                nzRequired
+                nzFor="atype"
+                >Account ID
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="12">
+                <nz-select
+                  id="atype"
+                  [nzMode]="showMultiSelect ? 'multiple' : 'default'"
+                  [nzMaxMultipleCount]="showMultiSelect ? 3 : null"
+                  [(ngModel)]="accountid"
+                  style="width: 90%"
+                  nzAllowClear
+                  nzPlaceHolder="Choose Account ID"
+                  nzShowSearch
+                  (ngModelChange)="changeForm()"
+                >
+                  <nz-option
+                    *ngFor="let a of accountsList"
+                    [nzValue]="a.id"
+                    [nzLabel]="a.name"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row param-table">
+      <nz-tabset
+        [nzSelectedIndex]="nodetabIndex"
+        (nzSelectChange)="nodeTabChanged($event)"
+      >
+        <nz-tab nzTitle="Managed Instances">
+          <ng-container class="page-body">
+            <div nz-row nzType="flex" nzAlign="middle" *ngIf="modifyiam">
+              <div nz-col nzSpan="6">
+                <nz-select
+                  nzShowSearch
+                  nzAllowClear
+                  id="ssmagenttype"
+                  style="width: 50%"
+                  placeholder="Select Type"
+                  nzPlaceHolder="Select Type"
+                  [(ngModel)]="ssmagenttype"
+                  (ngModelChange)="getNodesList()"
+                >
+                  <nz-option nzValue="Self" nzLabel="Self"></nz-option>
+                  <nz-option nzValue="Hybrid" nzLabel="Hybrid"></nz-option>
+                </nz-select>
+              </div>
+              <div nz-col nzSpan="18">
+                <div nz-col nzSpan="24">
+                  <div class="right-align">
+                    <button nz-button nzType="primary" (click)="showRole()">
+                      Modify IAM Role
+                    </button>
+                    &nbsp;&nbsp;
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row param-table">
+              <app-cloudmatiq-data-table
+                (dataChanged)="dataChanged($event)"
+                [tableData]="nodesList"
+                [tableHeader]="tableHeader"
+                [selectedcolumns]="selectedcolumns"
+                [tableConfig]="tableConfig"
+                [totalCount]="totalCount"
+              ></app-cloudmatiq-data-table>
+            </div>
+          </ng-container>
+        </nz-tab>
+        <nz-tab nzTitle="Inventory">
+          <ng-container class="page-body" *ngIf="nodetabIndex == 1">
+            <app-cloudmatiq-inventory
+              [refresh]="nodetabIndex == 1"
+              [region]="region"
+              [accountid]="accountid"
+            ></app-cloudmatiq-inventory>
+          </ng-container>
+        </nz-tab>
+        <nz-tab nzTitle="Patch Manager">
+          <ng-container class="page-body" *ngIf="nodetabIndex == 2">
+            <app-cloudmatiq-patchmanager
+              (tabChange)="patchTabChange($event)"
+              [refresh]="nodetabIndex == 2"
+              [region]="region"
+              [accountid]="accountid"
+            ></app-cloudmatiq-patchmanager>
+          </ng-container>
+        </nz-tab>
+        <nz-tab nzTitle="Run Command">
+          <ng-container class="page-body" *ngIf="nodetabIndex == 3">
+            <app-cloudmatiq-commandhistory
+              [refresh]="nodetabIndex == 3"
+              [region]="region"
+              [accountid]="accountid"
+            ></app-cloudmatiq-commandhistory>
+          </ng-container>
+        </nz-tab>
+        <nz-tab nzTitle="State Manager">
+          <ng-container class="page-body" *ngIf="nodetabIndex == 4">
+            <app-cloudmatiq-association
+              [refresh]="nodetabIndex == 4"
+              [region]="region"
+              [accountid]="accountid"
+            ></app-cloudmatiq-association>
+          </ng-container>
+        </nz-tab>
+        <nz-tab nzTitle="History">
+          <ng-container class="page-body" *ngIf="nodetabIndex == 5">
+            <app-cloudmatiq-nodemanager-log
+              [refresh]="nodetabIndex == 5"
+              [region]="region"
+              [accountid]="accountid"
+            ></app-cloudmatiq-nodemanager-log>
+          </ng-container>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>
+<app-cloudmatiq-side-bar
+  (dataChanged)="closeDrawer($event)"
+  [(isVisible)]="viewNode"
+  [title]="title"
+  [width]="860"
+>
+  <ng-container class="modal-content" *ngIf="viewNode">
+    <app-cloudmatiq-nodedetail [instanceref]="instanceref" *ngIf="viewNode">
+    </app-cloudmatiq-nodedetail>
+  </ng-container>
+</app-cloudmatiq-side-bar>
+<app-cloudmatiq-side-bar
+  (dataChanged)="closeDrawer($event)"
+  [(isVisible)]="showRoleView"
+  [title]="'Update IAMRole'"
+  [width]="480"
+>
+  <ng-container class="modal-content" *ngIf="showRoleView">
+    <form nz-form [formGroup]="roleForm">
+      <div nz-row>
+        <div nz-col nzSpan="24">
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="24"
+              [nzXs]="12"
+              nzFor="instancerefid"
+              nzRequired
+              >Instance ID
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="12">
+              <nz-select
+                style="width: 100%"
+                formControlName="instancerefid"
+                nzPlaceHolder="Please Select Instance"
+                nzShowSearch
+                nzAllowClear
+              >
+                <nz-option
+                  *ngFor="let o of assetsList"
+                  [nzLabel]="o.instancename"
+                  [nzValue]="o.instancerefid"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="24">
+          <nz-form-item>
+            <nz-form-label
+              class="left-align"
+              [nzSm]="24"
+              [nzXs]="12"
+              nzFor="iamrole"
+              nzRequired
+              >IAM role
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="12">
+              <nz-select
+                style="width: 100%"
+                formControlName="iamrole"
+                nzPlaceHolder="Please Select IAM Role"
+                nzShowSearch
+                nzAllowClear
+              >
+                <nz-option
+                  *ngFor="let o of roleList"
+                  [nzLabel]="o.InstanceProfileName"
+                  [nzValue]="o"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="right mr-0">
+          <button
+            class="mt-1 save-button"
+            type="submit"
+            nz-button
+            nzType="primary"
+            [nzLoading]="addingrole"
+            (click)="updateIAMRole()"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</app-cloudmatiq-side-bar>

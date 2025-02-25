@@ -1,0 +1,149 @@
+<body class="status uptime status-none">
+  <div *ngIf="isSpinning" class="col s12 text-xs-center center mt-15">
+    <nz-spin
+      nzSize="large"
+      nzTip="Loading..."
+    ></nz-spin>
+  </div>
+  <div *ngIf="!isSpinning" class="layout-content status status-full-history starter">
+    <app-notification-banner [customerid]="customerid"></app-notification-banner>
+    <div class="masthead-container basic">
+      <div class="masthead has-logo">
+        <br />
+        <div class="dahboard-name">
+          <h2>
+            <b>Customer Dashboard</b>&nbsp;&nbsp;
+            <!-- <ng-template #contentTemplate>
+              <nz-timeline>
+                <nz-timeline-item *ngFor="let n of ntfList">{{
+                  n.content
+                }}</nz-timeline-item>
+              </nz-timeline>
+            </ng-template>
+            <button
+              class="dashboard-btn"
+              nz-button
+              nz-popover
+              nzTitle="Notifications"
+              [nzContent]="contentTemplate"
+              nzTrigger="click"
+            >
+              <i class="anticon anticon-bell"></i>
+            </button> -->
+          </h2>
+          <h4>{{ customerObj.customername }}</h4>
+        </div>
+        <div class="logo-container">
+          <a *ngIf="customerObj.logo">
+            <img style="width: 40%; float: right" [src]="customerObj.logo" alt="Customer logo"/>
+          </a>
+        </div>
+        <div class="clearfix"></div>
+
+        <div>
+          <nz-breadcrumb>
+            <nz-breadcrumb-item>
+              <a (click)="gotoHome()">Home</a>
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item> Metrics </nz-breadcrumb-item>
+          </nz-breadcrumb>
+        </div>
+      </div>
+    </div>
+    <!-- this is outside of the .container so that the cover photo can go full width on mobile -->
+
+    <div class="container history-container">
+      <div class="history-nav border-color">
+        <a class="button border-color" (click)="uptime = true">Incidents</a>
+        <a class="button border-color" (click)="uptime = false">Uptime</a>
+      </div>
+      <div class="row metrics" *ngIf="!uptime" style="margin-bottom: 7%">
+        <nz-select
+          style="width: 40%; padding: 10px"
+          [(ngModel)]="selectedTag"
+          nzPlaceHolder="Choose"
+          (ngModelChange)="onYrChange()"
+        >
+          <nz-option
+            *ngFor="let option of dashboardConfig"
+            [nzLabel]="option.label"
+            [nzValue]="option.value"
+          ></nz-option>
+        </nz-select>
+        <nz-select
+          style="float: right; width: 15%; padding: 10px"
+          [(ngModel)]="selectedYr"
+          (ngModelChange)="onYrChange()"
+          nzAllowClear
+          nzPlaceHolder="Choose"
+        >
+          <nz-option nzValue="2022" nzLabel="2022"></nz-option>
+          <nz-option nzValue="2021" nzLabel="2021"></nz-option>
+        </nz-select>
+      </div>
+      <div *ngIf="!uptime" class="row">
+        <div class="column" *ngFor="let c of calendarSet">
+          <app-cloudmatiq-uptime-calendar
+            month="{{ c.month }}"
+            [highlights]="c.highlights"
+            avg="{{ c.overallavgprcnt }}"
+          ></app-cloudmatiq-uptime-calendar>
+        </div>
+      </div>
+      <div *ngIf="uptime" class="container">
+        <div class="components-section font-regular">
+          <div class="row metrics" style="margin-bottom: -70px">
+            <nz-select
+              style="float: right; width: 15%; padding: 10px"
+              [(ngModel)]="selectedYr"
+              (ngModelChange)="onYrChange()"
+              nzAllowClear
+              nzPlaceHolder="Choose"
+            >
+              <nz-option nzValue="2022" nzLabel="2022"></nz-option>
+              <nz-option nzValue="2021" nzLabel="2021"></nz-option>
+            </nz-select>
+          </div>
+          <div class="incidents-list format-expanded">
+            <!-- <a class="font-largest no-link" id="past-incidents">Incidents</a> -->
+            <nz-timeline>
+              <nz-timeline-item *ngFor="let iv of incidentObj | keyvalue">
+                <b>
+                  {{ iv.key | date: "MMM" }}
+                  <var data-var="date"> {{ iv.key | date: "dd" }}</var
+                  >,
+                  <var data-var="year">{{ iv.key | date: "yyyy" }}</var>
+                </b>
+                <div *ngFor="let i of iv.value">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      font-size: 12px;
+                    "
+                  >
+                    <p>ID: {{ i.incidentno }}</p>
+                    <p class="color-secondary">Severity: {{ i.severity }}</p>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      font-size: 12px;
+                    "
+                  >
+                    <p class="color-secondary">{{ i.title }}</p>
+                    <p class="color-secondary">Category: {{ i.category }}</p>
+                  </div>
+                  <div style="font-size: 12px">
+                    <p style="margin: 0">{{ i.notes }}</p>
+                  </div>
+                  <div style="border-bottom: 0.5px solid #abadad"></div></div
+              ></nz-timeline-item>
+            </nz-timeline>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

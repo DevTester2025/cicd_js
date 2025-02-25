@@ -1,0 +1,3 @@
+.releases-component-container ::ng-deep .ant-tabs-nav-container {
+    margin-bottom: -36px;
+}

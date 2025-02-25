@@ -1,0 +1,47 @@
+<nz-spin [nzSpinning]="gettingServerDetails">
+  <form nz-form nzLayout="vertical">
+    <nz-form-item>
+      <nz-form-label [nzXs]="24" nzFor="cinst">Current Instance</nz-form-label>
+      <nz-form-control [nzXs]="24">
+        <input
+          [attr.disabled]="true"
+          nz-input
+          id="cinst"
+          [(ngModel)]="currentflavour"
+          placeholder="4 CPU, 16 GB"
+          name="cflavour"
+        />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzXs]="24" nzFor="ninstype"
+        >New Instance Type</nz-form-label
+      >
+      <nz-form-control [nzXs]="24">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          [(ngModel)]="instanceflavour"
+          nzPlaceHolder="New Instance Type"
+          name="iflavour"
+          style="width: 100%"
+        >
+          <nz-option
+            *ngFor="let t of flavors; index as ti"
+            [nzLabel]="t.instancetypename"
+            [nzValue]="t.instancetypename"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <button
+      (click)="resizeInstance()"
+      nz-button
+      nzType="primary"
+      style="position: fixed; bottom: 8px; right: 17px"
+    >
+      Resize
+    </button>
+  </form>
+</nz-spin>

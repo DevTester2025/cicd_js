@@ -1,0 +1,230 @@
+<nz-spin [nzSpinning]="loading">
+  <nz-tabset
+  [nzTabBarExtraContent]="extraTemplate"
+    [nzSelectedIndex]="tabIndex"
+    (nzSelectChange)="tabChanged($event)">
+    <nz-tab nzTitle="Info">
+  <div>
+    <form nz-form [formGroup]="predictionForm">
+      <div class="row">
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label
+              nzRequired
+              style="text-align: left"
+              [nzSm]="24"
+              [nzXs]="12"
+              nzFor="cloudprovider"
+              >Provider
+            </nz-form-label>
+            <nz-form-control [nzSm]="24" [nzXs]="12">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                placeholder="Select Provider"
+                (ngModelChange)="
+                  providerChanges(predictionForm.value.cloudprovider)
+                "
+                nzPlaceHolder="Select Provider"
+                formControlName="cloudprovider"
+              >
+                <nz-option
+                  *ngFor="let data of cloudproviderList"
+                  [nzLabel]="data.keyname"
+                  [nzValue]="data.keyvalue"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="resourcetype"
+              >Zone</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="12">
+              <nz-select
+                formControlName="region"
+                style="width: 95%"
+                nzAllowClear
+                nzPlaceHolder="Zone"
+                nzShowSearch
+                [nzDisabled]="
+                  predictionForm.value.cloudprovider == 'Sentia' ||
+                  predictionForm.value.cloudprovider == 'Eqinix'
+                "
+              >
+                <nz-option
+                  *ngFor="let t of zoneList; index as ti"
+                  [nzLabel]="t.label"
+                  [nzValue]="t.value"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="23"
+              [nzXs]="24"
+              nzRequired
+              nzFor="windowname"
+            >
+              Maintenance Window Name
+            </nz-form-label>
+            <nz-form-control [nzSm]="23" [nzXs]="24">
+              <nz-input-group>
+                <input
+                  id="windowname"
+                  placeholder="Maintenance Window Name"
+                  formControlName="windowname"
+                  nz-input
+                  type="text"
+                />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col s12 m6">
+          <nz-form-item>
+            <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="windowdate" nzRequired
+              >Duration</nz-form-label
+            >
+            <nz-form-control [nzSm]="24" [nzXs]="12">
+              <nz-range-picker
+                (ngModelChange)="calcDuration(predictionForm.value.windowdate)"
+                formControlName="windowdate"
+                [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                nzFormat="dd-MMM-yyy HH:mm"
+                nzShowTime
+              >
+              </nz-range-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <!-- <nz-form-item>
+                <nz-form-label [nzSm]="23" [nzXs]="24" nzRequired nzFor="duration">
+                    Duration
+                </nz-form-label>
+                <nz-form-control [nzSm]="23" [nzXs]="24">
+                    <nz-input-group>
+                        <input id="duration" placeholder="Duration" formControlName="duration" nz-input type="number">
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item> -->
+        <div class="col s12 m6">
+          <div *ngIf="edit">
+            <nz-form-item>
+              <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="status"
+                >Status</nz-form-label
+              >
+              <nz-form-control [nzSm]="24" [nzXs]="24">
+                <nz-input-group>
+                  <nz-switch
+                    class="status"
+                    id="status"
+                    formControlName="status"
+                  ></nz-switch>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <div class="col s12 m12">
+          <div nz-col nzSpan="24">
+            <div nz-row style="margin-top: 13px">
+              <!-- <nz-collapse [nzBordered]="false">
+                                <nz-collapse-panel nzHeader="Schedule" [nzActive]="true"> -->
+              <nz-form-label
+                [nzSm]="23"
+                [nzXs]="24"
+                nzRequired
+                nzFor="duration"
+              >
+                Schedule
+              </nz-form-label>
+              <div nz-row>
+                <div formArrayName="requestdetails">
+                  <table style="width: 100%">
+                    <thead>
+                      <tr style="color: white">
+                        <th width="38%" class="p-l-15">Day</th>
+                        <th width="15%">Start Time</th>
+                        <th width="20%">End Time</th>
+                      </tr>
+                    </thead>
+                    <tr
+                      *ngFor="
+                        let item of getFormArray().controls;
+                        let i = index
+                      "
+                      [formGroupName]="i"
+                    >
+                      <td class="p-t-20 p-b-10 p-r-15">
+                        <input
+                          disabled
+                          nz-input
+                          placeholder="day"
+                          formControlName="requestday"
+                          type="text"
+                        />
+                      </td>
+                      <td class="p-t-20 p-b-10">
+                        <nz-time-picker
+                          class="shedule-request"
+                          formControlName="reqstarttime"
+                          nzFormat="HH:mm"
+                        >
+                        </nz-time-picker>
+                      </td>
+                      <td class="p-t-20 p-b-10">
+                        <nz-time-picker
+                          class="shedule-request"
+                          formControlName="reqendtime"
+                          nzFormat="HH:mm"
+                        >
+                        </nz-time-picker>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <!-- </nz-collapse-panel>
+                            </nz-collapse> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  </nz-tab>
+  <nz-tab nzTitle="Change Logs" *ngIf="windowObj.maintwindowid !== undefined && windowObj.maintwindowid !== null && isChangelogs">
+    <app-comments
+      *ngIf="tabIndex == 1"
+      [resourceDetails]="windowObj"
+      [resourceId]="windowObj.refid"
+      [refType]="'history'"
+    ></app-comments>
+  </nz-tab>
+  </nz-tabset>
+</nz-spin>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button *ngIf="tabIndex == 0"
+          [disabled]="disabled || !predictionForm.valid"
+          (click)="saveUpdate(predictionForm.value)"
+          class="save-button"
+          nz-button
+          nzType="primary"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+ 
+

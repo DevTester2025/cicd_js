@@ -1,0 +1,103 @@
+<nz-tabset
+  [nzSelectedIndex]="templateTabIndex"
+  (nzSelectChange)="templateChange($event)"
+  [nzTabBarExtraContent]="extraTemplate"
+>
+  <nz-tab nzTitle="Properties">
+    <app-prop-basic
+      [propertiesobj]="propertiesobj"
+      *ngIf="templateTabIndex==0"
+      [viewMode]="mode"
+    ></app-prop-basic>
+  </nz-tab>
+  <nz-tab
+    nzTitle="CMDB"
+    *ngIf="propertiesobj?.selectedNode?._data?.type !== 'OTHERS'"
+  >
+    <app-prop-cmdb
+      *ngIf="templateTabTitle=='CMDB'"
+      [nodeObj]="propertiesobj"
+      [nodeDetails]="nodeDetails"
+      [activeTab]="currentTab"
+      (formDataChange)="onTabDataChange($event)"
+    ></app-prop-cmdb>
+  </nz-tab>
+  <nz-tab
+    nzTitle="Notifications"
+    *ngIf="propertiesobj?.selectedNode?._data?.type !== 'OTHERS'"
+  >
+    <app-prop-notification
+      *ngIf="templateTabTitle=='Notifications'"
+      [nodeObj]="propertiesobj"
+      [nodeDetails]="nodeDetails"
+      [activeTab]="currentTab"
+      (formDataChange)="onTabDataChange($event)"
+    ></app-prop-notification>
+  </nz-tab>
+  <nz-tab
+    nzTitle="Integrations"
+    *ngIf="propertiesobj?.selectedNode?.name === 'TESTING_TOOL'"
+  >
+    <app-prop-integration
+      *ngIf="templateTabTitle=='Integrations'"
+      [nodeObj]="propertiesobj"
+      [nodeDetails]="nodeDetails"
+      [activeTab]="currentTab"
+      (formDataChange)="onTabDataChange($event)"
+    ></app-prop-integration>
+  </nz-tab>
+  <nz-tab
+    nzTitle="Compliances"
+    *ngIf="propertiesobj?.selectedNode?._data?.type === 'BUILD_SCRIPT' || propertiesobj?.selectedNode?.name === 'CONTAINER_REGISTRY'"
+  >
+    <app-alert-notification
+      *ngIf="templateTabTitle=='Compliances'"
+      [nodeObj]="propertiesobj"
+      [nodeDetails]="nodeDetails"
+      [activeTab]="currentTab"
+      (formDataChange)="onTabDataChange($event)"
+    ></app-alert-notification>
+  </nz-tab>
+  <nz-tab
+    nzTitle="Rollback & Retries"
+    *ngIf="propertiesobj?.selectedNode?._data?.type === 'BUILD_SCRIPT' || propertiesobj?.selectedNode?.name === 'CONTAINER_REGISTRY'"
+  >
+    <app-prop-rollback
+      *ngIf="templateTabTitle=='Rollback & Retries'"
+      [nodeDetails]="nodeDetails"
+      [nodeObj]="propertiesobj"
+      [activeTab]="currentTab"
+      (formDataChange)="onTabDataChange($event)"
+    ></app-prop-rollback>
+  </nz-tab>
+  <nz-tab
+    nzTitle="Settings"
+    *ngIf="propertiesobj?.selectedNode?._data?.type === 'BUILD_SCRIPT' || propertiesobj?.selectedNode?.name === 'CONTAINER_REGISTRY'"
+  >
+    <app-prop-envnode
+      *ngIf="templateTabTitle=='Settings'"
+      [nodeDetails]="nodeDetails"
+      [nodeObj]="propertiesobj"
+      [activeTab]="currentTab"
+      (formDataChange)="onTabDataChange($event)"
+    ></app-prop-envnode>
+  </nz-tab>
+</nz-tabset>
+
+<ng-template #extraTemplate>
+  <div nz-row nzType="flex" nzAlign="middle">
+    <div nz-col nzSpan="24">
+      <div class="right-align">
+        <button
+          *ngIf="isUpdate"
+          nz-button
+          nzType="primary"
+          (click)="updateNodeDetails()"
+        >
+          <i class="anticon anticon-save"></i>
+        </button>
+        &nbsp;&nbsp;
+      </div>
+    </div>
+  </div>
+</ng-template>

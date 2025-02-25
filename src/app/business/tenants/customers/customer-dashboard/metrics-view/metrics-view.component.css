@@ -1,0 +1,315 @@
+body {
+  font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, Sans-Serif;
+  font-weight: 400;
+  background-color: #ffffff;
+  font-size: 16px;
+  line-height: 24px;
+  color: #333;
+  background: #fff;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+body.status,
+.color-primary,
+.color-primary:hover,
+.layout-content.status-index .status-day .update-title.impact-none a,
+.layout-content.status-index .status-day .update-title.impact-none a:hover,
+.layout-content.status-index .timeframes-container .timeframe.active,
+.layout-content.status-full-history .month .incident-container .impact-none,
+.layout-content.status.status-index
+  .incidents-list
+  .incident-title.impact-none
+  a,
+.incident-history .impact-none,
+.layout-content.status .grouped-items-selector.inline .grouped-item.active,
+.layout-content.status.status-full-history .history-nav a.current,
+.layout-content.status.status-full-history .history-nav a:not(.current):hover,
+div[id^="subscribe-modal"] .modal-header .close,
+.grouped-item-label,
+#uptime-tooltip
+  .tooltip-box
+  .tooltip-content
+  .related-events
+  .related-event
+  a.related-event-link {
+  color: #2d3232;
+}
+.color-green,
+.status-none {
+  color: #2ecc71;
+}
+body,
+.layout-content.status.status-api
+  .section
+  .example-container
+  .example-opener
+  .color-secondary,
+.grouped-items-selector,
+.layout-content.status.status-full-history .history-nav a.current,
+div[id^="subscribe-modal"] .modal-footer,
+div[id^="subscribe-modal"],
+#uptime-tooltip .tooltip-box {
+  background-color: #ffffff;
+}
+.layout-content.status .masthead-container.basic {
+  width: 90%;
+  max-width: 90%;
+  margin: 0 auto;
+}
+.layout-content.status .masthead-container.basic .masthead {
+  /* padding-top: 36px; */
+}
+.layout-content.status .masthead-container .masthead {
+  margin-bottom: -23px;
+}
+.layout-content.status .masthead-container.basic .masthead .logo-container {
+  float: right;
+  max-width: 40%;
+  margin: 0px;
+}
+.layout-content.status .masthead-container.basic .masthead .dahboard-name {
+  float: left;
+}
+.layout-content.status .masthead-container .updates-dropdown-container {
+  float: right;
+}
+.updates-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+.clearfix {
+  clear: both;
+  zoom: 1;
+}
+.layout-content.status.status-full-history > .container {
+  position: relative;
+}
+.container {
+  width: 90%;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+body.status .layout-content.status .border-color,
+hr,
+.tooltip-base,
+.markdown-display table,
+div[id^="subscribe-modal"],
+#uptime-tooltip .tooltip-box {
+  border-color: #2d3232;
+}
+.layout-content.status.status-full-history .history-nav {
+  border-bottom-width: 1px;
+  /* border-style: solid; */
+  border-bottom: 1px solid;
+  margin: 2rem 0;
+}
+.layout-content.status.status-full-history .history-nav a:not(.current) {
+  border: 1px solid transparent !important;
+}
+body.status .layout-content.status .border-color,
+hr,
+.tooltip-base,
+.markdown-display table,
+div[id^="subscribe-modal"],
+#uptime-tooltip .tooltip-box {
+  border-color: #2d3232;
+}
+small,
+.layout-content.status .table-row .date,
+.color-secondary,
+.layout-content.status .grouped-items-selector.inline .grouped-item,
+.layout-content.status.status-full-history
+  .history-footer
+  .pagination
+  a.disabled,
+.layout-content.status.status-full-history .history-nav a,
+#uptime-tooltip
+  .tooltip-box
+  .tooltip-content
+  .related-events
+  #related-event-header {
+  color: #abadad;
+}
+.layout-content.status.status-full-history .history-nav a {
+  border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  -webkit-border-radius: 4px 4px 0 0;
+  -o-border-radius: 4px 4px 0 0;
+  -ms-border-radius: 4px 4px 0 0;
+  display: inline-block;
+  float: left;
+  margin-bottom: -1px;
+  padding: 10px 18px;
+  margin-right: 6px;
+  line-height: 20px;
+  display: inline-block;
+}
+a,
+a:hover,
+.layout-content.status-index .page-footer span a:hover,
+.layout-content.status-index
+  .timeframes-container
+  .timeframe:not(.active):hover,
+.layout-content.status-incident .subheader a:hover {
+  color: #825fff;
+}
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+body.status,
+.color-primary,
+.color-primary:hover,
+.layout-content.status-index .status-day .update-title.impact-none a,
+.layout-content.status-index .status-day .update-title.impact-none a:hover,
+.layout-content.status-index .timeframes-container .timeframe.active,
+.layout-content.status-full-history .month .incident-container .impact-none,
+.layout-content.status.status-index
+  .incidents-list
+  .incident-title.impact-none
+  a,
+.incident-history .impact-none,
+.layout-content.status .grouped-items-selector.inline .grouped-item.active,
+.layout-content.status.status-full-history .history-nav a.current,
+.layout-content.status.status-full-history .history-nav a:not(.current):hover,
+div[id^="subscribe-modal"] .modal-header .close,
+.grouped-item-label,
+#uptime-tooltip
+  .tooltip-box
+  .tooltip-content
+  .related-events
+  .related-event
+  a.related-event-link {
+  color: #2d3232;
+}
+.layout-content.status.status-full-history .history-nav a.current {
+  cursor: default;
+  border-width: 1px;
+  border-style: solid;
+  /* border-bottom: 1px solid; */
+  border-bottom-color: transparent;
+}
+body.status .layout-content.status .border-color,
+hr,
+.tooltip-base,
+.markdown-display table,
+div[id^="subscribe-modal"],
+#uptime-tooltip .tooltip-box {
+  border-color: #2d3232;
+}
+small,
+.layout-content.status .table-row .date,
+.color-secondary,
+.layout-content.status .grouped-items-selector.inline .grouped-item,
+.layout-content.status.status-full-history
+  .history-footer
+  .pagination
+  a.disabled,
+.layout-content.status.status-full-history .history-nav a,
+#uptime-tooltip
+  .tooltip-box
+  .tooltip-content
+  .related-events
+  #related-event-header {
+  color: #abadad;
+}
+.layout-content.status.status-full-history .history-nav a {
+  border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  -webkit-border-radius: 4px 4px 0 0;
+  -o-border-radius: 4px 4px 0 0;
+  -ms-border-radius: 4px 4px 0 0;
+  display: inline-block;
+  float: left;
+  margin-bottom: -1px;
+  padding: 10px 18px;
+  margin-right: 6px;
+  line-height: 20px;
+  display: inline-block;
+}
+body.status .layout-content.status .border-color,
+hr,
+.tooltip-base,
+.markdown-display table,
+div[id^="subscribe-modal"],
+#uptime-tooltip .tooltip-box {
+  border-color: #2d3232;
+}
+.font-small,
+small {
+  font-size: 14px;
+  line-height: 21.35px;
+  font-size: 0.875rem;
+  line-height: 1.334375rem;
+}
+
+.layout-content.status.status-full-history .history-nav:before,
+.layout-content.status.status-full-history .history-nav:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+.layout-content.status.status-full-history .history-nav:after {
+  clear: both;
+}
+.layout-content.status.status-full-history .history-nav:before,
+.layout-content.status.status-full-history .history-nav:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+.column {
+  float: left;
+  width: 33%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.layout-content.status .incidents-list {
+  margin-top: 70px;
+}
+.layout-content.status
+  .incidents-list.format-expanded
+  .status-day:nth-child(2) {
+  margin-top: 20px;
+}
+.layout-content.status .incidents-list.format-expanded .status-day {
+  margin-top: 35px;
+}
+.layout-content.status
+  .incidents-list.format-expanded
+  .status-day:nth-child(2) {
+  margin-top: 20px;
+}
+.layout-content.status .incidents-list.format-expanded .status-day {
+  margin-top: 35px;
+}
+.font-regular {
+  font-size: 16px;
+  line-height: 24px;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.layout-content.status .incidents-list.format-expanded .status-day .date {
+  font-weight: 500;
+  /* border-style: solid; */
+  border-bottom: 1px solid;
+  border-bottom-width: 1px;
+  padding-bottom: 3px;
+  margin-bottom: 10px;
+}
+
+.history-container.ant-select-selection {
+  background: transparent !important;
+  color:#333
+}
+.history-container.ant-select-dropdown-menu {
+  background: transparent !important;
+  color:#333
+}

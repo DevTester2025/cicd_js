@@ -1,0 +1,50 @@
+<div class="ant-col-md-24 ant-col-lg-24">
+  <div class="serviceform">
+    <div class="ant-col-md-24 ant-col-lg-24">
+      <div class="create-service ant-col-md-24 ant-col-lg-24">
+        <!-- <div class="ant-col-lg-4"></div> -->
+        <div class="ant-col-md-24 ant-col-lg-24 mb-1">
+          <ng-container *ngIf="isLoading">
+            <i nz-icon nzType="loading" style="font-size: 24px;"></i>
+          </ng-container>
+          <nz-table
+            #basicTable
+            [nzShowPagination]="false"
+            nzSize="medium"
+            [nzData]="workflowApprovers"
+            [nzLoading]="isLoading"
+          >
+            <thead>
+              <tr>
+                <th class="left-align">Approver Level</th>
+                <th class="left-align">Approver Name</th>
+                <th class="left-align">Approval Status</th>
+                <th class="left-align">Updated Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let data of workflowApprovers
+                "
+              >
+                <td class="left-align">
+                  Level {{ data.aprvrseqid }}
+                </td>
+                <td class="left-align">
+                  {{ data.approvers.fullname }}
+                </td>
+                <td class="left-align">
+                  {{ data.approvalstatus }}
+                </td>
+                <td class="left-align">
+                  {{ data.lastupdateddt }}
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

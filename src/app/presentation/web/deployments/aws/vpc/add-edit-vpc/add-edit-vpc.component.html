@@ -1,0 +1,222 @@
+<nz-tabset [(nzSelectedIndex)]="selectedIndex" class="networking-tab">
+  <nz-tab nzTitle="Details">
+    <form nz-form [formGroup]="vpcForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="vpcname"
+          >VPC Name</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              [attr.disabled]="noEdit"
+              id="vpcname"
+              formControlName="vpcname"
+              nz-input
+              type="text"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="awsvpcid"
+          >AWS VPC id</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              [attr.disabled]="noEdit"
+              id="awsvpcid"
+              formControlName="awsvpcid"
+              nz-input
+              type="text"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="ipv4cidr"
+          >IPV4 CIDR</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              [attr.disabled]="noEdit"
+              id="ipv4cidr"
+              formControlName="ipv4cidr"
+              nz-input
+              type="text"
+            />
+          </nz-input-group>
+          <nz-form-extra class="grey-text text-lighten-2"
+            >Format : ###.###.###.###/##</nz-form-extra
+          >
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="notes"
+          >Notes</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <textarea
+              [attr.disabled]="noEdit"
+              id="notes"
+              formControlName="notes"
+              placeholder="Notes"
+              type="text"
+              nz-input
+            ></textarea>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button
+          (click)="saveUpdateVpc(vpcForm.value)"
+          [disabled]="!vpcForm.valid || noEdit"
+          type="submit"
+          class="save-button"
+          nz-button
+          nzType="primary"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </nz-tab>
+  <nz-tab nzTitle="Subnets">
+    <app-cloudmatiq-data-table
+      [tableData]="vpcObj.subnets"
+      [tableHeader]="vpcObj.tableheader"
+      [tableConfig]="vpcObj.tagTableConfig"
+    >
+    </app-cloudmatiq-data-table>
+  </nz-tab>
+  <nz-tab nzTitle="Internet Gateway">
+    <form nz-form [formGroup]="igwForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="gatewayname"
+          >Gateway Name</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              [attr.disabled]="noEdit"
+              id="gatewayname"
+              formControlName="gatewayname"
+              nz-input
+              type="text"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="awsinternetgatewayid"
+          >AWS Gateway id</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              [attr.disabled]="noEdit"
+              id="awsinternetgatewayid"
+              formControlName="awsinternetgatewayid"
+              nz-input
+              type="text"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="notes"
+          >Notes</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <textarea
+              [attr.disabled]="noEdit"
+              id="notes"
+              formControlName="notes"
+              placeholder="Notes"
+              type="text"
+              nz-input
+            ></textarea>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-tab>
+  <nz-tab nzTitle="Tags">
+    <app-cloudmatiq-side-bar
+      (dataChanged)="tagDrawerChanges($event)"
+      [(isVisible)]="tagPickerVisible"
+      [width]="550"
+      [title]="'Add/Edit Tags'"
+    >
+      <ng-container class="modal-content">
+        <app-cloudmatiq-tag-picker
+          *ngIf="vpcObj && vpcObj.vpcid && tagPickerVisible"
+          [currentTags]="tags"
+          cloudProvider="AWS"
+          [pickermode]="'combined'"
+          [mode]="'picker'"
+          [validateInputs]="true"
+          [disableParams]="true"
+          [tagGroupType]="null"
+          [resourceId]="vpcObj.vpcid"
+          [resourceType]="'ASSET_VPC'"
+          (tagChanges)="onTagChangeEmit($event)"
+        >
+        </app-cloudmatiq-tag-picker>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+      <div nz-row class="ml-1">
+        <div
+          nz-col
+          nzSpan="24"
+        >
+          <!-- <h2 class="solution-title mb-0" style="margin-top: .5em;">Tags</h2> -->
+          <button
+            (click)="tagPickerVisible = true"
+            nz-button
+            *ngIf="!isSyncTags"
+            nzType="primary"
+            class="m-r-15"
+          >
+            Add/Edit Tags
+          </button>
+          <button nz-button (click)="syncAssetTags()">Sync Tags</button>
+          <nz-form-extra class="red-text"
+            >* Please sync the tags before update</nz-form-extra
+          >
+        </div>
+        <div nz-col nzSpan="24">
+          <div class="param-table" style="margin-top: 0px">
+            <app-cloudmatiq-data-table
+              [tableData]="tagsList"
+              [tableHeader]="tagTableHeader"
+              [tableConfig]="tagTableConfig"
+            >
+            </app-cloudmatiq-data-table>
+          </div>
+        </div>
+      </div>
+    </nz-spin>
+    <button
+      (click)="updateTags()"
+      [nzLoading]="loading"
+      class="save-button"
+      *ngIf="!isSyncTags"
+      nz-button
+      nzType="primary"
+    >
+      Save
+    </button>
+  </nz-tab>
+  <nz-tab [nzTitle]="subtenantLable" *ngIf="addTenant">
+    <div>
+      <app-mapping-instance [assetData]="assetData"></app-mapping-instance>
+    </div>
+  </nz-tab>
+</nz-tabset>

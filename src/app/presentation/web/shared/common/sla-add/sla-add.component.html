@@ -1,0 +1,206 @@
+<form nz-form [formGroup]="slaForm">
+  <!-- <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="slaname">SLA Name</nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-input-group>
+                <input id="slaname" formControlName="slaname" nz-input type="text">
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item> -->
+  <div class="row">
+    <div class="col s12 m3">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="priority"
+          >Priority</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="priority"
+            nzPlaceHolder="Priority"
+            formControlName="priority"
+            (ngModelChange)="onChange($event)"
+          >
+            <nz-option nzLabel="Priority 1" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="Priority 2" [nzValue]="2"></nz-option>
+            <nz-option nzLabel="Priority 3" [nzValue]="3"></nz-option>
+            <nz-option nzLabel="Priority 4" [nzValue]="4"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s12 m3">
+      <nz-form-item>
+        <nz-form-label
+          [nzSm]="24"
+          [nzXs]="12"
+          nzRequired
+          nzFor="responsetimemins"
+          >Response Time (Mins)</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              id="responsetimemins"
+              formControlName="responsetimemins"
+              nz-input
+              type="number"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s12 m3">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="uptimeprcnt"
+          >Uptime (%)</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              id="uptimeprcnt"
+              formControlName="uptimeprcnt"
+              nz-input
+              type="number"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s12 m3">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="replacementhrs"
+          >Replacement (Hrs)</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              id="replacementhrs"
+              formControlName="replacementhrs"
+              nz-input
+              type="number"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s12 m3" style="clear: both">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="workinghrs"
+          >Working (Hrs)</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              id="workinghrs"
+              formControlName="workinghrs"
+              nz-input
+              type="number"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s12 m3">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="creditsprcnt"
+          >Credits (%)</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input
+              id="creditsprcnt"
+              formControlName="creditsprcnt"
+              nz-input
+              type="number"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s12 m3">
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="notes"
+          >Notes</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="12">
+          <nz-input-group>
+            <input id="notes" formControlName="notes" nz-input type="text" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col s12" style="text-align: right">
+      <button
+        (click)="addSLA()"
+        [disabled]="!slaForm.valid"
+        nz-button
+        nzType="primary"
+      >
+        Add SLA
+      </button>
+    </div>
+    <div class="col s12">
+      <nz-table
+        #nzTable
+        [nzData]="lookupList"
+        [nzPageSize]="10"
+        [nzScroll]="{ x: '1000px' }"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="25px">Priority</th>
+            <th nzWidth="25px">Response Time (mins)</th>
+            <th nzWidth="25px">Uptime (%)</th>
+            <th nzWidth="25px">Replacement (hrs)</th>
+            <th nzWidth="25px">Working (hrs)</th>
+            <th nzWidth="25px">Credits (%)</th>
+            <th nzWidth="25px">Notes</th>
+            <th nzWidth="15px" nzRight="0px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of nzTable.data">
+            <td>Priority {{ data.priority }}</td>
+            <td>{{ data.responsetimemins }}</td>
+            <td>{{ data.uptimeprcnt }}</td>
+            <td>{{ data.replacementhrs }}</td>
+            <td>{{ data.workinghrs }}</td>
+            <td>{{ data.creditsprcnt }}</td>
+            <td>{{ data.notes }}</td>
+            <td nzWidth="15px" nzRight="0px">
+              &nbsp;
+              <a (click)="editSLA(data)">
+                <i class="anticon anticon-edit"></i> </a
+              >&nbsp;
+              <a
+                nz-popconfirm
+                nzTitle="Are you sure?"
+                nzOkText="Ok"
+                nzCancelText="Cancel"
+                (nzOnConfirm)="deleteSLA(data)"
+              >
+                <i class="anticon anticon-delete"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</form>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      (click)="SLAChanged()"
+      [disabled]="lookupList.length <= 0"
+      type="submit"
+      class="save-button"
+      nz-button
+      nzType="primary"
+    >
+      Save
+    </button>
+  </div>
+</div>

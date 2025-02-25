@@ -1,0 +1,121 @@
+<nz-spin [nzSpinning]="loading">
+  <form nz-form [formGroup]="ecl2lbvrrpForm">
+    <div class="row" style="margin-bottom: 0">
+      <nz-form-item>
+        <nz-form-label
+          [nzSm]="24"
+          [nzXs]="12"
+          nzFor="virtualipaddress"
+          nzRequired
+          >Virtual IP Address</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="virtualipaddress" type="text" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="vrid" nzRequired
+          >VRID</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="vrid" type="number" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="priority" nzRequired
+          >Prioriy</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="priority" type="number" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="tracking"
+          >Tracking
+        </nz-form-label>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            id="tracking"
+            placeholder="Select"
+            formControlName="tracking"
+          >
+            <nz-option
+              *ngFor="let data of trackingList"
+              [nzLabel]="data.keyname"
+              [nzValue]="data.keyvalue"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="preemption" nzRequired
+          >Preemption</nz-form-label
+        >
+        <nz-input-group>
+          <nz-switch
+            class="status"
+            id="preemption"
+            formControlName="preemption"
+          ></nz-switch>
+        </nz-input-group>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label
+          [nzSm]="24"
+          [nzXs]="12"
+          nzFor="preemptiondelaytimer"
+          nzRequired
+          >Preemption Delay Timer</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input
+            nz-input
+            formControlName="preemptiondelaytimer"
+            type="number"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label
+          [nzSm]="24"
+          [nzXs]="12"
+          nzFor="trackifnumpriority"
+          nzRequired
+          >Track Interface Priority</nz-form-label
+        >
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <input nz-input formControlName="trackifnumpriority" type="number" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="sharing" nzRequired
+          >Sharing</nz-form-label
+        >
+        <nz-input-group>
+          <nz-switch
+            class="status"
+            id="sharing"
+            formControlName="sharing"
+          ></nz-switch>
+        </nz-input-group>
+      </nz-form-item>
+    </div>
+  </form>
+</nz-spin>
+
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      [disabled]="disabled"
+      (click)="saveOrUpdate(ecl2lbvrrpForm.value)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</div>

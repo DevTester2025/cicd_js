@@ -1,0 +1,136 @@
+<div>
+  <nz-form-control [nzSm]="24" [nzXs]="12" *ngIf="documentType" class="mb-1">
+    <input type="file" name="attachmentFile" (change)="onFile($event)" />
+  </nz-form-control>
+  <!-- &nbsp; -->
+  <nz-input-group *ngIf="refType != 'history'">
+    <textarea
+      placeholder="Type your comments here..."
+      id="ctextarea"
+      rows="4"
+      nz-input
+      [(ngModel)]="comments.comment"
+    ></textarea>
+  </nz-input-group>
+</div>
+<br />
+<div class="row right-align" *ngIf="refType != 'history'">
+  <button nz-button nzType="primary" (click)="addUpdateComment()" *ngIf="!documentType">
+    {{ buttonText }}
+  </button>
+  <button nz-button nzType="primary" (click)="uploadFile()" *ngIf="documentType">
+    {{ buttonText }}
+  </button>
+</div>
+<br />
+<div *ngIf="commentRecords && commentRecords.length > 0">
+  <div
+    *ngFor="let c of commentRecords"
+    style="background: #ffffff1f; padding: 14px 15px; margin-bottom: 13px"
+  >
+    <div style="display: flex; justify-content: space-between; font-size: 12px">
+      <p>{{ c.createdby }}</p>
+      <p style="color: gold">
+        {{ c.lastupdateddt ? (c.lastupdateddt | date: "dd-MMM-yyyy hh:mm a") : (c.createddt | date: "dd-MMM-yyyy hh:mm a") }}
+      </p>
+    </div>
+    <div>
+      <p style="margin: 0">{{ c.comments }}</p>
+      <p style="margin: 0">{{ c.docname }}</p>
+    </div>
+    <div class="row right-align">
+      <i
+        class="anticon anticon-edit"
+        style="color: #ffcc00"
+        (click)="editComment(c, i)"
+        *ngIf="!documentType"
+      ></i>
+      <ng-template #pTemplate>
+        <div>
+          <p>File Name : {{ c.docname }}</p>
+          <p>File Type : {{ c.docpath }}</p>
+        </div>
+      </ng-template>
+      <a (click)="downloadFile(c.docpath)" *ngIf="documentType"
+        ><i
+          class="anticon anticon-download"
+          nz-popover
+          nzTitle="Title"
+          [nzContent]="pTemplate"
+          nzTrigger="hover"
+        ></i
+      ></a>
+      &nbsp;&nbsp;
+      <a
+        nz-popconfirm
+        nzTitle="Are you sure?"
+        nzOkText="Ok"
+        nzCancelText="Cancel"
+        (nzOnConfirm)="deleteComment(c, i)"
+      >
+        <i
+          class="anticon anticon-delete"
+          style="color: #ffcc00"
+        ></i>
+      </a>
+    </div>
+  </div>
+</div>
+<div
+  *ngIf="commentRecords.length <= 0"
+  style="text-align: center; color: white"
+>
+  <p class="mt-5" *ngIf="refType != 'history'">{{ documentType ? "No documents yet." : "No comments yet."}}</p>
+</div>
+<div *ngIf="refType === 'history'">
+  <div
+    *ngFor="let h of historyList; let i = index"
+    style="background: #ffffff1f; padding: 14px 15px; margin-bottom: 13px"
+  >
+    <div style="display: flex; justify-content: space-between; font-size: 12px">
+      <p>{{ h.createdby }}</p>
+      <p style="color: gold">
+        <!-- <b>{{
+          h.type == 0
+            ? "Created : "
+            : h.type == 1 || h.type == 2 || h.type == 4 || h.type == 5
+            ? "Modified : "
+            : "-"
+        }}</b -->
+        {{ h.createddt | date: "dd-MMM-yyyy hh:mm a" }}
+      </p>
+    </div>
+    <div>
+      <!-- <div *ngIf="h.type == 0"></div>
+      <div *ngIf="h.type == 1">
+        <b>{{ h.affectedattribute }}</b> : {{ h.new }}
+      </div> -->
+      <div>
+        <b>{{ h.affectedattribute }}</b>
+        <span *ngIf="h.new != ''">
+          <ng-container *ngIf="!h.newIsHtml;else htmlContent">
+            : {{ h.old }} -> {{ h.new }}
+          </ng-container>
+          <ng-template #htmlContent>
+            <table style="border: none;">
+              <tr>
+                <td style="padding: 0px 10px;border-right: solid 1px #fff;"><div [innerHtml]="h.old"></div></td>
+                <td style="padding: 0px 10px;"><div [innerHtml]="h.new"></div></td>
+              </tr>
+            </table>
+          </ng-template>
+          </span>
+      </div>
+      <!-- <div *ngIf="h.type == 4">
+        <b>{{ h.affectedattribute }}</b> : {{ h.new }}
+      </div> -->
+    </div>
+  </div>
+</div>
+<div
+  *ngIf="historyList.length === 0"
+  style="text-align: center; color: white"
+>
+  <p class="mt-5" *ngIf="refType === 'history'">No Data Found</p>
+</div>
+

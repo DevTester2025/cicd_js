@@ -1,0 +1,53 @@
+<div class="row param-table">
+  <nz-tabset [nzSelectedIndex]="tabIndex" (nzSelectChange)="tabChanged($event)">
+    <nz-tab nzTitle="Overview">
+      <nz-spin nzSimple nzTip="Loading..." [nzSpinning]="loading" [nzSize]="'small'">
+      <ng-container class="page-body" *ngIf="tabIndex == 0">
+        <table id="assetdetail" style="width: 100%">
+          <tbody>
+            <tr *ngFor="let r of associationDesc">
+              <td width="50%">{{ r.key }}</td>
+              <td>{{ r.value }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <nz-collapse [nzBordered]="false">
+          <nz-collapse-panel nzHeader="Targets tags" [nzActive]="false">
+            <table id="assetdetail" style="width: 100%">
+              <tbody>
+                <tr *ngFor="let r of associationobj.Targets">
+                  <td width="50%">{{ r.Key }}</td>
+                  <td>{{ r.Values }}</td>
+                </tr>
+              </tbody>
+            </table> </nz-collapse-panel
+          ><nz-collapse-panel nzHeader="Parameters" [nzActive]="false">
+            <table id="assetdetail" style="width: 100%">
+              <tbody>
+                <tr *ngFor="let r of parameters | keyvalue">
+                  <td width="50%">{{ r.key }}</td>
+                  <td>{{ r.value }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </nz-collapse-panel></nz-collapse
+        >
+      </ng-container></nz-spin>
+    </nz-tab>
+    <nz-tab nzTitle="Execution history">
+      <ng-container class="page-body" *ngIf="tabIndex == 1">
+        <div class="row param-table">
+          <app-cloudmatiq-data-table
+            (dataChanged)="dataChanged($event)"
+            [tableData]="associationExeList"
+            [tableHeader]="tableHeader"
+            [tableConfig]="tableConfig"
+          ></app-cloudmatiq-data-table>
+        </div>
+        <div class="count-container">
+          <p style="color:#ffcc00;">Total Records: {{totalCount}}</p>
+        </div>
+      </ng-container>
+    </nz-tab>
+  </nz-tabset>
+</div>

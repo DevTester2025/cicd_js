@@ -1,0 +1,262 @@
+<div class="mainlayout">
+  <div class="row">
+    <div *ngIf="isSpinning" class="col s12 text-xs-center center mt-15">
+      <nz-spin
+        nzSize="large"
+        nzTip="Loading..."
+      ></nz-spin>
+    </div>
+  <div *ngIf="!isSpinning" class="layout-content status status-index starter">
+    <app-notification-banner [customerid]="customerid"></app-notification-banner>
+    <div class="masthead-container basic">
+      <div class="masthead has-logo">
+        <br />
+        <div class="dahboard-name">
+          <h2>
+            <b>Customer Dashboard</b>&nbsp;&nbsp;
+            <!-- <ng-template #contentTemplate>
+              <nz-timeline>
+                <nz-timeline-item *ngFor="let n of ntfList">{{
+                  n.content
+                }}</nz-timeline-item>
+              </nz-timeline>
+            </ng-template>
+            <button
+              class="dashboard-btn"
+              nz-button
+              nz-popover
+              nzTitle="Notifications"
+              [nzContent]="contentTemplate"
+              nzTrigger="click"
+            >
+              <i class="anticon anticon-bell"></i>
+            </button> -->
+          </h2>
+          <h4>{{ customerObj.customername }}</h4>
+        </div>
+        <div class="logo-container">
+          <a *ngIf="customerObj.logo">
+            <img style="width: 40%; float: right" [src]="customerObj.logo" alt="Customer logo"/>
+          </a>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- <div class="page-status status-none">
+        <span class="status font-large">All Servers Running Normal</span>
+        <span class="last-updated-stamp font-small"></span>
+      </div> -->
+      <div class="components-section font-regular">
+        <i class="component-status hidden major_outage"></i>
+        <div class="components-uptime-link history-footer-link">
+          <span class="status font-large" style="font-size: 14px">
+            <nz-badge
+              nzStatus="processing"
+              [nzStyle]="serverStatus.fill"
+            ></nz-badge
+            >{{ serverStatus.title }}</span
+          >
+          <span style="float: right">
+            Uptime over the past 90 days
+            <a (click)="openMetrics()">Historical uptime.</a></span
+          >
+        </div>
+        <div class="components-container one-column">
+          <div
+            class="component-container border-color"
+            *ngIf="dashboardConfig.length > 0"
+          >
+            <div
+              class="component-inner-container status-green showcased"
+              *ngFor="let d of dashboardConfig; let idx = index"
+            >
+              <span class="name"> {{ d.sectionname }}</span>
+              <span class="tooltip" class="component-status">Operational</span>
+              <span
+                class="tool icon-indicator fa fa-check tooltipstered"
+              ></span>
+              <div class="shared-partial uptime-90-days-wrapper">
+                <svg
+                  class="availability-time-line-graphic"
+                  id="uptime-component-wn4x1pbp261x"
+                  preserveAspectRatio="none"
+                  height="34"
+                  viewBox="0 0 448 34"
+                >
+                  <rect
+                    *ngFor="let i of d.svgList; let sidx = index"
+                    height="34"
+                    width="3"
+                    y="0"
+                    [attr.x]="i.x"
+                    [attr.fill]="i.fill"
+                    class="system uptime-day component-wn4x1pbp261x day-2"
+                    data-html="true"
+                    (click)="updateExpandView(idx, sidx)"
+                  >
+                    <title>{{ i.title }}</title>
+                  </rect>
+                </svg>
+                
+                <div class="legend"style="width: 100%" >
+                  <div class="legend-item light legend-item-date-range">
+                    <span class="availability-time-line-legend-day-count"
+                      >90 days ago</span
+                    >
+                  </div>
+                  <div class="spacer"></div>
+                  <div
+                    class="legend-item legend-item-uptime-value legend-item-wn4x1pbp261x"
+                  >
+                    <span class="uptime-percent-wn4x1pbp261x">{{
+                      d.overallavgprcnt | number: "1.2-2"
+                    }}</span>
+                    <var>% uptime</var>
+                  </div>
+                  <div class="spacer"></div>
+                  <div class="legend-item light legend-item-date-range">
+                    Today
+                  </div>
+                </div>
+                <div class="legend" style="width: 33.33%; float: right">
+                  <div class="legend-item light legend-item-date-range">
+                    <span class="availability-time-line-legend-day-count"
+                      >30 days ago</span
+                    >
+                  </div>
+                  <div class="spacer"></div>
+                  <div
+                    class="legend-item legend-item-uptime-value legend-item-wn4x1pbp261x"
+                  >
+                    <span class="uptime-percent-wn4x1pbp261x">{{
+                      d.thirtyavgprcnt | number: "1.2-2"
+                    }}</span>
+                    <var>% uptime</var>
+                  </div>
+                  <div class="spacer"></div>
+                  <div class="legend-item light legend-item-date-range">
+                    Today
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+                <br />
+                <div *ngIf="d.isExpand" style="font-size: 14px">
+                  <div class="row">
+                    <b>{{ d.selectedData.date }}</b>
+                  </div>
+                  <div class="row">
+                    <span class="col s6 m4"><b>VM Name</b></span>
+                    <span class="col s2 m2"><b>SLA(%)</b></span>
+                    <span class="col s2 m2"><b>Reported uptime(%)</b></span>
+                  </div>
+                  <div class="row" *ngIf="d.selectedData.dategrp.length == 0">
+                    Metrics are not available
+                  </div>
+                  <div class="row" *ngFor="let x of d.selectedData.dategrp">
+                    <span class="col s6 m4">
+                      <nz-badge
+                        *ngIf="x.avg >= x.actualsla"
+                        nzStatus="success"
+                      ></nz-badge>
+                      <nz-badge
+                        *ngIf="x.avg < x.actualsla && x.avg >= 50"
+                        nzStatus="warning"
+                      ></nz-badge>
+                      <nz-badge
+                        *ngIf="x.avg > 0 && x.avg < 50"
+                        nzStatus="error"
+                      ></nz-badge>
+                      <nz-badge
+                        *ngIf="x.avg == 0"
+                        nzStatus="default"
+                      ></nz-badge>
+                      {{ x.name }}</span
+                    >
+                    <span class="col s2 m2"
+                      >{{ x.actualsla | number: "1.2-2" }} %</span
+                    >
+                    <span class="col s2 m2"
+                      >{{ x.avg | number: "1.2-2" }} %</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="component-statuses-legend font-small">
+          <div class="legend-item status-green">
+            <span class="icon-indicator fa fa-check"> Operational </span>
+          </div>
+          <div class="legend-item status-yellow">
+            <span class="icon-indicator fa fa-minus-square">
+              Degraded Performance
+            </span>
+          </div>
+          <div class="legend-item status-orange">
+            <span class="icon-indicator fa fa-exclamation-triangle">
+              Partial Outage
+            </span>
+          </div>
+          <div class="breaker"></div>
+          <div class="legend-item status-red">
+            <span class="icon-indicator fa fa-times"> Major Outage </span>
+          </div>
+          <div class="legend-item status-blue">
+            <span class="icon-indicator fa fa-wrench"> Maintenance </span>
+          </div>
+        </div>
+        <div class="incidents-list format-expanded">
+          <div class="font-largest no-link" id="past-incidents">
+            Past Incidents
+          </div>
+          <div class="clearfix"></div>
+          <br />
+          <nz-timeline>
+            <nz-timeline-item *ngFor="let i of incidentList">
+              <b class="date border-color font-large">
+                {{ i.date | date: "MMM" }}
+                <var data-var="date"> {{ i.date | date: "dd" }}</var
+                >, <var data-var="year">{{ i.date | date: "yyyy" }}</var>
+              </b>
+
+              <div *ngFor="let iv of i.value">
+                <div
+                  *ngIf="i.value.length > 0"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 12px;
+                  "
+                >
+                  <p>ID: {{ iv.incidentno }}</p>
+                  <p class="color-secondary">Severity: {{ iv.severity }}</p>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 12px;
+                  "
+                >
+                  <p class="color-secondary">{{ iv.displaytitle }}</p>
+                  <p class="color-secondary">Category: {{ iv.category }}</p>
+                </div>
+                <div style="font-size: 12px">
+                  <p style="margin: 0">{{ iv.notes }}</p>
+                </div>
+                <div style="border-bottom: 0.5px solid #abadad"></div>
+              </div>
+              <div *ngIf="i.value.length == 0">
+                <p class="color-secondary">No incidents reported today.</p>
+              </div>
+              <div style="border-bottom: 0.5px solid #abadad"></div
+            ></nz-timeline-item>
+          </nz-timeline>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

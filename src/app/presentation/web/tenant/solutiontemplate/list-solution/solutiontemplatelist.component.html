@@ -1,0 +1,256 @@
+<app-cloudmatiq-side-nav  [rightbar]="true">
+  <ng-container class="page-body">
+    <div class="row">
+      <div class="ant-col-md-24 ant-col-lg-24">
+        <div class="ant-col-md-6 ant-col-lg-6 mt-1">
+          <nz-select
+            nzShowSearch
+            placeholder="Select Provider"
+            nzPlaceHolder="Select Provider"
+            [(ngModel)]="provider"
+            style="width: 100%"
+            (ngModelChange)="onChange($event)"
+          >
+            <nz-option
+              *ngFor="let i of providerList"
+              [nzLabel]="i.keyname"
+              [nzValue]="i.keyvalue"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="ant-col-md-18 ant-col-lg-18 right-align mt-1">
+          <button
+            *ngIf="createSolution"
+            class="mr-1"
+            (click)="router.navigate(['solutiontemplate/create'])"
+            nz-button
+            nzType="primary"
+          >
+            Add
+          </button>
+          <button
+            *ngIf="deploySolution"
+            (click)="router.navigate(['deploysolution'])"
+            nz-button
+            nzType="primary"
+          >
+            Deploy
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="row data-table">
+         <!-- #OP_B632 -->
+         
+        <div class="ant-col-md-24 ant-col-lg-24 right">
+          <div
+         class="ant-col-md-1 ant-col-lg-1"
+         style="padding: 0px 20px"
+       >
+         <button nz-button *ngIf="downloadflag" (click)="download()" title="Download">
+           <i class="anticon anticon-download"></i>
+         </button>
+       </div>
+          <div
+            class="ant-col-md-1 ant-col-lg-1 right"
+            style="padding: 0px 20px"
+          >
+            <button nz-button (click)="refresh()" title="Reload">
+              <i class="anticon anticon-reload"></i>
+            </button>
+          </div>
+          <div class="ant-col-md-5 ant-col-lg-5 right">
+            <nz-input-group nzAddOnAfterIcon="anticon anticon-search" title="Click to search">
+              <input
+                type="search"
+                nz-input
+                [(ngModel)]="searchText"
+                (ngModelChange)="globalSearch($event)"
+                placeholder="Search"
+              /> </nz-input-group
+            >
+          </div>
+        </div>
+      </div>
+      <div class="row param-table" style="margin-top: 15px">
+        <!-- <app-cloudmatiq-data-table (dataChanged)="dataChanged($event)" [tableData]="solutionsList" [tableHeader]="solutionsListHeaders" [tableConfig]="solutionTableConfig"></app-cloudmatiq-data-table> -->
+        <nz-spin [nzSpinning]="spinning" [nzSize]="'large'">
+          <nz-table
+            #nzTable
+            [nzData]="solutionsList"
+            nzSize="middle"
+            [nzScroll]="{ x: '1300px' }"
+            [nzLoading]="loading"
+            [nzShowPagination]="false"
+          >
+            <thead (nzSortChange)="sort($event)" nzSingleSort>
+              <tr>
+                <th
+                  nzWidth="150px"
+                  nzLeft="0px"
+                  nzShowSort
+                  nzSortKey="solutionname"
+                >
+                  Solution Name
+                </th>
+                <!-- <th nzShowSort nzSortKey="cloudprovider">Cloud Provider</th> -->
+                <th nzShowSort nzSortKey="notes">Description</th>
+                <th nzShowSort nzSortKey="vmsummary">VM</th>
+                <th nzShowSort nzSortKey="scriptssummary">Scripts</th>
+                <th nzShowSort nzSortKey="sgsummary" nzWidth="100px">
+                  Firewall
+                </th>
+                <th nzShowSort nzSortKey="lbsummary" nzWidth="75px">LB</th>
+                <th
+                  *ngIf="showcosts"
+                  nzShowSort
+                  nzSortKey="totalprice"
+                  nzWidth="120px"
+                >
+                  Costs
+                </th>
+                <th nzShowSort nzSortKey="slaname" nzWidth="75px">SLA</th>
+                <th nzShowSort nzSortKey="notificationsummary">Notification</th>
+                <th
+                  class="center-align"
+                  *ngIf="
+                    solutionTableConfig.delete ||
+                    solutionTableConfig.edit ||
+                    solutionTableConfig.clone
+                  "
+                  nzWidth="90px"
+                  nzRight="0px"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of nzTable.data">
+                <td nzLeft="0px">{{ data.solutionname }}</td>
+                <!-- <td>{{data.cloudprovider}}</td> -->
+                <td>{{ data.notes }}</td>
+                <td>{{ data.vmsummary }}</td>
+                <td>{{ data.scriptssummary }}</td>
+                <td>{{ data.sgsummary }}</td>
+                <td>{{ data.lbsummary }}</td>
+                <td *ngIf="showcosts">{{ data.totalprice }}</td>
+                <td>{{ data.slaname }}</td>
+                <td>{{ data.notificationsummary }}</td>
+                <td
+                  class="center-align"
+                  *ngIf="
+                    solutionTableConfig.delete ||
+                    solutionTableConfig.edit ||
+                    solutionTableConfig.clone ||
+                    solutionTableConfig.publish
+                  "
+                  nzRight="0px"
+                >
+                  <a
+                    *ngIf="solutionTableConfig.edit"
+                    (click)="dataChanged({ edit: true, data: data })"
+                  >
+                    <i class="anticon anticon-edit" title="Edit"></i> </a
+                  >&nbsp;
+                  <a
+                    *ngIf="solutionTableConfig.delete"
+                    nz-popconfirm
+                    nzTitle="Are you sure?"
+                    nzOkText="Ok"
+                    nzCancelText="Cancel"
+                    (nzOnConfirm)="dataChanged({ edit: false, data: data })"
+                    title="Delete"
+                  >
+                    <i class="anticon anticon-delete"></i> </a
+                  >&nbsp;
+                  <a
+                    *ngIf="solutionTableConfig.clone"
+                    nz-popconfirm
+                    nzTitle="Do you want to clone"
+                    nzOkText="Ok"
+                    nzCancelText="Cancel"
+                    (nzOnConfirm)="cloneTemplate(data)"
+                    title="Clone"
+                  >
+                    <i class="anticon anticon-copy"></i>
+                  </a>
+                  <a
+            *ngIf="solutionTableConfig.publish"
+            (click)="publish(data)"
+            class="publish-button"
+            [title]="
+              data.catalogdetails?.publishstatus === 'Published'
+                ? 'Unpublish'
+                : 'Publish'
+            "
+          >
+            <i
+              *ngIf="data.catalogdetails?.publishstatus === 'Published'"
+              class="fa fa-magic fa-rotate-180" style="color: #ffcc00"
+            ></i>
+            <i
+              *ngIf="
+                !data.catalogdetails || data.catalogdetails?.publishstatus != 'Published'
+              "
+              class="fa fa-magic" style="color: #ffcc00"
+            ></i>
+          </a>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+          <div class="card-paginator">
+            <nz-pagination 
+            [(nzPageIndex)]="pageIndex" 
+            [nzSize]="'small'" 
+            [nzPageSize]="10" 
+            [nzShowTotal]="totalTemplate"
+              nzShowSizeChanger 
+              [nzPageSizeOptions]="pageCount" 
+              (nzPageSizeChange)="onPageSizeChange($event)"
+              ></nz-pagination>
+          </div>
+          <div>
+            <p class="count-container">Total Records : {{totalCount}}</p>
+          </div>
+        </nz-spin>
+        <!-- <p-table #dt [columns]="solutionsListHeaders" [value]="solutionsList" [paginator]="true" [rows]="10">
+                    <ng-template pTemplate="caption">
+                        <div style="text-align: right">
+                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                            <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                {{col.header}}
+                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                            </th>
+                            <th *ngIf="solutionTableConfig.delete && solutionTableConfig.edit" nzWidth="50px" nzRight="0px">Action</th>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr>
+                            <td *ngFor="let col of columns">
+                                {{rowData[col.field]}}
+                            </td>
+                            <td *ngIf="solutionTableConfig.delete && solutionTableConfig.edit" nzRight="0px">
+                                <a *ngIf="solutionTableConfig.edit" (click)="dataChanged({edit:true,data:data})">
+                                    <i class="anticon anticon-edit"></i>
+                                </a>&nbsp;
+                                <a *ngIf="solutionTableConfig.delete" nz-popconfirm nzTitle="Are you sure?" nzOkText="Ok" nzCancelText="Cancel" (nzOnConfirm)="dataChanged({edit:false,data:data})">
+                                    <i class="anticon anticon-delete"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table> -->
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

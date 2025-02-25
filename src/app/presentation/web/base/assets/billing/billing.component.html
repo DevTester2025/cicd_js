@@ -1,0 +1,451 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <app-cloudmatiq-side-bar
+      (dataChanged)="filterMenuVisible = false"
+      [width]="450"
+      [(isVisible)]="filterMenuVisible"
+      title="Filter"
+    >
+      <ng-container class="modal-content">
+        <div *ngFor="let v of filterableValues" nz-col nzSpan="24">
+          <label
+            style="color: white; padding: 13px 0"
+            nz-checkbox
+            [(ngModel)]="
+              filters[currentFilter.value] &&
+              filters[currentFilter.value][v.value]
+            "
+            >{{ v.title }}</label
+          >
+        </div>
+        <button
+          style="position: absolute; bottom: 7px; right: 7px"
+          nzSize="small"
+          nz-button
+          (click)="applyFilter()"
+          nzType="primary"
+          [disabled]="filterableValues.length <= 0"
+        >
+          Apply Filter
+        </button>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <div style="height: 100%; width: 100%">
+      <div nz-row nzType="flex" nzAlign="middle" class="mt-1">
+        <div nz-col nzSpan="12">
+          <div nz-row>
+            <div nz-col nzSpan="12">
+              <nz-range-picker
+                [(ngModel)]="models.date"
+                (ngModelChange)="getBilling()"
+                [nzAllowClear]="false"
+                nzFormat="dd-MM-yyyy"
+              ></nz-range-picker>
+            </div>
+            <div nz-col nzSpan="12">
+              <nz-select
+                style="width: 120px"
+                [nzAllowClear]="false"
+                nzPlaceHolder="Choose"
+                [(ngModel)]="models.duration"
+                (ngModelChange)="getBilling()"
+              >
+                <nz-option nzValue="Day" nzLabel="Day"></nz-option>
+                <nz-option nzValue="Week" nzLabel="Week"></nz-option>
+                <nz-option nzValue="Month" nzLabel="Month"></nz-option>
+              </nz-select>
+            </div>
+          </div>
+          <div nz-row class="white-text">
+            <div nz-col nzSpan="24" class="mt-1">
+              <b>Group: </b>
+              <span
+                *ngFor="let g of getOnlyGroupableOptions()"
+                style="margin-left: 7px"
+                [class.t-active]="groupBy == g.value"
+                (click)="
+                  groupBy == g.value ? (groupBy = null) : (groupBy = g.value);
+                  getBilling()
+                "
+              >
+                {{ g.title }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div nz-col nzSpan="12">
+          <div nz-row nzType="flex" nzJustify="end">
+            <div nz-col nzSpan="24" class="right-align white-text">
+              Total Cost
+            </div>
+            <div
+              nz-col
+              nzSpan="24"
+              class="right-align white-text"
+              style="font-size: 25px; font-weight: 500"
+            >
+              {{ totalCost | currency }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div nz-row nzGutter="16">
+        <div nz-col nzSpan="18">
+          <nz-card
+            [nzBordered]="false"
+            class="width-100"
+            style="height: 550px"
+            [nzTitle]="titleTemplate"
+            [nzExtra]="extraTemplate"
+          >
+            <div id="billing-chart" style="height: 425px"></div>
+          </nz-card>
+          <ng-template #titleTemplate>
+            <div style="color: white">Cost</div>
+          </ng-template>
+          <ng-template #extraTemplate>
+            <label
+              nz-checkbox
+              [(ngModel)]="stackedChart"
+              (ngModelChange)="drawChart()"
+              class="white-text"
+              style="color: white !important"
+              >Stacked</label
+            >
+            <label
+              nz-checkbox
+              [(ngModel)]="showPreviousData"
+              (ngModelChange)="getPreviousBilling()"
+              class="white-text"
+              style="color: white !important"
+              >Show Previous Period</label
+            >
+          </ng-template>
+        </div>
+        <div nz-col nzSpan="6">
+          <nz-card
+            [nzBordered]="false"
+            class="width-100"
+            style="height: 550px"
+            [nzTitle]="filterTitleTemplate"
+          >
+            <div
+              *ngFor="let g of groupAndFilterByOptions"
+              style="padding: 9px 0 9px 0; border-bottom: 1px solid #80808061"
+            >
+              <div style="display: flex; justify-content: space-between">
+                <h4
+                  (click)="getFilterValue(g)"
+                  class="white-text mb-0"
+                  style="margin: 0; cursor: pointer"
+                >
+                  <b>{{ g.title }}</b>
+                </h4>
+                <p
+                  *ngIf="!appliedFilters[g.value]"
+                  class="mb-0"
+                  (click)="getFilterValue(g)"
+                  style="margin: 0; cursor: pointer"
+                >
+                  All
+                </p>
+                <p
+                  *ngIf="appliedFilters[g.value]"
+                  (click)="removeAppliedFilter(g)"
+                  class="mb-0"
+                  style="margin: 0"
+                >
+                  <a>Clear</a>
+                </p>
+              </div>
+              <div
+                (click)="getFilterValue(g)"
+                *ngIf="appliedFilters[g.value] && appliedFilters[g.value].length > 0"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-top: 7px;
+                  cursor: pointer;
+                "
+              >
+                <div>
+                  <nz-tag class="mr-2">{{
+                    appliedFilters[g.value][0]["title"]
+                  }}</nz-tag>
+                </div>
+                <div class="yellow-text">
+                  {{ appliedFilters[g.value].length }}
+                </div>
+              </div>
+            </div>
+            <div
+              *ngIf="
+                appliedFilters &&
+                appliedFilters['resourcetype'] &&
+                appliedFilters['resourcetype'].length == 1 &&
+                appliedFilters['resourcetype'][0]['title'] ==
+                  'Amazon Elastic Compute Cloud - Compute'
+              "
+            >
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="rtag"
+                  >Tag</nz-form-label
+                >
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <nz-select
+                    id="rtag"
+                    [(ngModel)]="models.tag"
+                    (ngModelChange)="tagChanged($event); getBilling()"
+                    style="width: 90%"
+                    nzAllowClear
+                    nzPlaceHolder="Choose"
+                  >
+                    <nz-option
+                      *ngFor="let r of tagList"
+                      [nzValue]="r.tagid"
+                      [nzLabel]="r.tagname"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div
+              *ngIf="
+                appliedFilters &&
+                appliedFilters['resourcetype'] &&
+                appliedFilters['resourcetype'].length == 1 &&
+                appliedFilters['resourcetype'][0]['title'] ==
+                  'Amazon Elastic Compute Cloud - Compute'
+              "
+            >
+              <nz-form-item>
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="rtag"
+                  >Tag value</nz-form-label
+                >
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <input
+                    *ngIf="selectedTag == null"
+                    nz-input
+                    placeholder="Value"
+                    disabled
+                  />
+                  <nz-select
+                    *ngIf="
+                      selectedTag &&
+                      selectedTag.tagtype &&
+                      selectedTag.tagtype == 'list'
+                    "
+                    [(ngModel)]="models.tagvalue"
+                    (ngModelChange)="getBilling()"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Value"
+                    style="width: 95%"
+                  >
+                    <nz-option
+                      *ngFor="let t of selectedTag.lookupvalues; index as ti"
+                      [nzLabel]="t"
+                      [nzValue]="t"
+                    >
+                    </nz-option>
+                  </nz-select>
+                  <nz-select
+                    *ngIf="
+                      selectedTag &&
+                      selectedTag.tagtype &&
+                      selectedTag.tagtype == 'boolean'
+                    "
+                    [(ngModel)]="models.tagvalue"
+                    (ngModelChange)="getBilling()"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Value"
+                    style="width: 95%"
+                  >
+                    <nz-option nzLabel="Yes" nzValue="Yes"> </nz-option>
+                    <nz-option nzLabel="No" nzValue="No"> </nz-option>
+                  </nz-select>
+                  <nz-date-picker
+                    *ngIf="
+                      selectedTag &&
+                      selectedTag.tagtype &&
+                      selectedTag.tagtype == 'date'
+                    "
+                    [(ngModel)]="models.tagvalue"
+                    (ngModelChange)="getBilling()"
+                    nzFormat="dd-MMM-yyyy"
+                  ></nz-date-picker>
+                  <input
+                    *ngIf="
+                      selectedTag &&
+                      selectedTag.tagtype &&
+                      selectedTag.tagtype == 'text'
+                    "
+                    [(ngModel)]="models.tagvalue"
+                    (ngModelChange)="getBilling()"
+                    nz-input
+                    placeholder="Value"
+                  />
+                  <nz-input-number
+                    *ngIf="
+                      selectedTag &&
+                      selectedTag.tagtype &&
+                      selectedTag.tagtype == 'number'
+                    "
+                    [(ngModel)]="models.tagvalue"
+                    (ngModelChange)="getBilling()"
+                  ></nz-input-number>
+                  <nz-input-number
+                    *ngIf="
+                      selectedTag &&
+                      selectedTag.tagtype &&
+                      selectedTag.tagtype == 'range'
+                    "
+                    [(ngModel)]="models.tagvalue"
+                    (ngModelChange)="getBilling()"
+                    [nzMin]="selectedTag.min"
+                    [nzMax]="selectedTag.max"
+                  >
+                  </nz-input-number>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </nz-card>
+          <ng-template #filterTitleTemplate>
+            <div style="color: white">Filters</div>
+          </ng-template>
+        </div>
+      </div>
+      <div nz-row class="mt-3">
+        <div nz-col nzSpan="24" class="mt-1">
+          <div
+            nz-row
+            nzType="flex"
+            nzAlign="middle"
+            nzJustify="space-between"
+            class="white-text"
+          >
+            <div nz-col nzSpan="12">Data</div>
+            <div nz-col nzSpan="12" class="right-align">
+              <button
+                nzSize="small"
+                nz-button
+                nzType="primary"
+                *ngIf="download"
+                style="margin: 0"
+                (click)="downloadCSV()"
+              >
+                <i class="anticon anticon-download"></i>Download CSV
+              </button>
+            </div>
+          </div>
+        </div>
+        <div nz-col nzSpan="24" class="mt-1">
+          <nz-table
+            #nzTable
+            [nzData]="paginatedTableData"
+            [nzScroll]="{ x: '1300px' }"
+            [nzFrontPagination]="false"
+            [nzData]="dataSet"
+            [nzLoading]="loading"
+            [nzTotal]="tableData.length"
+            [(nzPageIndex)]="tablePageIndex"
+            [nzPageSize]="10"
+            (nzPageIndexChange)="paginateTable()"
+            (nzPageSizeChange)="paginateTable()"
+            *ngIf="paginatedTableData && paginatedTableData.length > 0"
+          >
+            <thead>
+              <tr>
+                <th
+                  nzWidth="175px"
+                  [nzLeft]="i == 0 ? '0px' : null"
+                  *ngFor="let r of tableHeader; let i = index"
+                >
+                  {{ r }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of paginatedTableData; let i = index">
+                <td
+                  [nzLeft]="j == 0 ? '0px' : null"
+                  *ngFor="let item of data; let j = index"
+                  (click)="getDrillDownFor(data, j)"
+                >
+                  <span *ngIf="j == 0">{{ item }}</span>
+                  <span *ngIf="j != 0">
+                    <a>{{ item | currency }}</a>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+      <div nz-row class="mt-3">
+        <app-cloudmatiq-resource-billing
+          [groupby]="groupBy == 'resourcetype' ? 'resourceid' : 'resourcetype'"
+          [tenantid]="userstoragedata.tenantid"
+          [startdate]="ddStartDate"
+          [enddate]="ddEndDate"
+          [options]="ddOptions"
+        ></app-cloudmatiq-resource-billing>
+
+        <!-- <div nz-col nzSpan="24" class="mt-1">
+            <div
+              nz-row
+              nzType="flex"
+              nzAlign="middle"
+              nzJustify="space-between"
+              class="white-text"
+            >
+              <div nz-col nzSpan="12">Info</div>
+              <div nz-col nzSpan="12" class="right-align">
+                <button
+                  nzSize="small"
+                  nz-button
+                  nzType="primary"
+                  style="margin: 0"
+                  (click)="downloadCSV()"
+                >
+                  <i class="anticon anticon-download"></i> CSV
+                </button>
+              </div>
+            </div>
+          </div>
+          <div nz-col nzSpan="24" class="mt-1 mb-5">
+            <nz-table
+              #basicTable
+              [nzData]="drillDownTablebody"
+              [nzScroll]="{ x: '500px' }"
+            >
+              <thead>
+                <tr>
+                  <th nzWidth="175px" *ngFor="let h of drillDownTableHeader">
+                    {{ h }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of basicTable.data">
+                  <td *ngFor="let d of data; let i = index">
+                    <span *ngIf="i == 0">{{ d }}</span>
+                    <span *ngIf="i != 0">{{ d | currency }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div> -->
+      </div>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

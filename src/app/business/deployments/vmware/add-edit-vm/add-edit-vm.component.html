@@ -1,0 +1,158 @@
+<nz-spin [nzSpinning]="loading">
+  <nz-tabset style="width: 95%">
+    <nz-tab nzTitle="Details">
+      <div class="cloudasset">
+        <div class="row">
+          <h4 class="white-text text-lighten-3 ml-1">
+            <div class="col s12 m2">Name</div>
+            <div class="grey-text">: {{ cloudassetObj.instancename }}</div>
+          </h4>
+        </div>
+        <div class="row">
+          <h4 class="white-text text-lighten-3 ml-1">
+            <div class="col s12 m2">Cloud Provider</div>
+            <div class="grey-text">: {{ cloudassetObj.cloudprovider }}</div>
+          </h4>
+        </div>
+        <div class="row">
+          <h4 class="white-text text-lighten-3 ml-1">
+            <div class="col s12 m2">VM ID</div>
+            <div class="grey-text">: {{ cloudassetObj.instancerefid }}</div>
+          </h4>
+        </div>
+        <div class="row">
+          <h4 class="white-text text-lighten-3 ml-1">
+            <div class="col s12 m2">Memory Size</div>
+            <div class="grey-text">: {{ cloudassetObj.memorysize }}</div>
+          </h4>
+        </div>
+        <div class="row">
+          <h4 class="white-text text-lighten-3 ml-1">
+            <div class="col s12 m2">CPU Count</div>
+            <div class="grey-text">: {{ cloudassetObj.cpucount }}</div>
+          </h4>
+        </div>
+        <div class="row">
+          <h4 class="white-text text-lighten-3 ml-1">
+            <div class="col s12 m2">Power Status</div>
+            <div class="grey-text">: {{ cloudassetObj.powerstate }}</div>
+          </h4>
+        </div>
+        <div class="row">
+          <div
+            class="ant-drawer-header ng-star-inserted col s12 m12 p-a-0"
+            style="padding-left: 0"
+          >
+            <div class="ant-drawer-title">
+              <div class="ng-star-inserted">Disk Details</div>
+            </div>
+          </div>
+          <div nz-col [nzSpan]="12" *ngFor="let data of cloudassetObj.disks">
+            <nz-card
+              style="width: 89%; background: #aeaebd"
+              [nzTitle]="data['label']"
+            >
+              <div>
+                <div class="col s3 m3">Type</div>
+                <div class="col s9 m9 f-w-500">: {{ data.type }}</div>
+              </div>
+              <div>
+                <div class="col s3 m3">Capacity</div>
+                <div class="col s9 m9 f-w-500">: {{ data.capacity }}</div>
+              </div>
+            </nz-card>
+          </div>
+        </div>
+        <div class="row">
+          <div
+            class="ant-drawer-header ng-star-inserted col s12 m12 p-a-0"
+            style="padding-left: 0"
+          >
+            <div class="ant-drawer-title">
+              <div class="ng-star-inserted">Network Details</div>
+            </div>
+          </div>
+          <div nz-col [nzSpan]="12" *ngFor="let item of cloudassetObj.network">
+            <nz-card
+              style="width: 89%; background: #aeaebd"
+              [nzTitle]="item['label']"
+            >
+              <div>
+                <div class="col s3 m3">ID</div>
+                <div class="col s9 m9 f-w-500">: {{ item.network }}</div>
+              </div>
+              <div>
+                <div class="col s3 m3">Name</div>
+                <div class="col s9 m9 f-w-500">: {{ item.network_name }}</div>
+              </div>
+              <div>
+                <div class="col s3 m3">Type</div>
+                <div class="col s9 m9 f-w-500">: {{ item.networktype }}</div>
+              </div>
+              <div>
+                <div class="col s3 m3">State</div>
+                <div class="col s9 m9 f-w-500">: {{ item.state }}</div>
+              </div>
+              <div>
+                <div class="col s3 m3">MAC Addr</div>
+                <div class="col s9 m9 f-w-500">: {{ item.macaddr }}</div>
+              </div>
+              <div>
+                <div class="col s3 m3">MAC Type</div>
+                <div class="col s9 m9 f-w-500">: {{ item.mac_type }}</div>
+              </div>
+            </nz-card>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="Tags">
+      <app-cloudmatiq-side-bar
+        (dataChanged)="metaTagsSideBarVisible = false"
+        [(isVisible)]="metaTagsSideBarVisible"
+        [title]="'Add/Edit Tags'"
+        [width]="450"
+      >
+        <ng-container class="modal-content">
+          <app-cloudmatiq-tag-picker
+            [pickermode]="'combined'"
+            [currentTags]="metaTags"
+            [mode]="'picker'"
+            [disableParams]="true"
+            [validateInputs]="true"
+            [resourceType]="'ASSET_INSTANCE'"
+            (tagChanges)="metaTagsChanges($event)"
+          >
+          </app-cloudmatiq-tag-picker>
+        </ng-container>
+      </app-cloudmatiq-side-bar>
+      <button nz-button (click)="metaTagsSideBarVisible = true">
+        Add/Edit Tags
+      </button>
+      <app-cloudmatiq-data-table
+        [tableData]="metaTagsList"
+        [tableHeader]="tagTableHeader"
+        [tableConfig]="metaVolumes.tagTableConfig"
+      >
+      </app-cloudmatiq-data-table>
+      <div style="text-align: end">
+        <button [nzLoading]="syncingTagstoCloud" nz-button (click)="syncTags()">
+          Save
+        </button>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</nz-spin>
+<div class="row right">
+  <div class="col s12 md4">
+    <button
+      (click)="notifyNewEntry.next($event)"
+      class="save-button"
+      type="submit"
+      nz-button
+      nzType="primary"
+    >
+      Close
+    </button>
+  </div>
+</div>

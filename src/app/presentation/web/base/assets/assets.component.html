@@ -1,0 +1,59 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <!-- <div nz-row style="height: 7%; padding-left: 5px; padding-top: 5px">
+      <nz-button-group>
+        <button
+          [nzSize]="'small'"
+          [ngClass]="{ active: current == 'dashboard' }"
+          (click)="changeView('dashboard')"
+          nz-button
+          nzType="default"
+        >
+          <i class="anticon anticon-pie-chart"></i> Dashboard
+        </button>
+        <button
+          [nzSize]="'small'"
+          [ngClass]="{ active: current == 'rightsize' }"
+          (click)="changeView('rightsize')"
+          nz-button
+          nzType="default"
+        >
+          <i class="anticon anticon-line-chart"></i> Rightsize
+        </button>
+        <button
+          [nzSize]="'small'"
+          [ngClass]="{ active: current == 'list' }"
+          (click)="changeView('list')"
+          nz-button
+          nzType="default"
+        >
+          <i class="anticon anticon-hdd"></i> Assets
+        </button>
+      </nz-button-group>
+    </div> -->
+    <div
+      *ngIf="current == 'dashboard'"
+      [hidden]="current == 'list' || current == 'rightsize'"
+      nz-row
+      style="height: 88%"
+    >
+      <app-assets-dashboard></app-assets-dashboard>
+    </div>
+    <div
+      *ngIf="current == 'list'"
+      [hidden]="current == 'dashboard' || current == 'rightsize'"
+      nz-row
+      style="height: 88%"
+    >
+      <app-assets-list></app-assets-list>
+    </div>
+    <div
+      *ngIf="current == 'rightsize'"
+      [hidden]="current == 'list' || current == 'dashboard'"
+      nz-row
+      style="height: 88%"
+    >
+      <app-rightsize-dashboard></app-rightsize-dashboard>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

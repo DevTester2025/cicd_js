@@ -1,0 +1,56 @@
+<div>
+  <app-cloudmatiq-side-bar
+    *ngIf="enableEdit"
+    (dataChanged)="rightbarChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-addeditcosts
+        [solutionObj]="solutionData"
+        [costObj]="costObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      >
+      </app-addeditcosts>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <div
+    *ngIf="enableEdit"
+    nz-col
+    nzSpan="24"
+    style="display: flex; justify-content: space-between"
+  >
+    <h2 class="solution-title mb-0" style="margin-top: 0.5em">Costs</h2>
+    <button
+      nz-button
+      nzType="primary"
+      style="margin: 9px 0"
+      (click)="showModal()"
+    >
+      Add/Edit Cost
+    </button>
+  </div>
+  <div nz-col nzSpan="24">
+    <div class="col s12" *ngIf="!enableEdit">
+      <h5 class="white-text text-lighten-3 ml-1">
+        Total Price :
+        <span class="grey-text">{{ totalprice }}</span>
+      </h5>
+      <h5 class="white-text text-lighten-3 ml-1">
+        Total Cost (Monthly) :
+        <span class="grey-text">{{ totalcostpermonth }}</span>
+      </h5>
+    </div>
+    <div class="param-table" style="margin-top: 0px">
+      <nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+        <app-cloudmatiq-data-table
+          (dataChanged)="dataChanged($event)"
+          [tableData]="solutionCosts"
+          [tableHeader]="tagTableHeader"
+          [tableConfig]="tagTableConfig"
+        >
+        </app-cloudmatiq-data-table>
+      </nz-spin>
+    </div>
+  </div>
+</div>

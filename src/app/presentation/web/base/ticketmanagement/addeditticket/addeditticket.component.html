@@ -1,0 +1,486 @@
+<nz-spin [nzSpinning]="loading" [nzTip]="loadermessage" [nzSize]="'large'">
+  <nz-tabset
+    [nzTabBarExtraContent]="extraTemplate"
+    [nzSelectedIndex]="tabIndex"
+    (nzSelectChange)="tabChanged($event)"
+  >
+    <nz-tab nzTitle="Basic Details">
+      <form nz-form [formGroup]="incidentForm">
+        <div class="row" style="margin-bottom: 0">
+          <!-- <h4 _ngcontent-c22="" class="amber-text">Basic Details</h4> -->
+          <div nz-row>
+            <div nz-col *ngIf="edit" nzSpan="6" class="col s6">
+              <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="incidentno"
+                  >Incident Number
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <input
+                    nz-input
+                    placeholder="Incident Number"
+                    formControlName="incidentno"
+                    type="text"
+                    readonly
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="6" class="col s6">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="incidentdate"
+                  >Incident Date
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <nz-date-picker
+                    nzFormat="dd-MMM-yyyy"
+                    nzPlaceHolder="Incident Date"
+                    formControlName="incidentdate"
+                    [nzDisabledDate]="disabledDate"
+                    disabled
+                  ></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col s6">
+              <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="impact"
+                  >Impact
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    placeholder="Select Impact"
+                    nzPlaceHolder="Select Impact"
+                    formControlName="impact"
+                  >
+                    <nz-option
+                      *ngFor="let data of impactList"
+                      [nzLabel]="data.keyname"
+                      [nzValue]="data.keyvalue"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col s6">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzRequired
+                  nzFor="urgency"
+                  >Urgency
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    placeholder="Select Urgency"
+                    nzPlaceHolder="Select Urgency"
+                    formControlName="urgency"
+                  >
+                    <nz-option
+                      *ngFor="let data of urgencyList"
+                      [nzLabel]="data.keyname"
+                      [nzValue]="data.keyvalue"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="6" class="col s6">
+              <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="severity"
+                  >Severity
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    placeholder="Select Severity"
+                    nzPlaceHolder="Select Severity"
+                    formControlName="severity"
+                  >
+                    <nz-option
+                      *ngFor="let data of severityList"
+                      [nzLabel]="data.keyname"
+                      [nzValue]="data.keyvalue"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div nz-row>
+            <div class="col s12">
+              <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12" nzRequired nzFor="title"
+                  >Title (As per Ticket)
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <input
+                    nz-input
+                    placeholder="Title"
+                    formControlName="title"
+                    type="text"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div nz-row>
+            <div class="col s12">
+              <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12"
+                  >Title (As per user friendly)
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <input
+                    nz-input
+                    placeholder="Title Description"
+                    formControlName="displaytitle"
+                    type="text"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div nz-row>
+            <div class="col s12">
+              <nz-form-item>
+                <nz-form-label [nzSm]="24" [nzXs]="12">Notes </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <nz-input-group>
+                    <p-editor
+                      formControlName="notes"
+                      [style]="{ height: '320px' }"
+                    ></p-editor>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+          <nz-collapse [nzBordered]="false">
+            <nz-collapse-panel nzHeader="Additional Info" [nzActive]="false">
+              <!-- <h4 _ngcontent-c22="" class="amber-text">Additional Info</h4> -->
+              <!-- <div nz-row> -->
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="customerid"
+                    >Customer
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      placeholder="Select Customer"
+                      nzPlaceHolder="Select Customer"
+                      formControlName="customerid"
+                    >
+                      <nz-option
+                        *ngFor="let data of customerList"
+                        [nzLabel]="data.customername"
+                        [nzValue]="data.customerid"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="product"
+                    >Product
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      placeholder="Select Product"
+                      nzPlaceHolder="Select Product"
+                      formControlName="product"
+                    >
+                      <nz-option
+                        *ngFor="let data of productList"
+                        [nzLabel]="data.keyname"
+                        [nzValue]="data.keyvalue"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="u_environment"
+                    >Environment
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <input
+                      nz-input
+                      placeholder="Environment"
+                      formControlName="u_environment"
+                      type="text"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="category"
+                    >Category
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <input
+                      nz-input
+                      placeholder="Category"
+                      [nzAutocomplete]="auto1"
+                      formControlName="category"
+                      (ngModelChange)="onCategoryChange($event)"
+                    />
+                    <nz-autocomplete #auto1>
+                      <nz-auto-option
+                        *ngFor="let option of categoryList"
+                        [nzValue]="option.keyvalue"
+                      >
+                        {{ option.keyvalue }}
+                      </nz-auto-option>
+                    </nz-autocomplete>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="subcategory"
+                    >Sub Category
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <input
+                      nz-input
+                      placeholder="Sub Category"
+                      [nzAutocomplete]="auto"
+                      formControlName="subcategory"
+                    />
+                    <nz-autocomplete nzBackfill #auto>
+                      <nz-auto-option
+                        *ngFor="let option of subcategoryList"
+                        [nzValue]="option.keyvalue"
+                      >
+                        {{ option.keyvalue }}
+                      </nz-auto-option>
+                    </nz-autocomplete>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="contacttype"
+                    >Contact Type
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      placeholder="Select Contact Type"
+                      nzPlaceHolder="Select Contact Type"
+                      formControlName="contacttype"
+                    >
+                      <nz-option
+                        *ngFor="let data of contacttypes"
+                        [nzLabel]="data.keyname"
+                        [nzValue]="data.keyvalue"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="caller_id"
+                    >Caller
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <input
+                      nz-input
+                      placeholder="Caller"
+                      formControlName="caller_id"
+                      type="text"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="assignmentgroup"
+                    >Assignment Group
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      placeholder="Select Assignment Group"
+                      nzPlaceHolder="Select Assignment Group"
+                      formControlName="assignmentgroup"
+                    >
+                      <nz-option
+                        *ngFor="let data of assignmentgroups"
+                        [nzLabel]="data.keyname"
+                        [nzValue]="data.keyvalue"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="assignmentto"
+                    >Assignment To
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <input
+                      nz-input
+                      placeholder="Assignment To"
+                      formControlName="assignmentto"
+                      type="text"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="incidentstatus"
+                    >Incident Status
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-select
+                      placeholder="Select Incident Status"
+                      nzPlaceHolder="Select Incident Status"
+                      formControlName="incidentstatus"
+                    >
+                      <nz-option
+                        *ngFor="let data of incidentstatusList"
+                        [nzLabel]="data.keyname"
+                        [nzValue]="data.keyvalue"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="response_ts"
+                    >Response Date
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-date-picker
+                      nzShowTime
+                      nzFormat="dd-MMM-yyyy HH:mm:ss"
+                      nzPlaceHolder="Response Date"
+                      formControlName="response_ts"
+                    ></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="resolution_ts"
+                    >Resolution Date
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-date-picker
+                      nzShowTime
+                      nzFormat="dd-MMM-yyyy HH:mm:ss"
+                      nzPlaceHolder="Resolution Date"
+                      formControlName="resolution_ts"
+                    ></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="incidentclosedt"
+                    >Incident Close Date
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-date-picker
+                      nzShowTime
+                      nzFormat="dd-MMM-yyyy HH:mm:ss"
+                      nzPlaceHolder="Incident Close Date"
+                      formControlName="incidentclosedt"
+                    ></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div
+                *ngIf="incidentObj && incidentObj.id != null"
+                nz-col
+                nzSpan="6"
+                class="col s6"
+              >
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="status"
+                    >Status
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      placeholder="Select Status"
+                      nzPlaceHolder="Select Status"
+                      formControlName="status"
+                    >
+                      <nz-option
+                        *ngFor="let data of statusList"
+                        [nzLabel]="data"
+                        [nzValue]="data"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6" class="col s6">
+                <nz-form-item>
+                  <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="incidentclosedt"
+                    >Publish to Dashboard?
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="24">
+                    <label nz-checkbox formControlName="publishyn"></label>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </nz-collapse-panel>
+          </nz-collapse>
+          <!-- </div> -->
+        </div>
+      </form>
+    </nz-tab>
+    <nz-tab
+      nzTitle="Change Logs"
+      *ngIf="
+        incidentObj.id !== undefined && incidentObj.id !== null && isChangelogs">
+      <app-comments
+        *ngIf="tabIndex == 1"
+        [resourceDetails]="incidentObj"
+        [resourceId]="incidentObj.refid"
+        [refType]="'history'"
+      ></app-comments>
+    </nz-tab>
+  </nz-tabset>
+</nz-spin>
+
+<div class="right mr-0">
+  <button  *ngIf="tabIndex == 0"
+    (click)="saveOrUpdate(incidentForm.value)"
+    class="mt-1 save-button"
+    type="submit"
+    nz-button
+    nzType="primary"
+    [nzLoading]="addingparam"
+  >
+    {{ button }}
+  </button>
+</div>

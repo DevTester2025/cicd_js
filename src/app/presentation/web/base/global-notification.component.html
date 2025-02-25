@@ -1,0 +1,194 @@
+<app-cloudmatiq-side-nav>
+  <ng-container class="page-body">
+    <div nz-row>
+      <div nz-row nzType="flex" style="margin-top: 13px" nzAlign="middle">
+        <div nz-col nzSpan="24">
+          <form nz-form [formGroup]="filterForm">
+            <div nz-row>
+              <div nz-col nzSpan="4">
+                <nz-form-item>
+                  <nz-form-label
+                    class="left-align"
+                    [nzSm]="24"
+                    [nzXs]="12"
+                    nzFor="startdt"
+                    >Start Date
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-input-group nzCompact>
+                      <nz-date-picker
+                        nzFormat="dd-MMM-yyyy"
+                        nzPlaceHolder="Start Date"
+                        formControlName="startdt"
+                      >
+                      </nz-date-picker> </nz-input-group
+                  ></nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="4">
+                <nz-form-item>
+                  <nz-form-label
+                    class="left-align"
+                    [nzSm]="24"
+                    [nzXs]="12"
+                    nzFor="enddt"
+                    >End Date
+                  </nz-form-label>
+                  <nz-form-control [nzSm]="24" [nzXs]="12">
+                    <nz-input-group nzCompact>
+                      <nz-date-picker
+                        nzFormat="dd-MMM-yyyy"
+                        nzPlaceHolder="End Date"
+                        formControlName="enddt"
+                      >
+                      </nz-date-picker>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzSpan="6">
+                <nz-form-label
+                  class="left-align"
+                  [nzSm]="24"
+                  [nzXs]="12"
+                  nzFor="rtype"
+                  >Alert Type
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="12">
+                  <nz-select
+                    nzPlaceHolder="Select"
+                    formControlName="type"
+                    nzMode="multiple"
+                    [(ngModel)]="selectedValue"
+                  >
+                    <nz-option
+                      *ngFor="let a of alertTypes"
+                      [nzLabel]="a.label"
+                      [nzValue]="a.value"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </div>
+              <div nz-col nzSpan="3" class="m-t-35">
+                <nz-switch
+                  formControlName="showall"
+                  (ngModelChange)="getAllNotifications()"
+                ></nz-switch
+                >&nbsp;<span style="color: white">Show All</span>
+              </div>
+              <div nz-col nzSpan="3">
+                <button
+                  nzSize="small"
+                  nz-button
+                  (click)="getAllNotifications()"
+                  nzType="primary"
+                  style="margin-top: 30px"
+                >
+                  <i class="anticon anticon-search"></i>
+                </button>
+                <button
+                *ngIf="tableData.length > 0"
+                [disabled]="selectedRows.length == 0"
+                style="position: relative;margin-left: 13px"
+                nz-button
+                (click)="resolve()"
+              >
+                Resolve
+              </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div *ngIf="showResolveModal">
+        <nz-modal
+          [nzWidth]="750"
+          [(nzVisible)]="showResolveModal"
+          [nzTitle]="modalTitle"
+          [nzContent]="modalContent"
+          [nzFooter]="modalFooter"
+          (nzOnCancel)="showResolveModal = false"
+        >
+          <ng-template #modalTitle> Resolve </ng-template>
+          <ng-template #modalContent>
+            <div>
+            <div class="col s2 m2">Notes :</div>
+            <div class="col s8 m8">
+              <textarea rows="4" nz-input [(ngModel)]="bulkresolutionnotes"></textarea>
+            </div>
+          </div>
+          </ng-template>
+
+          <ng-template #modalFooter>
+            <button
+              class="m-t-20"
+              nz-button
+              nzType="default"
+              (click)="showResolveModal = false"
+            >
+              Cancel
+            </button>
+            <button
+              class="m-t-20"
+              [disabled]="bulkresolutionnotes == '' || btnLoading"
+              [nzLoading]="btnLoading"
+              nz-button
+              nzType="primary"
+              (click)="bulkResolve()"
+            >
+              Confirm
+            </button>
+          </ng-template>
+        </nz-modal>
+      </div>
+      <div nz-col nzSpan="24">
+        <!-- <span>Data as on : {{ reportdt | date : "dd-MMM-yyyy HH:mm:ss" }}</span> -->
+        <app-cloudmatiq-data-table
+          (dataChanged)="dataChanged($event)"
+          [tableData]="tableData"
+          [tableHeader]="tagTableHeader"
+          [tableConfig]="tagTableConfig"
+          [totalCount]="totalCount"
+        >
+        </app-cloudmatiq-data-table>
+      </div>
+    </div>
+  </ng-container>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="closeDrawer()"
+    [(isVisible)]="isVisible"
+    [width]="840"
+    [title]="viewTitle"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-side-bar
+        (dataChanged)="closeDrawer()"
+        [(isVisible)]="isVisible"
+        [width]="840"
+        [title]="viewTitle"
+      >
+        <ng-container class="modal-content">
+          <app-notifications
+            [selectedNotification]="selectedData"
+          ></app-notifications>
+        </ng-container>
+      </app-cloudmatiq-side-bar>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <app-cloudmatiq-side-bar
+    (dataChanged)="showFilter = false"
+    [(isVisible)]="showFilter"
+    [title]="'Filter'"
+  >
+    <ng-container *ngIf="showFilter" class="modal-content">
+      <app-filters
+        (getFilterValue)="getFilterValue($event)"
+        (setFilterValue)="setFilterValue($event)"
+        [filterableValues]="filterableValues"
+        [existValues]="filteredValues[filterKey]"
+        [filterKey]="filterKey"
+      >
+      </app-filters>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+</app-cloudmatiq-side-nav>

@@ -1,0 +1,64 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+    [width]="820"
+  >
+    <ng-container class="modal-content">
+      <app-add-edit-interconnectivity
+        *ngIf="isVisible"
+        [interConnectivityObj]="interConnectivityObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      ></app-add-edit-interconnectivity>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <div class="row">
+      <div class="col s4 m3 mt-1">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          id="customerid"
+          [(ngModel)]="customerid"
+          (ngModelChange)="onCustomerChange($event)"
+          nzPlaceHolder="Select Customer"
+        >
+          <nz-option
+            *ngFor="let data of customerList"
+            [nzLabel]="data.customername"
+            [nzValue]="data"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+      <div class="col s8 m8 right right-align mt-1">
+        <button
+          *ngIf="customerid"
+          nz-button
+          nzType="primary"
+          (click)="dataSync()"
+          style="margin-right: 5px"
+        >
+          <i class="fa fa-cloud-download" style="color: #ffcc00"></i> Data Sync
+        </button>
+        <button
+          *ngIf="visibleadd && customerid"
+          nz-button
+          nzType="primary"
+          (click)="showModal()"
+        >
+          <i class="anticon anticon-plus"></i>{{ buttonText }}
+        </button>
+      </div>
+    </div>
+    <div class="param-table" style="margin-top: 0px">
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="interconnectivityList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

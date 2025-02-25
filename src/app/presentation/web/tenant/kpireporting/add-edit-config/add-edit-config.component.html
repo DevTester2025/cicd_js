@@ -1,0 +1,589 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <app-cloudmatiq-side-bar *ngIf="filterMenuVisible" (dataChanged)="filterMenuVisible = false" [width]="450"
+      [(isVisible)]="filterMenuVisible" title="Filter">
+      <ng-container class="modal-content">
+        <nz-spin [nzSpinning]="dataloading">
+          <div *ngFor="let v of filterableValues" nz-col nzSpan="24">
+            <label style="color: white; padding: 13px 0" nz-checkbox
+              [(ngModel)]="filters[currentFilter.value][v.value]">{{ v.title }}</label>
+          </div>
+        </nz-spin>
+        <button style="position: absolute; bottom: 7px; right: 7px" nzSize="small" nz-button (click)="applyFilter()"
+          nzType="primary" [disabled]="filterableValues.length <= 0">
+          Apply Filter
+        </button>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+    <div style="height: 100%; width: 100%">
+      <div nz-col nzspan="24">
+        <div nz-row>
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label class="left-align" [nzSm]="24" [nzXs]="12" nzRequired>Title
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="12">
+                <input nz-input [(ngModel)]="kpireporting.reportname" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label class="left-align" [nzSm]="24" [nzXs]="12">Description
+              </nz-form-label>
+              <nz-form-control [nzSm]="24" [nzXs]="12">
+                <input nz-input [(ngModel)]="kpireporting.description" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="12" style="text-align: end">
+            <!-- <button
+              nz-button
+              style="margin-top: 35px; margin-right: 4px"
+              (click)="downloadCsv()"
+              title="Download as CSV"
+            >
+              <i class="anticon anticon-download"></i>
+            </button> -->
+            <button style="margin-top: 35px; margin-right: 4px" nzSize="small" nz-button (click)="saveConfig()"
+              [nzLoading]="updating" nzType="primary">
+              Save
+            </button>
+            <button style="margin-top: 35px" nzSize="small" nz-button (click)="close()" nzType="primary">
+              <i class="anticon anticon-close"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div nz-row style="margin-top: 20px">
+        <div nz-col nzSpan="12">
+          <h4 class="col s2 m2 amber-text" style="padding-top: 15px">
+            Tickets
+          </h4>
+        </div>
+        <div nz-col nzSpan="12" style="text-align: end">
+          <nz-select *ngIf="_confighdrid != null" nzShowSearch nzPlaceHolder="Select series"
+            style="width: 50%; padding: 10px" [(ngModel)]="kpireporting.tickets.selectedseries"
+            (ngModelChange)="formDetails(kpireporting.tickets.selectedseries)">
+            <nz-option *ngFor="let data of ticketSeries" [nzLabel]="data.seriesname" [nzValue]="data"></nz-option>
+          </nz-select>
+          <!-- <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose"
+            [(ngModel)]="kpireporting.tickets.charttype" (ngModelChange)="getTickets()">
+            <nz-option *ngFor="let option of chartTypes" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+          </nz-select> -->
+          &nbsp;
+          <button *ngIf="_confighdrid != null" nz-button nzType="primary" style="margin-right: 4px"
+            (click)="addSeries('TICKETS')">
+            Add Report
+          </button>
+          <button *ngIf="_confighdrid != null" title="Delete" nz-button nzType="primary"
+            (click)="deleteSeries('TICKETS')" [disabled]="kpireporting.monitoring.selectedseries == null">
+            <i class="anticon anticon-delete"></i>
+          </button>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-row nzType="flex" nzAlign="middle" class="mt-1">
+          <div class="clearfix"></div>
+          <div nz-col nzSpan="24">
+            <div nz-col nzSpan="15">
+              <div nz-col nzSpan="10">
+                <input nz-input [(ngModel)]="kpireporting.tickets.seriesname" placeholder="Series Name" />
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-range-picker [(ngModel)]="kpireporting.tickets.date" (ngModelChange)="getTickets()"
+                  [nzAllowClear]="false" nzFormat="dd-MMM-yyyy"></nz-range-picker>
+              </div>
+              <div nz-col nzSpan="5">
+                <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose"
+                  [(ngModel)]="kpireporting.tickets.duration" (ngModelChange)="getTickets()">
+                  <nz-option nzValue="Daily" nzLabel="Daily"></nz-option>
+                  <nz-option nzValue="Weekly" nzLabel="Weekly"></nz-option>
+                  <nz-option nzValue="Monthly" nzLabel="Monthly"></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div nz-col nzSpan="9" style="text-align: end" class="white-text">
+              <div nz-col class="mt-1">
+                <i class="anticon anticon-setting" (click)="onClickSettings('TICKETS',kpireporting.tickets.settings)"
+                  style="color: #ffcc00"></i>
+                <!-- <b>Group: </b>
+                <span *ngFor="let g of getTicetGroupOptions()" style="margin-left: 7px"
+                  [class.t-active]="kpireporting.tickets.groupby == g.value" (click)="
+                    kpireporting.tickets.groupby == g.value
+                      ? (kpireporting.tickets.groupby = null)
+                      : (kpireporting.tickets.groupby = g.value);
+                    getTickets()
+                  ">
+                  {{ g.title }}
+                </span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div nz-row nzGutter="16">
+          <div nz-col nzSpan="24">
+            <nz-card [nzBordered]="false" class="width-100" style="height: 550px" [nzTitle]="titleTemplate"
+              [nzExtra]="extraTemplate">
+              <div nz-col style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            " class="card-toggle-btn">
+                <nz-button-group>
+                  <button [ngClass]="{ 'active-btn': kpireporting.tickets.currentTab == 0 }" nz-button
+                    (click)="changeTickettab(0,'tickets')" class="button"
+                    [nzType]="kpireporting.tickets.currentTab == 0 ? 'primary' : 'default'">
+                    <i class="anticon anticon-line-chart"></i>
+                  </button>
+                  <button [ngClass]="{ 'active-btn': kpireporting.tickets.currentTab == 1 }" nz-button
+                    (click)="changeTickettab(1,'tickets')" class="button"
+                    [nzType]="kpireporting.tickets.currentTab == 1 ? 'primary' : 'default'">
+                    <i class="anticon anticon-table"></i>
+                  </button>
+                </nz-button-group>
+              </div>
+              <div *ngIf="kpireporting.tickets.currentTab == 0" id="chart">
+                <apx-chart [series]="ticketChartOptions.series" [chart]="ticketChartOptions.chart"
+                  [dataLabels]="ticketChartOptions.dataLabels" [plotOptions]="ticketChartOptions.plotOptions"
+                  [xaxis]="ticketChartOptions.xaxis" [yaxis]="ticketChartOptions.yaxis"
+                  [stroke]="ticketChartOptions.stroke" [labels]="ticketChartOptions.labels"
+                  [title]="ticketChartOptions.title" [fill]="ticketChartOptions.fill"
+                  [legend]="ticketChartOptions.legend" [tooltip]="ticketChartOptions.tooltip"></apx-chart>
+              </div>
+              <div *ngIf="kpireporting.tickets.currentTab == 1" class="row">
+                <div *ngIf="kpireporting.tickets.view == 'list'" nz-col nzSpan="24" class="right-align">
+                  <button nzSize="small" nz-button nzType="primary" (click)="downloadCSV('Tickets',ticketHdr,ticketsummary)">
+                    <i class="anticon anticon-download"></i>Download CSV
+                  </button>
+                </div>
+                <app-cloudmatiq-data-table *ngIf="kpireporting.tickets.view == 'list'" [tableData]="ticketsummary"
+                  [tableHeader]="ticketHdr" [tableConfig]="tableconfig">
+                </app-cloudmatiq-data-table>
+              </div>
+            </nz-card>
+          </div>
+          <!-- <div nz-col nzSpan="6">
+            <app-additionalfilters [ticketFilters]="ticketgroupAndFilterByOptions"
+              (applyTicketFilter)="applyTicketFilter($event)"></app-additionalfilters>
+          </div> -->
+        </div>
+      </div>
+      <div nz-row style="margin-top: 20px">
+        <div nz-col nzSpan="12">
+          <h4 class="col s2 m2 amber-text" style="padding-top: 15px">
+            Monitoring
+          </h4>
+        </div>
+        <div nz-col nzSpan="12" style="text-align: end">
+          <nz-select *ngIf="_confighdrid != null" nzShowSearch placeholder="Select Series" nzPlaceHolder="Select Series"
+            style="width: 50%; padding: 10px" [(ngModel)]="kpireporting.monitoring.selectedseries" (ngModelChange)="
+              formDetails(kpireporting.monitoring.selectedseries)
+            ">
+            <nz-option *ngFor="let data of monitoringSeries" [nzLabel]="data.seriesname" [nzValue]="data"></nz-option>
+          </nz-select>
+          <!-- <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose"
+            [(ngModel)]="kpireporting.monitoring.charttype" (ngModelChange)="getMonitoring()">
+            <nz-option *ngFor="let option of chartTypes" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+          </nz-select> -->
+          &nbsp;
+          <button *ngIf="_confighdrid != null" nz-button nzType="primary" style="margin-right: 4px"
+            (click)="addSeries('MONITORING')">
+            Add Report
+          </button>
+          <button *ngIf="_confighdrid != null" title="Delete"
+            [disabled]="kpireporting.monitoring.selectedseries == null" nz-button nzType="primary"
+            (click)="deleteSeries('MONITORING')">
+            <i class="anticon anticon-delete"></i>
+          </button>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-row nzType="flex" nzAlign="middle" class="mt-1">
+          <div class="clearfix"></div>
+          <div nz-col nzSpan="24">
+            <div nz-col nzSpan="15">
+              <div nz-col nzSpan="10">
+                <input nz-input [(ngModel)]="kpireporting.monitoring.seriesname" placeholder="Series Name" />
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-range-picker [(ngModel)]="kpireporting.monitoring.date" (ngModelChange)="getMonitoring()"
+                  [nzAllowClear]="false" nzFormat="dd-MMM-yyyy"></nz-range-picker>
+              </div>
+              <div nz-col nzSpan="6">
+                <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose"
+                  [(ngModel)]="kpireporting.monitoring.duration" (ngModelChange)="getMonitoring()">
+                  <nz-option nzValue="Daily" nzLabel="Daily"></nz-option>
+                  <nz-option nzValue="Weekly" nzLabel="Weekly"></nz-option>
+                  <nz-option nzValue="Monthly" nzLabel="Monthly"></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div nz-col nzSpan="9" style="text-align: end" class="white-text">
+              <div nz-col class="mt-1">
+                <i class="anticon anticon-setting"
+                  (click)="onClickSettings('MONITORING',kpireporting.monitoring.settings)" style="color: #ffcc00"></i>
+                <!-- <b>Group: </b>
+                <span *ngFor="let g of getMonitoringGroupOptions()" style="margin-left: 7px"
+                  [class.t-active]="kpireporting.monitoring.groupby == g.value" (click)="
+                    kpireporting.monitoring.groupby == g.value
+                      ? (kpireporting.monitoring.groupby = null)
+                      : (kpireporting.monitoring.groupby = g.value);
+                    getMonitoring()
+                  ">
+                  {{ g.title }}
+                </span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div nz-row nzGutter="16">
+          <div nz-col nzSpan="24">
+            <nz-card [nzBordered]="false" class="width-100" style="height: 550px" [nzTitle]="titleTemplate"
+              [nzExtra]="extraTemplate">
+              <div nz-col style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            " class="card-toggle-btn">
+
+                <nz-button-group>
+                  <button [ngClass]="{ 'active-btn': kpireporting.monitoring.currentTab == 0 }" nz-button
+                    (click)="onchangeMonitoring(0,'monitoring')" class="button"
+                    [nzType]="kpireporting.monitoring.currentTab == 0 ? 'primary' : 'default'">
+                    <i class="anticon anticon-line-chart"></i>
+                  </button>
+                  <button [ngClass]="{ 'active-btn': kpireporting.monitoring.currentTab == 1 }" nz-button
+                    (click)="onchangeMonitoring(1,'monitoring')" class="button"
+                    [nzType]="kpireporting.monitoring.currentTab == 1 ? 'primary' : 'default'">
+                    <i class="anticon anticon-table"></i>
+                  </button>
+                </nz-button-group>
+              </div>
+              <div *ngIf="kpireporting.monitoring.currentTab == 0" id="chart">
+                <apx-chart [series]="monitoringChartOptions.series" [chart]="monitoringChartOptions.chart"
+                  [xaxis]="monitoringChartOptions.xaxis" [yaxis]="monitoringChartOptions.yaxis"
+                  [stroke]="monitoringChartOptions.stroke" [labels]="monitoringChartOptions.labels"
+                  [title]="monitoringChartOptions.title" [legend]="monitoringChartOptions.legend"
+                  [tooltip]="monitoringChartOptions.tooltip" [colors]="monitoringChartOptions.colors"></apx-chart>
+              </div>
+              <div *ngIf="kpireporting.monitoring.currentTab == 1" class="row">
+                <div *ngIf="kpireporting.monitoring.currentTab == 1" nz-col nzSpan="24" class="right-align">
+                  <button nzSize="small" nz-button nzType="primary" (click)="downloadCSV('Monitoring',monitoringHdr,monitoringsummary)">
+                    <i class="anticon anticon-download"></i>Download CSV
+                  </button>
+                </div>
+                <app-cloudmatiq-data-table *ngIf="kpireporting.monitoring.currentTab == 1"
+                  [tableData]="monitoringsummary" [tableHeader]="monitoringHdr" [tableConfig]="tableconfig">
+                </app-cloudmatiq-data-table>
+              </div>
+            </nz-card>
+          </div>
+          <!-- <div nz-col nzSpan="6">
+            <app-additionalfilters [monitoringFilters]="monitoringgroupAndFilterByOptions"
+              (applyMonitoringFilter)="applyMonitoringFilter($event)"></app-additionalfilters>
+            <ng-template #filterTitleTemplate>
+              <div style="color: white">Filters</div>
+            </ng-template>
+          </div> -->
+        </div>
+      </div>
+
+      <div nz-row style="margin-top: 20px">
+        <div nz-col nzSpan="12">
+          <h4 class="col s2 m2 amber-text" style="padding-top: 15px">Assets</h4>
+        </div>
+        <div nz-col nzSpan="12" style="text-align: end">
+          <nz-select *ngIf="_confighdrid != null" nzShowSearch nzPlaceHolder="Select series"
+            style="width: 50%; padding: 10px" [(ngModel)]="kpireporting.assets.selectedseries"
+            (ngModelChange)="formDetails(kpireporting.assets.selectedseries)">
+            <nz-option *ngFor="let data of assetSeries" [nzLabel]="data.seriesname" [nzValue]="data"></nz-option>
+          </nz-select>
+          <!-- <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose"
+            [(ngModel)]="kpireporting.assets.charttype" (ngModelChange)="getAssets()">
+            <nz-option *ngFor="let option of chartTypes" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+          </nz-select> -->
+          &nbsp;
+          <button *ngIf="_confighdrid != null" nz-button nzType="primary" style="margin-right: 4px"
+            (click)="addSeries('ASSET')">
+            Add Report
+          </button>
+          <button *ngIf="_confighdrid != null" title="Delete" nz-button nzType="primary" (click)="deleteSeries('ASSET')"
+            [disabled]="kpireporting.assets.selectedseries == null">
+            <i class="anticon anticon-delete"></i>
+          </button>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-row nzType="flex" nzAlign="middle" class="mt-1">
+          <div class="clearfix"></div>
+          <div nz-col nzSpan="24">
+            <div nz-col nzSpan="15">
+              <div nz-col nzSpan="10">
+                <input nz-input [(ngModel)]="kpireporting.assets.seriesname" placeholder="Series Name" />
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-range-picker [(ngModel)]="kpireporting.assets.date" (ngModelChange)="getAssets()"
+                  [nzAllowClear]="false" nzFormat="dd-MMM-yyyy"></nz-range-picker>
+              </div>
+              <div nz-col nzSpan="6">
+                <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose"
+                  [(ngModel)]="kpireporting.assets.duration" (ngModelChange)="getAssets()">
+                  <nz-option nzValue="Daily" nzLabel="Daily"></nz-option>
+                  <nz-option nzValue="Weekly" nzLabel="Weekly"></nz-option>
+                  <nz-option nzValue="Monthly" nzLabel="Monthly"></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div nz-col nzSpan="9" style="text-align: end" class="white-text">
+              <div nz-col class="mt-1">
+                <i class="anticon anticon-setting" (click)="onClickSettings('ASSET',kpireporting.assets.settings)"
+                  style="color: #ffcc00"></i>
+                <!-- <b>Group: </b>
+                <span *ngFor="let g of getAssetMonitoringGroupOptions()" style="margin-left: 7px"
+                  [class.t-active]="kpireporting.assets.groupby == g.value" (click)="
+                    kpireporting.assets.groupby == g.value
+                      ? (kpireporting.assets.groupby = null)
+                      : (kpireporting.assets.groupby = g.value);
+                    getAssets()
+                  ">
+                  {{ g.title }}
+                </span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div nz-row nzGutter="16">
+          <div nz-col nzSpan="24">
+            <nz-card [nzBordered]="false" class="width-100" style="height: 550px" [nzTitle]="titleTemplate"
+              [nzExtra]="extraTemplate">
+              <div nz-col style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            " class="card-toggle-btn">
+
+                <nz-button-group>
+                  <button [ngClass]="{ 'active-btn': kpireporting.assets.currentTab == 0 }" nz-button
+                    (click)="onchangeAssets(0,'assets')" class="button"
+                    [nzType]="kpireporting.assets.currentTab == 0 ? 'primary' : 'default'">
+                    <i class="anticon anticon-line-chart"></i>
+                  </button>
+                  <button [ngClass]="{ 'active-btn': kpireporting.assets.currentTab == 1 }" nz-button
+                    (click)="onchangeAssets(1,'assets')" class="button"
+                    [nzType]="kpireporting.assets.currentTab == 1 ? 'primary' : 'default'">
+                    <i class="anticon anticon-table"></i>
+                  </button>
+                </nz-button-group>
+              </div>
+              <div *ngIf="kpireporting.assets.currentTab == 0" id="chart">
+                <apx-chart [series]="assetChartOptions.series" [chart]="assetChartOptions.chart"
+                  [dataLabels]="assetChartOptions.dataLabels" [plotOptions]="assetChartOptions.plotOptions"
+                  [xaxis]="assetChartOptions.xaxis" [yaxis]="assetChartOptions.yaxis"
+                  [stroke]="assetChartOptions.stroke" [labels]="assetChartOptions.labels"
+                  [title]="assetChartOptions.title" [fill]="assetChartOptions.fill" [legend]="assetChartOptions.legend"
+                  [tooltip]="assetChartOptions.tooltip"></apx-chart>
+              </div>
+              <div *ngIf="kpireporting.assets.currentTab == 1" class="row">
+                <div *ngIf="kpireporting.assets.currentTab == 1" nz-col nzSpan="24" class="right-align">
+                  <button nzSize="small" nz-button nzType="primary" (click)="downloadCSV('Assets',assetHdr,assetsummary)">
+                    <i class="anticon anticon-download"></i>Download CSV
+                  </button>
+                </div>
+                <app-cloudmatiq-data-table *ngIf="kpireporting.assets.currentTab == 1" [tableData]="assetsummary"
+                  [tableHeader]="assetHdr" [tableConfig]="tableconfig">
+                </app-cloudmatiq-data-table>
+              </div>
+            </nz-card>
+          </div>
+          <!-- <div nz-col nzSpan="6">
+            <app-additionalfilters [assetFilters]="assetgroupAndFilterByOptions"
+              (applyAssetFilter)="applyAssetFilter($event)"></app-additionalfilters>
+          </div> -->
+        </div>
+      </div>
+
+      <div nz-row style="margin-top: 20px">
+        <div nz-col nzSpan="12">
+          <h4 class="col s2 m2 amber-text" style="padding-top: 15px">CMDB</h4>
+        </div>
+        <div nz-col nzSpan="12" style="text-align: end">
+          <nz-select *ngIf="_confighdrid != null" nzShowSearch nzPlaceHolder="Select series"
+            style="width: 50%; padding: 10px" [(ngModel)]="kpireporting.cmdb.selectedseries"
+            (ngModelChange)="formDetails(kpireporting.cmdb.selectedseries)">
+            <nz-option *ngFor="let data of cmdbSeries" [nzLabel]="data.seriesname" [nzValue]="data"></nz-option>
+          </nz-select>
+          <!-- <nz-select style="width: 120px" [nzAllowClear]="false" nzPlaceHolder="Choose"
+            [(ngModel)]="kpireporting.cmdb.charttype" (ngModelChange)="getCMDB()">
+            <nz-option *ngFor="let option of chartTypes" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+          </nz-select> -->
+          &nbsp;
+          <button *ngIf="_confighdrid != null" nz-button nzType="primary" style="margin-right: 4px"
+            (click)="addSeries('CMDB')">
+            Add Report
+          </button>
+          <button *ngIf="_confighdrid != null" title="Delete" nz-button nzType="primary" (click)="deleteSeries('CMDB')"
+            [disabled]="kpireporting.cmdb.selectedseries == null">
+            <i class="anticon anticon-delete"></i>
+          </button>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-row nzType="flex" nzAlign="middle" class="mt-1">
+          <div class="clearfix"></div>
+          <div nz-col nzSpan="24">
+            <div nz-col nzSpan="21">
+              <div nz-col nzSpan="7">
+                <input nz-input [(ngModel)]="kpireporting.cmdb.seriesname" placeholder="Series Name" />
+              </div>
+              <div nz-col nzSpan="6">
+                <nz-range-picker [(ngModel)]="kpireporting.cmdb.date" (ngModelChange)="getCMDB()" [nzAllowClear]="false"
+                  nzFormat="dd-MMM-yyyy"></nz-range-picker>
+              </div>
+              <div nz-col nzSpan="5">
+                <nz-select style="width: 200px" [nzAllowClear]="false" [nzShowSearch]="true"
+                  nzPlaceHolder="Resource Type" [(ngModel)]="kpireporting.cmdb.resourcetype">
+                  <nz-option *ngFor="let option of resourceTypes" [nzValue]="option.crn" [nzLabel]="option.resource">
+                  </nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div nz-col nzSpan="3" style="text-align: end" class="white-text">
+              <div nz-col class="mt-1">
+                <i *ngIf="kpireporting.cmdb.resourcetype != null" class="anticon anticon-setting"
+                  (click)="onClickSettings('CMDB',kpireporting.cmdb.settings)" style="color: #ffcc00"></i>
+                <!-- <b>Group: </b>
+                <span
+                  *ngFor="let g of getCMDBGroupOptions()"
+                  style="margin-left: 7px"
+                  [class.t-active]="kpireporting.cmdb.groupby == g.value"
+                  (click)="
+                    kpireporting.cmdb.groupby == g.value
+                      ? (kpireporting.cmdb.groupby = null)
+                      : (kpireporting.cmdb.groupby = g.value);
+                    getCMDB()
+                  "
+                >
+                  {{ g.title }}
+                </span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div nz-row nzGutter="16">
+          <div nz-col nzSpan="24">
+            <nz-card *ngIf="cmdbChartOptions.chart.type=='rangeBar'" [nzBordered]="false" class="width-100"
+              [ngClass]="cmdbChartOptions.style" [nzTitle]="titleTemplate" [nzExtra]="extraTemplate">
+              <div nz-col style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            " class="card-toggle-btn">
+
+                <nz-button-group>
+                  <button [ngClass]="{ 'active-btn': kpireporting.cmdb.currentTab == 0 }" nz-button
+                    (click)="onchangeTimeseries(0,'cmdb')" class="button"
+                    [nzType]="kpireporting.cmdb.currentTab == 0 ? 'primary' : 'default'">
+                    <i class="anticon anticon-line-chart"></i>
+                  </button>
+                  <button [ngClass]="{ 'active-btn': kpireporting.cmdb.currentTab == 1 }" nz-button
+                    (click)="onchangeTimeseries(1,'cmdb')" class="button"
+                    [nzType]="kpireporting.cmdb.currentTab == 1 ? 'primary' : 'default'">
+                    <i class="anticon anticon-table"></i>
+                  </button>
+                </nz-button-group>
+              </div>
+              <div *ngIf="kpireporting.cmdb.currentTab == 0" id="chart">
+                <apx-chart [series]="cmdbChartOptions.series" [chart]="cmdbChartOptions.chart"
+                  [dataLabels]="cmdbChartOptions.dataLabels" [plotOptions]="cmdbChartOptions.plotOptions"
+                  [xaxis]="cmdbChartOptions.xaxis" [yaxis]="cmdbChartOptions.yaxis" [stroke]="cmdbChartOptions.stroke"
+                  [labels]="cmdbChartOptions.labels" [title]="cmdbChartOptions.title" [fill]="cmdbChartOptions.fill"
+                  [legend]="cmdbChartOptions.legend" [tooltip]="cmdbChartOptions.tooltip"></apx-chart>
+              </div>
+              <div *ngIf="kpireporting.cmdb.currentTab == 1" class="row">
+                <div *ngIf="kpireporting.cmdb.currentTab == 1" nz-col nzSpan="24" class="right-align">
+                  <button nzSize="small" nz-button nzType="primary" (click)="downloadCSV('CMDB',cmdbHdr,cmdbsummary)">
+                    <i class="anticon anticon-download"></i>Download CSV
+                  </button>
+                </div>
+                <app-cloudmatiq-data-table *ngIf="kpireporting.cmdb.currentTab == 1" [tableData]="cmdbsummary"
+                  [tableHeader]="cmdbHdr" [tableConfig]="tableconfig">
+                </app-cloudmatiq-data-table>
+              </div>
+            </nz-card>
+            <nz-card *ngIf="cmdbChartOptions.chart.type!='rangeBar'" [nzBordered]="false" class="width-100"
+              style="height: 550px" [nzTitle]="titleTemplate" [nzExtra]="extraTemplate">
+              <div nz-col style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            " class="card-toggle-btn">
+
+                <nz-button-group>
+                  <button [ngClass]="{ 'active-btn': kpireporting.cmdb.currentTab == 0 }" nz-button
+                    (click)="onchangeCMDB(0,'cmdb')" class="button"
+                    [nzType]="kpireporting.cmdb.currentTab == 0 ? 'primary' : 'default'">
+                    <i class="anticon anticon-line-chart"></i>
+                  </button>
+                  <button [ngClass]="{ 'active-btn': kpireporting.cmdb.currentTab == 1 }" nz-button
+                    (click)="onchangeCMDB(1,'cmdb')" class="button"
+                    [nzType]="kpireporting.cmdb.currentTab == 1 ? 'primary' : 'default'">
+                    <i class="anticon anticon-table"></i>
+                  </button>
+                </nz-button-group>
+              </div>
+              <div *ngIf="kpireporting.cmdb.currentTab == 0" id="chart">
+                <apx-chart [series]="cmdbChartOptions.series" [chart]="cmdbChartOptions.chart"
+                  [dataLabels]="cmdbChartOptions.dataLabels" [plotOptions]="cmdbChartOptions.plotOptions"
+                  [xaxis]="cmdbChartOptions.xaxis" [yaxis]="cmdbChartOptions.yaxis" [stroke]="cmdbChartOptions.stroke"
+                  [labels]="cmdbChartOptions.labels" [title]="cmdbChartOptions.title" [fill]="cmdbChartOptions.fill"
+                  [legend]="cmdbChartOptions.legend" [tooltip]="cmdbChartOptions.tooltip"></apx-chart>
+              </div>
+              <div *ngIf="kpireporting.cmdb.currentTab == 1" class="row">
+                <div *ngIf="kpireporting.cmdb.currentTab == 1" nz-col nzSpan="24" class="right-align">
+                  <button nzSize="small" nz-button nzType="primary" (click)="downloadCSV('CMDB',cmdbHdr,cmdbsummary)">
+                    <i class="anticon anticon-download"></i>Download CSV
+                  </button>
+                </div>
+                <app-cloudmatiq-data-table *ngIf="kpireporting.cmdb.currentTab == 1" [tableData]="cmdbsummary"
+                  [tableHeader]="cmdbHdr" [tableConfig]="tableconfig">
+                </app-cloudmatiq-data-table>
+              </div>
+            </nz-card>
+          </div>
+          <!-- <div nz-col nzSpan="6">
+            <app-additionalfilters [cmdbFilters]="cmdbGroupOptions" [crn]="kpireporting.cmdb.resourcetype"
+              (applyCMDBFilter)="applyCMDBFilter($event)"></app-additionalfilters>
+          </div> -->
+        </div>
+      </div>
+    </div>
+    <app-cloudmatiq-side-bar *ngIf="attributemenu" (dataChanged)="attributemenu = false" [(isVisible)]="attributemenu"
+      [width]="750" title="Configuration">
+      <ng-container class="modal-content">
+        <nz-tabset>
+          <nz-tab nzTitle="Settings">
+            <app-report-settings *ngIf="attributemenu" [reporttype]="reporttype"
+              [crn]="reporttype=='CMDB'?kpireporting.cmdb.resourcetype:null" [reportsettings]="reportsettings"
+              [charttype]="kpireporting.cmdb.charttype" (applySettings)="applySettings($event)">
+            </app-report-settings>
+          </nz-tab>
+          <nz-tab nzTitle="Filters">
+            <app-additionalfilters *ngIf="reporttype=='CMDB'&&attributemenu" [cmdbFilters]="cmdbGroupOptions"
+              [crn]="kpireporting.cmdb.resourcetype" (applyCMDBFilter)="applyCMDBFilter($event)">
+            </app-additionalfilters>
+            <app-additionalfilters *ngIf="reporttype=='TICKETS'&&attributemenu"
+              [ticketFilters]="ticketgroupAndFilterByOptions" (applyTicketFilter)="applyTicketFilter($event)">
+            </app-additionalfilters>
+            <app-additionalfilters *ngIf="reporttype=='ASSET'&&attributemenu"
+              [assetFilters]="assetgroupAndFilterByOptions" (applyAssetFilter)="applyAssetFilter($event)">
+            </app-additionalfilters>
+            <app-additionalfilters *ngIf="reporttype=='MONITORING'&&attributemenu"
+              [monitoringFilters]="monitoringgroupAndFilterByOptions"
+              (applyMonitoringFilter)="applyMonitoringFilter($event)"></app-additionalfilters>
+          </nz-tab>
+        </nz-tabset>
+      </ng-container>
+    </app-cloudmatiq-side-bar>
+  </ng-container>
+</app-cloudmatiq-side-nav>

@@ -1,0 +1,111 @@
+<nz-spin [nzSpinning]="loading">
+  <div>
+    <form nz-form [nzLayout]="vertical" [formGroup]="requestForm">
+      <div class="p-b-10 row ant-col-md-12">
+        <nz-form-item *ngIf="!showComponents">
+          <nz-form-label [nzSm]="24" [nzXs]="12" nzFor="maintwindowid"
+            >Maintenance window</nz-form-label
+          >
+          <nz-form-control [nzSm]="24" [nzXs]="12">
+            <nz-select
+              [nzDisabled]="showComponents"
+              nzShowSearch
+              nzAllowClear
+              id="maintwindowid"
+              (ngModelChange)="windowChanged(requestForm.value.maintwindowid)"
+              nzPlaceHolder="Maintenance window"
+              formControlName="maintwindowid"
+            >
+              <nz-option
+                *ngFor="let c of mainWindowList"
+                [nzLabel]="c.windowname"
+                [nzValue]="c.maintwindowid"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div formArrayName="requestdetails" class="p-t-10">
+        <table style="width: 100%">
+          <thead>
+            <tr style="color: white">
+              <th width="5%" class="p-l-15"></th>
+              <th width="20%" class="p-l-15">Day</th>
+              <th width="35%" class="p-l-15">Plan</th>
+              <th width="35%">Time</th>
+              <!-- <th width="20%">Start Time</th>
+                            <th width="20%">End Time</th> -->
+            </tr>
+          </thead>
+          <tr
+            *ngFor="let item of getFormArray().controls; let i = index"
+            [formGroupName]="i"
+          >
+            <td class="p-t-12 p-b-10">
+              <label nz-checkbox formControlName="execute"></label>
+            </td>
+            <td class="p-t-12 p-b-10 p-r-15">
+              <input
+                disabled
+                nz-input
+                placeholder="day"
+                formControlName="requestday"
+                type="text"
+              />
+            </td>
+            <td class="p-t-12 p-b-10 p-r-15">
+              <nz-select
+                style="width: 100%"
+                nzAllowClear
+                nzPlaceHolder="Select Plan"
+                formControlName="upgradeplantype"
+              >
+                <nz-option
+                  *ngFor="let rec of requestData; index as j"
+                  [nzValue]="rec.costvisualid"
+                  [nzLabel]="rec.plantype"
+                ></nz-option>
+              </nz-select>
+            </td>
+            <!-- <td class="p-t-20 p-b-10">
+                            <nz-time-picker class="shedule-request" formControlName="reqstarttime" nzFormat="HH:mm">
+                            </nz-time-picker>
+                        </td>
+                        <td class="p-t-20 p-b-10">
+                            <nz-time-picker class="shedule-request" formControlName="reqendtime" nzFormat="HH:mm">
+                            </nz-time-picker>
+                        </td> -->
+            <td class="p-t-12 p-b-10 p-r-15">
+              <nz-select
+                style="width: 100%"
+                nzAllowClear
+                nzPlaceHolder="Select Time"
+                formControlName="reqstarttime"
+                nzShowSearch
+              >
+                <nz-option
+                  *ngFor="let d of schedulingTime; index as j"
+                  [nzValue]="d.value"
+                  [nzLabel]="d.label"
+                ></nz-option>
+              </nz-select>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </form>
+    <div class="row right">
+      <div class="col s12 md4">
+        <button
+          class="save-button"
+          (click)="saveOrUpdate(requestForm.value)"
+          nz-button
+          nzType="primary"
+        >
+          Schedule Resize
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-spin>

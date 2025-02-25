@@ -1,0 +1,105 @@
+.add-release ::ng-deep .ant-form-item-label label:after {
+    content: " ";
+}
+
+.add-release ::ng-deep .ant-input {
+    border: 1px solid #8d9ba6;
+}
+
+:host ::ng-deep .ant-form-item-control .ant-select .ant-select-selection,
+:host ::ng-deep .ant-input-number,
+:host ::ng-deep .ant-select-selection {
+    border: 1px solid #8d9ba6;
+}
+
+.add-release .m-b-14 {
+    margin-bottom: 14px;
+}
+
+.discard:hover {
+    background: #475560;
+    color: #a4a7a8 !important;
+    border: 1px solid #a4a7a8;
+}
+
+.add-release {
+
+    .form-field,
+    .panel {
+        display: flex;
+        align-items: center;
+
+        .panel-field {
+            display: initial;
+        }
+    }
+
+    .panel-container {
+        max-height: 75vh;
+        overflow: auto;
+
+        .ant-collapse {
+            border: 1px solid #8d9ba6;
+            margin-bottom: 2px;
+            border-radius: 1px;
+        }
+
+        .ant-collapse-header {
+            color: #aabb11 !important;
+        }
+
+        .ant-collapse>.ant-collapse-item {
+            border-bottom: 0px;
+        }
+
+        .ant-collapse-content>.ant-collapse-content-box {
+            padding: 4px 6px !important;
+            background: rgb(71, 85, 96);
+        }
+
+        :host ::ng-deep .ant-form-item-control .ant-select .ant-select-selection,
+        :host ::ng-deep .ant-input-number,
+        :host ::ng-deep .ant-select-selection {
+             border: 1px solid #8d9ba6;
+        }
+    }
+
+    .ant-input-affix-wrapper .ant-input-suffix {
+        top: 55%;
+        right: 10px;
+    }
+
+    .ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
+        border-color: #a4a7a8 !important;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+}
+
+.release-name {
+    cursor: not-allowed !important;
+}
+
+.orch-container {
+    .ant-drawer-content {
+        width: 1125px !important;
+        background: rgb(71, 85, 96) !important;
+    }
+}
+
+.autocomplete {
+    -webkit-text-security: disc !important;
+}
+
+::ng-deep .ql-toolbar.ql-snow{
+    width: 95% !important;
+}

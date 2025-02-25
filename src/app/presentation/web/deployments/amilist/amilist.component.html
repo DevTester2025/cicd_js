@@ -1,0 +1,96 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <app-cloudmatiq-side-bar
+    (dataChanged)="onChanged($event)"
+    [(isVisible)]="isVisible"
+    [title]="formTitle"
+  >
+    <ng-container class="modal-content">
+      <app-cloudmatiq-add-edit-ami
+        *ngIf="selectedProvider == 'AWS'"
+        [amiObj]="amiObj"
+        (notifyAmiEntry)="notifyNewEntry($event)"
+      >
+      </app-cloudmatiq-add-edit-ami>
+      <app-cloudmatiq-ecl2-add-edit-ami
+        *ngIf="selectedProvider == 'ECL2'"
+        [amiObj]="amiObj"
+        (notifyAmiEntry)="notifyNewEntry($event)"
+      >
+      </app-cloudmatiq-ecl2-add-edit-ami>
+      <app-cloudmatiq-ali-add-edit-image
+        *ngIf="selectedProvider == 'Alibaba'"
+        [imageObj]="amiObj"
+        (notifyNewEntry)="notifyNewEntry($event)"
+      ></app-cloudmatiq-ali-add-edit-image>
+    </ng-container>
+  </app-cloudmatiq-side-bar>
+  <ng-container class="page-body">
+    <div class="row">
+      <div class="col s12">
+        <div class="col s6 m3 mt-1">
+          <nz-select
+            nzShowSearch
+            placeholder="Select Provider"
+            nzPlaceHolder="Select Provider"
+            [(ngModel)]="provider"
+            style="width: 93%"
+            (ngModelChange)="onChange($event)"
+          >
+            <nz-option
+              *ngFor="let i of providerList"
+              [nzLabel]="i.keyname"
+              [nzValue]="i.keyvalue"
+            ></nz-option>
+          </nz-select>
+        </div>
+        <div
+          *ngIf="
+            provider == 'AWS' || provider == 'ECL2' || provider == 'Alibaba'
+          "
+          class="col s6 m2 right right-align mt-1"
+        >
+          <button
+            *ngIf="visibleadd"
+            nz-button
+            nzType="primary"
+            (click)="showModal()"
+          >
+            <i class="anticon anticon-plus"></i>{{ buttonText }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="amiList.length > 0"
+      class="param-table ami-table"
+      style="margin-top: 0px"
+    >
+      <app-cloudmatiq-data-table
+        (dataChanged)="dataChanged($event)"
+        [tableData]="amiList"
+        [tableHeader]="tableHeader"
+        [tableConfig]="tableConfig"
+      ></app-cloudmatiq-data-table>
+    </div>
+    <div
+      *ngIf="amiList.length == 0 && !loading"
+      class="param-table ami-table"
+      style="margin-top: 0px"
+    >
+      <app-cloudmatiq-skeleton
+        [loading]="false"
+        message="No AMI's found."
+      ></app-cloudmatiq-skeleton>
+    </div>
+    <div
+      *ngIf="amiList.length == 0 && loading"
+      class="param-table ami-table"
+      style="margin-top: 0px"
+    >
+      <app-cloudmatiq-skeleton
+        [loading]="false"
+        message="No AMI's found."
+      ></app-cloudmatiq-skeleton>
+    </div>
+  </ng-container>
+</app-cloudmatiq-side-nav>

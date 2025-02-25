@@ -1,0 +1,42 @@
+<app-cloudmatiq-side-nav [blockUI]="loading">
+  <ng-container class="page-body">
+    <!-- <div class="row srm-button">
+            <div class="col s12 m2 right right-align mt-1">
+                <nz-dropdown>
+                    <button nz-button nz-dropdown>
+                        <i class="anticon anticon-plus"></i> Create&nbsp;
+                        <i class="anticon anticon-down"></i>
+                    </button>
+                    <ul nz-menu>
+                        <li nz-menu-item (click)="router.navigate(['srm/service/create'])">
+                            <a>Service Catalog</a>
+                        </li>
+                        <li nz-menu-item (click)="router.navigate(['srm/generic/create'])">
+                            <a>Generic Request</a>
+                        </li>
+                    </ul>
+                </nz-dropdown>
+            </div>
+        </div> -->
+    <nz-tabset class="servicecatalog">
+      <nz-tab nzTitle="Service Catalog">
+        <div class="param-table" style="margin-top: 0px">
+          <app-srm-catalog-list
+            (notfiyEntry)="notfiyEntry($event)"
+          ></app-srm-catalog-list>
+        </div>
+      </nz-tab>
+      <nz-tab
+        *ngIf="createGenericFlag"
+        nzTitle="Generic Request"
+      >
+        <div class="param-table" style="margin-top: 20px">
+          <!-- <app-generic-request></app-generic-request> -->
+          <app-srm-generic-list
+          (notfiyEntry)="notfiyEntry($event)"
+          ></app-srm-generic-list>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </ng-container>
+</app-cloudmatiq-side-nav>
