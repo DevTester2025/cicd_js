@@ -1,0 +1,28 @@
+        name: sonar_integration_release_01
+
+        on:
+          workflow_dispatch:
+
+
+        jobs:
+          build:
+           name: GITHUB
+           runs-on: ubuntu-latest
+           steps:
+                - name: Check out the repo
+                  uses: actions/checkout@v3  
+            
+
+    #---------------- SONARQUBE
+          SONARQUBE:
+            needs: [build]
+            runs-on: ubuntu-latest
+            environment:
+              name: DEVELOPMENT
+            steps:
+              - uses: actions/checkout@v3
+              - name: SonarQube Scan
+                uses: sonarsource/sonarqube-scan-action@master
+            env:
+                SONAR_TOKEN: sqp_7104fd6834990ee74841a252003f163e0991e641
+                SONAR_HOST_URL: http://13.48.130.200:9000
