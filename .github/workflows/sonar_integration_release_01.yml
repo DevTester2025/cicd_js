@@ -25,4 +25,4 @@
                 uses: sonarsource/sonarqube-scan-action@master
             env:
                 SONAR_TOKEN: sqp_7104fd6834990ee74841a252003f163e0991e641
-                SONAR_HOST_URL: http://13.48.130.200:9000
+                SONAR_HOST_URL: http://51.20.184.181:9000
