@@ -29,7 +29,7 @@
                               cd ~/projects/script_test/javaproject/Spring-Boot-main
                               sudo mvn clean
                               sudo mvn install 
-                   EOF
+                    EOF
 
         #---------------- DOCKER
           DOCKERHUB:
