@@ -16,7 +16,7 @@
 
     #---------------- BUILD_SCRIPT
           BUILD_SCRIPT:
-            needs: [SONARQUBE]
+            needs: [build]
             runs-on: ubuntu-latest
             steps:
                - name: Run script on the VM
