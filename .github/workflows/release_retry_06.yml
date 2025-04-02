@@ -21,15 +21,15 @@
                - name: Retry Run script on the VM
                  uses: nick-fields/retry@v2
                  with:
-                   timeout_seconds: 60
-                   max_attempts: 2
+                   timeout_seconds: 5
+                   max_attempts: 3
                    retry_on: error
                    command: |
-                    sshpass -p "CmCICD#2024#" ssh -o StrictHostKeyChecking=no ubuntu@13.51.7.24 <<EOF
-                              cd ~/projects/script_test/javaproject/Spring-Boot-main
+                    sshpass -p "CmCICD#2024#" ssh -p undefined -o StrictHostKeyChecking=no ubuntu@13.51.7.24 <<EOF
+                            cd ~/projects/script_test/javaproject/Spring-Boot-main
                               sudo mvn clean
                               sudo mvn install 
-                             EOF
+                    EOF 
 
         #---------------- DOCKER
           DOCKERHUB:
