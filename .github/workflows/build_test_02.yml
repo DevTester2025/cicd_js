@@ -12,7 +12,20 @@
                 - name: Check out the repo
                   uses: actions/checkout@v3  
             
-# No SonarQube configuration found for this project type.
+
+    #---------------- SONARQUBE
+          SONARQUBE:
+            needs: [build]
+            runs-on: ubuntu-latest
+            environment:
+              name: DEVELOPMENT
+            steps:
+              - uses: actions/checkout@v3
+              - name: SonarQube Scan
+                uses: sonarsource/sonarqube-scan-action@master
+            env:
+                SONAR_TOKEN: sqp_d5c17085de7fd62151dcac07600573c7c9ca70cc
+                SONAR_HOST_URL: http://51.20.72.247:9000
 
     #---------------- BUILD_SCRIPT
           BUILD_SCRIPT:
