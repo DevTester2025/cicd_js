@@ -39,7 +39,7 @@
                    max_attempts: 2
                    retry_on: error
                    command: |
-                    sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.72.247 <<EOF
+                    sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@52.20.72.247 <<EOF
                               cd ~/projects/apps/sample_project
                               source ~/.nvm/nvm.sh
                               nvm use default
