@@ -35,7 +35,7 @@
                - name: Retry Run script on the VM
                  uses: nick-fields/retry@v2
                  with:
-                   timeout_seconds: 60
+                   timeout_seconds: 3000
                    max_attempts: 2
                    retry_on: error
                    command: |
