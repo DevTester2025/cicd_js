@@ -32,15 +32,10 @@
             needs: [SONARQUBE]
             runs-on: ubuntu-latest
             steps:
-               - name: Retry Run script on the VM
-                 uses: nick-fields/retry@v2
-                 with:
-                   timeout_seconds: 3000
-                   max_attempts: 2
-                   retry_on: error
-                   command: |
-                    sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.72.247 <<EOF
-                            cd ~/projects/apps/sample_project
+               - name: Run script on the VM
+                 run: |
+                   sshpass -p "a7X2p9L4kR" ssh -o StrictHostKeyChecking=no omnisecure@51.20.72.247 <<EOF
+                              cd ~/projects/apps/sample_project
                               source ~/.nvm/nvm.sh
                               nvm use default
                               node -v
@@ -49,4 +44,4 @@
                               rm -rf node_modules package-lock.json dist
                               npm install
                               ng build 
-                    EOF 
+                   EOF
