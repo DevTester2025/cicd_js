@@ -32,6 +32,12 @@
                               npm install
                               ng build
                    EOF
+                   - name: Print working directory on GitHub runner
+                     run: |
+                        echo "Current directory on GitHub runner:"
+                        pwd
+                        echo "Listing files for debug:"
+                        ls -la    
                - name: Copy Build to AWS S3 for Rollback
                  uses: keithweaver/aws-s3-github-action@v1.0.0
                  with:
