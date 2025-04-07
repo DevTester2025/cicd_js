@@ -32,9 +32,9 @@
                               npm install
                               ng build
                    EOF
-                   - name: Print working directory on GitHub runner
-                     run: |
-                        echo "Current directory on GitHub runner:"
+               - name: Print working directory on GitHub runner
+                 run: |
+                   echo "Current directory on GitHub runner:"
                         pwd
                         echo "Listing files for debug:"
                         ls -la    
