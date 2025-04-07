@@ -36,7 +36,7 @@
                  uses: keithweaver/aws-s3-github-action@v1.0.0
                  with:
                    command: cp
-                   source: ~/home/omnisecure/projects/apps/sample_project/dist/
+                   source: /home/omnisecure/projects/apps/sample_project/dist/
                    destination: s3://cm-static--dev/cicd-build/
                    aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                    aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
