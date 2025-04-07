@@ -21,7 +21,7 @@
             steps:
                - name: Run script on the VM
                  run: |
-                   sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.255.62 <<EOF
+                   sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.249.232 <<EOF
                               cd ~/projects/apps/sample_project
                               source ~/.nvm/nvm.sh
                               nvm use default
