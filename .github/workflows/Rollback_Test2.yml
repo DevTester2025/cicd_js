@@ -34,5 +34,6 @@
                               rm -rf node_modules package-lock.json dist
                               npm install
                               ng build
+                              aws sts get-caller-identity
                               aws s3 cp /home/omnisecure/projects/apps/sample_project/dist/angular-conduit/ s3://cm-static--dev/test/* --recursive --region eu-north-1
                    EOF
