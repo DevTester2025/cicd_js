@@ -34,5 +34,5 @@
                               rm -rf node_modules package-lock.json dist
                               npm install
                               ng build
-                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist/angular-conduit/ s3://cm-static--dev/build_test/ --recursive --region eu-north-1
+                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist/angular-conduit/ s3://cm-static--dev/ --recursive --region eu-north-1
                    EOF
