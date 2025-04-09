@@ -30,6 +30,26 @@ jobs:
             rm -rf node_modules package-lock.json dist
             npm install
             ng build
+
+             echo "Checking if FTP is installed and running..."
+
+            # Check if vsftpd or proftpd is installed
+            if dpkg -l | grep -q vsftpd; then
+              echo "vsftpd is installed"
+              systemctl status vsftpd || echo "vsftpd service is not running"
+            elif dpkg -l | grep -q proftpd; then
+              echo "proftpd is installed"
+              systemctl status proftpd || echo "proftpd service is not running"
+            else
+              echo "No FTP server installed"
+            fi
+
+            # Check if FTP port 21 is listening
+            if ss -tuln | grep -q ':21'; then
+              echo "FTP port (21) is open"
+            else
+              echo "FTP port (21) is not open"
+            fi
             
             # FTP Upload Section
             echo "Uploading build via FTP..."
