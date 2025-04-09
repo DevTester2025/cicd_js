@@ -18,6 +18,7 @@ jobs:
       - name: Run build script on VM over SSH
         run: |
           sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.247.48 << 'ENDSSH'
+            echo "Executing on Server1: \$(hostname)"
             cd ~/projects/apps/sample_project
             source ~/.nvm/nvm.sh
             nvm use default
@@ -37,6 +38,7 @@ jobs:
           LOCAL_FILE: 'dist/angular-conduit/app.zip'
         run: |
           echo "Uploading build via FTP..."
+          echo "Executing on Server: \$(hostname)"
           apt-get update && apt-get install -y ftp
           ftp -inv $FTP_SERVER <<EOF
           user $FTP_USERNAME $FTP_PASSWORD
