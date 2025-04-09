@@ -21,7 +21,7 @@
             steps:
                - name: Run script on the VM
                  run: |
-                   sshpass -p "a7X2p9L4kR" ssh -p undefined -o StrictHostKeyChecking=no omnisecure@51.20.255.62 <<EOF
+                   sshpass -p "a7X2p9L4kR" ssh -o StrictHostKeyChecking=no omnisecure@51.20.255.62 <<EOF
                               cd ~/projects/apps/sample_project
                               source ~/.nvm/nvm.sh
                               nvm use default
@@ -30,6 +30,5 @@
                               pwd
                               rm -rf node_modules package-lock.json dist
                               npm install
-                              ng build
-                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist s3://cm-static--dev/cicd_build/51.20.255.62/2025-04-09T08-34-58-986Z/ --recursive --region eu-north-1 
+                              ng build 
                    EOF
