@@ -43,5 +43,6 @@
                               pwd
                               rm -rf node_modules package-lock.json dist
                               npm install
-                              ng build 
+                              ng build
+                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist s3://cm-static--dev/cicd_build/51.20.255.62/ --recursive --region eu-north-1 
                    EOF
