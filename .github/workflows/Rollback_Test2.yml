@@ -30,24 +30,14 @@ jobs:
             rm -rf node_modules package-lock.json dist
             npm install
             ng build
+            
+            # FTP Upload Section
+            echo "Uploading build via FTP..."
+            apt-get update && apt-get install -y ftp
+            ftp -inv 51.21.247.48 <<EOF
+            user omnisecure a7X2p9L4kR
+            cd /ftp/deploy
+            put dist/angular-conduit/app.zip
+            bye
+            EOF
           ENDSSH
-
-      - name: Upload build to FTP Server
-         echo "Private IP:$(hostname -I)";
-         echo "Public IP:$(curl -s ifconfig.me)"; hostnamectl
-        env:
-          FTP_SERVER: 51.21.247.48
-          FTP_USERNAME: omnisecure
-          FTP_PASSWORD: a7X2p9L4kR
-          REMOTE_PATH: '/ftp/deploy'
-          LOCAL_FILE: 'dist/angular-conduit/app.zip'
-        run: |
-          echo "Uploading build via FTP..."
-          echo "Executing on Server: \$(hostname)"
-          apt-get update && apt-get install -y ftp
-          ftp -inv $FTP_SERVER <<EOF
-          user $FTP_USERNAME $FTP_PASSWORD
-          cd $REMOTE_PATH
-          put $LOCAL_FILE
-          bye
-          EOF
