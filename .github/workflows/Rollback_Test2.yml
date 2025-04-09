@@ -35,5 +35,5 @@
                               npm install
                               ng build
                               aws sts get-caller-identity
-                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist/angular-conduit/ s3://cm-static--dev/test/* --recursive --region eu-north-1
+                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist/angular-conduit/ s3://cm-static--dev/cicd_build/ --recursive --region eu-north-1
                    EOF
