@@ -22,9 +22,6 @@
                - name: Run script on the VM
                  run: |
                    sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.247.48 <<EOF
-                              export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-                              export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-                              export AWS_REGION=eu-north-1
                               cd ~/projects/apps/sample_project
                               source ~/.nvm/nvm.sh
                               nvm use default
@@ -33,7 +30,16 @@
                               pwd
                               rm -rf node_modules package-lock.json dist
                               npm install
-                              ng build
-                              aws sts get-caller-identity
-                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist/angular-conduit/ s3://cm-static--dev/cicd_build/ --recursive --region eu-north-1
-                   EOF
+                              ng build        
+                   EOF                   
+               - name: Upload to FTP Server
+                 env:
+                  FTP_SERVER: 51.21.247.48
+                  FTP_USERNAME: omnisecure
+                  FTP_PASSWORD: a7X2p9L4kR
+                  REMOTE_PATH: '/ftp/deploy'
+                  LOCAL_FILE: 'build/app.zip'
+                 run: |
+                  chmod +x ftp_upload.sh
+                  ./ftp_upload.sh "$FTP_SERVER" "$FTP_USERNAME" "$FTP_PASSWORD" "$REMOTE_PATH" "$LOCAL_FILE"
+
