@@ -32,10 +32,15 @@
             needs: [SONARQUBE]
             runs-on: ubuntu-latest
             steps:
-               - name: Run script on the VM
-                 run: |
-                   sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.247.48 <<EOF
-                              cd ~/projects/apps/sample_project
+               - name: Retry Run script on the VM
+                 uses: nick-fields/retry@v2
+                 with:
+                   timeout_seconds: 300
+                   max_attempts: 2
+                   retry_on: error
+                   command: |
+                    sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.247.48 <<EOF
+           cd ~/projects/apps/sample_project
                               source ~/.nvm/nvm.sh
                               nvm use default
                               node -v
@@ -48,5 +53,5 @@
                               export AWS_SECRET_ACCESS_KEY=\${{ secrets.AWS_SECRET_ACCESS_KEY }}
                               export AWS_REGION=eu-north-1
                               export BUILD_TIMESTAMP=\$(date +"%d-%b-%Y_%H:%M:%S")
-                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist s3://cm-static--dev/cicd_build/51.21.247.48/\${BUILD_TIMESTAMP}/ --recursive --region eu-north-1 
-                   EOF
+                              aws s3 cp /home/omnisecure/projects/apps/sample_project/dist s3://cm-static--dev/cicd/51.21.247.48/\${BUILD_TIMESTAMP}/ --recursive --region eu-north-1 
+                    EOF 
