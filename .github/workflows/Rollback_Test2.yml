@@ -19,7 +19,7 @@ jobs:
         run: |
           sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.247.48 << 'ENDSSH'
             echo "Executing on Server1:"
-            hostnamectl
+            hostname
             cd ~/projects/apps/sample_project
             source ~/.nvm/nvm.sh
             nvm use default
