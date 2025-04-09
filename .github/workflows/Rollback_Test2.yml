@@ -19,7 +19,9 @@ jobs:
         run: |
           sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.247.48 << 'ENDSSH'
             echo "Executing on Server1:"
-            hostname
+            echo "Private IP:$(hostname -I)";
+            echo "Public IP:$(curl -s ifconfig.me)";
+            hostnamectl
             cd ~/projects/apps/sample_project
             source ~/.nvm/nvm.sh
             nvm use default
@@ -31,6 +33,8 @@ jobs:
           ENDSSH
 
       - name: Upload build to FTP Server
+         echo "Private IP:$(hostname -I)";
+         echo "Public IP:$(curl -s ifconfig.me)"; hostnamectl
         env:
           FTP_SERVER: 51.21.247.48
           FTP_USERNAME: omnisecure
