@@ -31,26 +31,35 @@ jobs:
             npm install
             ng build
 
-             echo "Checking if FTP is installed and running..."
-
-            # Check if vsftpd or proftpd is installed
-            if dpkg -l | grep -q vsftpd; then
-              echo "vsftpd is installed"
-              systemctl status vsftpd || echo "vsftpd service is not running"
-            elif dpkg -l | grep -q proftpd; then
-              echo "proftpd is installed"
-              systemctl status proftpd || echo "proftpd service is not running"
-            else
-              echo "No FTP server installed"
+            echo "Checking if FTP is installed and running..."
+            # Install vsftpd if not present
+            if ! dpkg -l | grep -q vsftpd; then
+              echo "Installing vsftpd..."
+              echo "a7X2p9L4kR" | sudo -S apt-get update
+              echo "a7X2p9L4kR" | sudo -S apt-get install -y vsftpd
+              echo "a7X2p9L4kR" | sudo -S systemctl start vsftpd
+              echo "a7X2p9L4kR" | sudo -S systemctl enable vsftpd
             fi
 
-            # Check if FTP port 21 is listening
-            if ss -tuln | grep -q ':21'; then
-              echo "FTP port (21) is open"
-            else
-              echo "FTP port (21) is not open"
+            # Open FTP Port
+            echo "a7X2p9L4kR" | sudo -S ufw allow 21/tcp || true
+
+            # Install ftp client if not exists
+            if ! command -v ftp &> /dev/null; then
+              echo "Installing FTP Client..."
+              echo "a7X2p9L4kR" | sudo -S apt-get install -y ftp
             fi
-            
+
+            # Upload build
+            cd dist/angular-conduit
+            zip -r app.zip .
+
+            ftp -inv 13.61.0.41 <<EOF
+            user omnisecure a7X2p9L4kR
+            cd /ftp/deploy
+            put app.zip
+            bye
+            EOF
             # FTP Upload Section
             echo "Uploading build via FTP..."
             sudo apt-get update && apt-get install -y vsftpd
@@ -60,3 +69,4 @@ jobs:
             put dist/angular-conduit/app.zip
             bye
           EOF
+          ENDSSH
