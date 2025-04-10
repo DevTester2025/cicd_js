@@ -54,7 +54,7 @@ jobs:
             # FTP Upload Section
             echo "Uploading build via FTP..."
             sudo apt-get update && apt-get install -y ftp
-            ftp -inv 51.21.247.48 <<EOF
+            ftp -inv 13.61.0.41 <<EOF
             user omnisecure a7X2p9L4kR
             cd /ftp/deploy
             put dist/angular-conduit/app.zip
