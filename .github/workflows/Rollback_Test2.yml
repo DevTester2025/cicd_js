@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Run build script on VM over SSH
         run: |
-          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.247.48 << 'ENDSSH'
+          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@13.61.0.41 << 'ENDSSH'
             echo "Executing on Server1:"
             echo "Private IP:$(hostname -I)";
             echo "Public IP:$(curl -s ifconfig.me)";
