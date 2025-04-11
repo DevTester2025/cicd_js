@@ -39,7 +39,7 @@ jobs:
           ssh-keyscan -p 222 13.61.146.226 >> ~/.ssh/known_hosts
           
           sshpass -p "a7X2p9L4kR" sftp -P 222 omnisecure@13.61.146.226 << 'ENDSFTP'
-            cd /home/omnisecure/projects/apps/sample_project/deployment_path   # Destination path
-            lcd dist/angular-conduit   # Local build output folder
-            put -r *                   # Upload all build files
+            cd /home/omnisecure/projects/apps/sample_project/dist
+            lcd /home/omnisecure/projects/apps/sample_project/dist # Local build output folder
+            put -r *   # Upload all build files
           ENDSFTP
