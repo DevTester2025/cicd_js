@@ -40,12 +40,15 @@ jobs:
             cd ~/projects/apps/sample_project/dist
             echo "Uploading build to FTP server..."
             zip -r app.zip .
-            ftp -n <<EOF
-            open 13.61.146.226
-            user omnisecure a7X2p9L4kR
-            cd projects
-            put app.zip
-            bye
-            EOF
+             # Using lftp which handles passive mode better
+            lftp -e "
+              set ftp:passive-mode on;
+              set ftp:prefer-epsv no;
+              open 13.61.146.226;
+              user omnisecure a7X2p9L4kR;
+              cd projects;
+              put app.zip;
+              bye
+              "
           ENDSSH
       
