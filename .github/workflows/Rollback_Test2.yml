@@ -39,6 +39,6 @@ jobs:
           ssh-keyscan -p 222 13.61.146.226 >> ~/.ssh/known_hosts
           
           sshpass -p "a7X2p9L4kR" sftp -P 222 omnisecure@13.61.146.226 << 'ENDSFTP'
-            cd ~/projects/apps/sample_project/dist
+            cd /home/omnisecure/projects/apps/sample_project/dist
             ls -la
           ENDSFTP
