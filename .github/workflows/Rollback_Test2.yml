@@ -39,6 +39,7 @@ jobs:
             set -e
             cd ~/projects/apps/sample_project/dist
             echo "Uploading build to FTP server..."
+            zip -r app.zip .
             ftp -inv <<EOF
             open 13.61.146.226
             user omnisecure a7X2p9L4kR
