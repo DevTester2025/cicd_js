@@ -31,20 +31,14 @@ jobs:
             rm -rf node_modules package-lock.json dist
             npm install
             ng build
-        
+          ENDSSH
+
       - name: Run SFTP script on VM over SSH
         run: |
-          # First get the host key and add it to known_hosts
           mkdir -p ~/.ssh
           ssh-keyscan -p 222 13.61.146.226 >> ~/.ssh/known_hosts
           
-          sshpass -p "a7X2p9L4kR" ssh -p 222 omnisecure@13.61.146.226 << 'ENDSSH'
-            set -e
+          sshpass -p "a7X2p9L4kR" sftp -P 222 omnisecure@13.61.146.226 << 'ENDSFTP'
             cd ~/projects/apps/sample_project/dist
-            echo "Uploading build to SFTP server..."
-            zip -r app.zip .
-            sftp -oPort=222 -oBatchMode=no -b - omnisecure@13.61.146.226 <<EOF
-              put app.zip
-              bye
-            EOF
-          ENDSSH
+            ls -la
+          ENDSFTP
