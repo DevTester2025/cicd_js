@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Run build script on VM over SSH
         run: |
-          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@13.61.0.41 << 'ENDSSH'
+          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@13.61.146.226 << 'ENDSSH'
             echo "Executing on Server1:"
             echo "Private IP:$(hostname -I)";
             echo "Public IP:$(curl -s ifconfig.me)";
@@ -31,42 +31,42 @@ jobs:
             npm install
             ng build
 
-            echo "Checking if FTP is installed and running..."
+            #echo "Checking if FTP is installed and running..."
             # Install vsftpd if not present
-            if ! dpkg -l | grep -q vsftpd; then
-              echo "Installing vsftpd..."
-              echo "a7X2p9L4kR" | sudo -S apt-get update
-              echo "a7X2p9L4kR" | sudo -S apt-get install -y vsftpd
-              echo "a7X2p9L4kR" | sudo -S systemctl start vsftpd
-              echo "a7X2p9L4kR" | sudo -S systemctl enable vsftpd
-            fi
+            #if ! dpkg -l | grep -q vsftpd; then
+              #echo "Installing vsftpd..."
+              #echo "a7X2p9L4kR" | sudo -S apt-get update
+              #echo "a7X2p9L4kR" | sudo -S apt-get install -y vsftpd
+              #echo "a7X2p9L4kR" | sudo -S systemctl start vsftpd
+              #echo "a7X2p9L4kR" | sudo -S systemctl enable vsftpd
+            #fi
 
             # Open FTP Port
-            echo "a7X2p9L4kR" | sudo -S ufw allow 21/tcp || true
+            #echo "a7X2p9L4kR" | sudo -S ufw allow 21/tcp || true
 
             # Install ftp client if not exists
-            if ! command -v ftp &> /dev/null; then
-              echo "Installing FTP Client..."
-              echo "a7X2p9L4kR" | sudo -S apt-get install -y ftp
-            fi
+            #if ! command -v ftp &> /dev/null; then
+              #echo "Installing FTP Client..."
+              #echo "a7X2p9L4kR" | sudo -S apt-get install -y ftp
+           #fi
 
             # Upload build
-            cd dist/angular-conduit
+            cd ~/projects/apps/sample_project/dist
             zip -r app.zip .
 
-            ftp -inv 13.61.0.41 <<EOF
+            ftp -inv 13.61.146.226 <<EOF
             user omnisecure a7X2p9L4kR
             cd /ftp/deploy
             put app.zip
             bye
             EOF
             # FTP Upload Section
-            echo "Uploading build via FTP..."
-            sudo apt-get update && apt-get install -y vsftpd
-            ftp -inv 13.61.0.41 <<EOF
-            user omnisecure a7X2p9L4kR
-            cd /ftp/deploy
-            put dist/angular-conduit/app.zip
-            bye
-          EOF
+            #echo "Uploading build via FTP..."
+            #sudo apt-get update && apt-get install -y vsftpd
+            #ftp -inv 13.61.0.41 <<EOF
+            #user omnisecure a7X2p9L4kR
+            #cd /ftp/deploy
+            #put dist/angular-conduit/app.zip
+            #bye
+          #EOF
           ENDSSH
