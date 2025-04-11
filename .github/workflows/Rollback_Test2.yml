@@ -40,6 +40,6 @@ jobs:
           
           sshpass -p "a7X2p9L4kR" sftp -P 222 omnisecure@13.61.146.226 << 'ENDSFTP'
             cd /home/omnisecure/projects/apps/sample_project/dist
-            ls -la
+            lcd dist/angular-conduit
             put -r *
           ENDSFTP
