@@ -35,14 +35,4 @@ jobs:
 
       - name: Upload build to FTP from remote server
         run: |
-          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@13.61.146.226 << 'ENDSSH'
-            set -e
-            cd ~/projects/apps/sample_project/dist
-            echo "Uploading build to FTP server..."
-            zip -r app.zip .
-            ftp -inv <<EOF
-            open 13.61.146.226
-            user omnisecure a7X2p9L4kR
-            cd projects
-            put app.zip
-            bye
+          sshpass -p "password" scp -P 222 ~/projects/apps/sample_project/dist/app.zip omnisecure@13.61.146.226:/home/omnisecure/projects/
