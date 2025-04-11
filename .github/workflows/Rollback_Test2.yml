@@ -32,7 +32,22 @@ jobs:
             npm install
             ng build
           ENDSSH
-
+        
       - name: Upload build to FTP from remote server
         run: |
-          sshpass -p "password" scp -P 222 ~/projects/apps/sample_project/dist/app.zip omnisecure@13.61.146.226:/home/omnisecure/projects/
+          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@13.61.146.226 << 'ENDSSH'
+            set -e
+            cd ~/projects/apps/sample_project/dist
+            echo "Uploading build to FTP server..."
+            zip -r app.zip .
+            
+            # Try active mode if passive fails
+            ftp -n <<EOF
+            open 13.61.146.226
+            user $FTP_USER ${{ secrets.FTP_PASSWORD }}
+            cd projects
+            put app.zip
+            bye
+            EOF
+          ENDSSH
+      
