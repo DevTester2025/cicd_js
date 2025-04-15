@@ -32,10 +32,15 @@
             needs: [SONARQUBE]
             runs-on: ubuntu-latest
             steps:
-               - name: Run script on the VM
-                 run: |
-                   sshpass -p "a7X2p9L4kR" ssh -o StrictHostKeyChecking=no omnisecure@51.21.131.56 <<EOF
-                              cd ~/projects/apps/sample_project
+               - name: Retry Run script on the VM
+                 uses: nick-fields/retry@v2
+                 with:
+                   timeout_seconds: 300
+                   max_attempts: 2
+                   retry_on: error
+                   command: |
+                    sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.21.131.56 <<EOF
+                            cd ~/projects/apps/sample_project
                               source ~/.nvm/nvm.sh
                               nvm use default
                               node -v
@@ -43,8 +48,18 @@
                               pwd
                               rm -rf node_modules package-lock.json dist
                               npm install
-                              ng build 
-                   EOF
+                              ng build
+                              export BUILD_TIMESTAMP=\$(TZ="Asia/Kolkata" date +"%d-%b-%Y_%H:%M:%S")
+                              echo "Uploading to FTP: /home/omnisecure/cicd_build/\${BUILD_TIMESTAMP}/"
+                              sshpass -p "a7X2p9L4kR" sftp -oPort=222 \
+                                -o StrictHostKeyChecking=no \
+                                -o UserKnownHostsFile=/dev/null \
+                                omnisecure@51.21.131.56 <<SFTP_EOF
+                              mkdir /home/omnisecure/cicd_build/\${BUILD_TIMESTAMP}
+                              put -r /home/omnisecure/projects/apps/sample_project/dist/* /home/omnisecure/cicd_build/\${BUILD_TIMESTAMP}
+                              bye
+                              SFTP_EOF 
+                    EOF 
 
         #---------------- DOCKER
           DOCKERHUB:
