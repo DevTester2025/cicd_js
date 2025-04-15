@@ -40,6 +40,6 @@ jobs:
            mkdir \$BACKUP_PATH
            put -r /home/omnisecure/projects/apps/sample_project/dist/* \$BACKUP_PATH
            bye
-          SFTP_EOF
+         SFTP_EOF
           echo "SFTP upload complete."
          ENDSSH
