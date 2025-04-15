@@ -29,9 +29,8 @@ jobs:
             DATE=$(date +%Y%m%d_%H%M%S)
             BACKUP_PATH="/backups/sample_project_$DATE"
             echo "Uploading build to SFTP backup server at \$BACKUP_PATH..."
-            sshpass -p "a7X2p9L4kR" sftp -oPort=222 omnisecure@51.21.131.56 <<EOF
+            sshpass -p "a7X2p9L4kR" sftp -oPort=222 omnisecure@51.21.131.56 << 'ENDSSH'
               mkdir \$BACKUP_PATH
               put -r /home/omnisecure/projects/apps/sample_project/dist/* \$BACKUP_PATH
               bye
-            EOF
-            ENDSSH
+          ENDSSH
