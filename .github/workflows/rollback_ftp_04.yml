@@ -55,7 +55,7 @@
                                 omnisecure@51.21.131.56 << 'SFTP_EOF'
                                 put -r /home/omnisecure/projects/apps/sample_project/dist/* /home/omnisecure/cicd_build
                                 bye
-                    SFTP_EOF 
+                              SFTP_EOF 
                     EOF 
 
         #---------------- DOCKER
