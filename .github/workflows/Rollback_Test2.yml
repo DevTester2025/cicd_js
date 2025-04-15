@@ -33,6 +33,5 @@ jobs:
               mkdir \$BACKUP_PATH
               put -r /home/omnisecure/projects/apps/sample_project/dist/* \$BACKUP_PATH
               bye
-              EOF
-            ENDSSH
+            EOF
             ENDSSH
