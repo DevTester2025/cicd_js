@@ -49,13 +49,13 @@
                               rm -rf node_modules package-lock.json dist
                               npm install
                               ng build
-                              sshpass -p "a7X2p9L4kR" sftp -oPort=222 \
-                                -o StrictHostKeyChecking=no \
-                                -o UserKnownHostsFile=/dev/null \
-                                omnisecure@51.21.131.56 << 'SFTP_EOF'
-                                put -r /home/omnisecure/projects/apps/sample_project/dist/* /home/omnisecure/cicd_build
-                                bye
-                                   SFTP_EOF 
+                                  sshpass -p "a7X2p9L4kR" sftp -oPort=222 \
+                                    -o StrictHostKeyChecking=no \
+                                    -o UserKnownHostsFile=/dev/null \
+                                    omnisecure@51.21.131.56 <<'SFTP_EOF'
+                                    put -r /home/omnisecure/projects/apps/sample_project/dist/* /home/omnisecure/cicd_build
+                                    bye
+                              SFTP_EOF 
                     EOF 
 
         #---------------- DOCKER
