@@ -65,6 +65,7 @@ jobs:
           username: devtester2025
           password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
       - name: Current working directory
+        run: |
          PWD
          ll
          ls
