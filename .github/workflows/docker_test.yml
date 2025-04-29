@@ -48,7 +48,7 @@ jobs:
       - name: Download build artifacts from VM
         run: |
           mkdir -p dist
-          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/ ./dist/
+          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/angular-conduit ./dist
           ls -la dist/  # Verify files were copied
 
   #---------------- DOCKER
@@ -59,7 +59,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Verify files exist
-        run: ls -la dist/angular-conduit/
+        run: ls -la dist
       - name: Print working directory (before setup)
         run: pwd
       - name: Set up Docker Buildx
