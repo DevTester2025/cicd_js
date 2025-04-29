@@ -43,7 +43,8 @@
                               pwd
                               rm -rf node_modules package-lock.json dist
                               npm install
-                              ng build 
+                              ng build
+                              echo "Docker should COPY from: /usr/src/app/dist/$(ls -1 dist/)"
                    EOF
 
         #---------------- DOCKER
