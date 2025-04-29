@@ -40,7 +40,7 @@ jobs:
             pwd
             rm -rf node_modules package-lock.json dist
             npm install
-            ng build
+            ng build --configuration=production --output-path=dist/cloudmatiq-web
             echo "Build output contents>>:"
             ls -la dist/
             echo "Docker should COPY from: dist/$(ls -1 dist/)"
@@ -48,7 +48,7 @@ jobs:
       - name: Download build artifacts from VM
         run: |
           mkdir -p dist
-          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/angular-conduit ./dist
+          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/cloudmatiq-web ./dist
           ls -la dist/  # Verify files were copied
 
   #---------------- DOCKER
