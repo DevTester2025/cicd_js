@@ -28,24 +28,22 @@ jobs:
     needs: [SONARQUBE]
     runs-on: ubuntu-latest
     steps:
-    - name: Run script on the VM
-      run: |
-        sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.80.105 <<EOF
-          # Prepare target directory
-          sudo mkdir -p /usr/src/app/dist
-          sudo chown omnisecure:omnisecure /usr/src/app/dist
-          
-          # Build directly to target location
-          cd ~/projects/apps/sample_project
-          source ~/.nvm/nvm.sh
-          nvm use default
-          npm install
-          ng build --output-path=/usr/src/app/dist/cloudmatiq-web
-          
-          # Verify
-          echo "Build output:"
-          ls -la /usr/src/app/dist/cloudmatiq-web
-        EOF
+      - name: Run script on the VM
+        run: |
+          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.80.105 <<EOF
+            cd ~/projects/apps/sample_project
+            source ~/.nvm/nvm.sh
+            nvm use default
+            node -v
+            cd ~/projects/apps/sample_project
+            pwd
+            rm -rf node_modules package-lock.json dist
+            npm install
+            ng build --output-path=usr/src/app/dist/cloudmatiq-web
+            echo "Build output contents>>:"
+            ls -la dist/
+            echo "Docker should COPY from: dist/$(ls -1 dist/)"
+          EOF
 
   #---------------- DOCKER
   DOCKERHUB:
