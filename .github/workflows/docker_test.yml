@@ -44,6 +44,7 @@ jobs:
             echo "Build output contents>>:"
             ls -la dist/
             echo "Docker should COPY from: dist/$(ls -1 dist/)"
+            ls -la dist/cloudmatiq-web/  # Verify
           EOF
       - name: Download build artifacts from VM
         run: |
@@ -67,12 +68,11 @@ jobs:
         with:
           username: devtester2025
           password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
-      - name: Print working directory (before build)
+      - name: Prepare Docker context
         run: |
-          pwd
-          ls -la
-      - name: Clear Docker cache
-        run: docker builder prune --force
+          mkdir -p usr/src/app/dist
+          cp -r dist/cloudmatiq-web usr/src/app/dist/  # Match Dockerfile path
+          ls -la usr/src/app/dist/cloudmatiq-web/ 
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
