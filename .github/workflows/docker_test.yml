@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  
 
   #---------------- SONARQUBE
   SONARQUBE:
@@ -35,23 +35,44 @@ jobs:
             source ~/.nvm/nvm.sh
             nvm use default
             node -v
+            cd ~/projects/apps/sample_project
+            pwd
             rm -rf node_modules package-lock.json dist
             npm install
-            ng build --output-path=dist/angular-conduit
+            ng build --output-path=usr/src/app/dist/cloudmatiq-web
             echo "Build output contents>>:"
             ls -la dist/
-            echo "Building Docker image..."
-            docker build -t devtester2025/pipelinev1:main .
-            echo "Pushing Docker image..."
-            docker login -u devtester2025 -p dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
-            docker push devtester2025/pipelinev1:main
+            echo "Docker should COPY from: dist/$(ls -1 dist/)"
           EOF
+      - name: Download build artifacts from VM
+        run: |
+          mkdir -p dist
+          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:~/projects/apps/sample_project/dist/ ./dist/
 
-
+  #---------------- DOCKER
+  DOCKERHUB:
+    needs: [BUILD_SCRIPT]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: devtester2025
+          password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: devtester2025/pipelinev1:main
 
   #---------------- VIRTUAL_MACHINE
   VIRTUAL_MACHINE:
-    needs: [BUILD_SCRIPT]
+    needs: [DOCKERHUB]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
