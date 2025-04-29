@@ -58,8 +58,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Verify files exist
-        run: ls -la dist
       - name: Print working directory (before setup)
         run: pwd
       - name: Set up Docker Buildx
