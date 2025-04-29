@@ -24,7 +24,7 @@ RUN if [ "$ENV" = "demo" ]; then npm run build-demo; fi
 FROM node:16
 WORKDIR /app
 # COPY --from=build /usr/src/app/dist/cloudmatiq-web /app
-COPY --from=build /usr/src/app/dist/angular-conduit /app
+COPY --from=build /usr/src/app/dist/angular-conduit/angular-conduit /app
 RUN npm i -g serve@13.0.0
 CMD ["serve", "-s", "-l", "4200"]
 EXPOSE 4200
