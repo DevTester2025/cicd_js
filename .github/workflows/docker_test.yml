@@ -57,6 +57,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Print working directory (before setup)
+        run: pwd
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -64,11 +66,10 @@ jobs:
         with:
           username: devtester2025
           password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
-      - name: Current working directory
+      - name: Print working directory (before build)
         run: |
-         PWD
-         ll
-         ls
+          pwd
+          ls -la
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
