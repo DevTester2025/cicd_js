@@ -45,10 +45,10 @@ jobs:
             ls -la dist/
             echo "Docker should COPY from: dist/$(ls -1 dist/)"
           EOF
-      - name: Download build artifacts from VM
-        run: |
-          mkdir -p dist
-          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:~/projects/apps/sample_project/dist/ ./dist/
+      # - name: Download build artifacts from VM
+      #   run: |
+      #     mkdir -p dist
+      #     sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:~/projects/apps/sample_project/dist/ ./dist/
 
   #---------------- DOCKER
   DOCKERHUB:
@@ -64,7 +64,10 @@ jobs:
         with:
           username: devtester2025
           password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
-          echo "Current working directory: $PWD"
+      - name: Current working directory
+         PWD
+         ll
+         ls
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
