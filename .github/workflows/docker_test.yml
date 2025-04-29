@@ -30,6 +30,7 @@ jobs:
     steps:
       - name: Run script on the VM
         run: |
+          echo "Current working directory build: $PWD"
           sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.80.105 <<EOF
             cd ~/projects/apps/sample_project
             source ~/.nvm/nvm.sh
@@ -63,13 +64,13 @@ jobs:
         with:
           username: devtester2025
           password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
+          echo "Current working directory: $PWD"
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: devtester2025/pipelinev1:main
-
   #---------------- VIRTUAL_MACHINE
   VIRTUAL_MACHINE:
     needs: [DOCKERHUB]
