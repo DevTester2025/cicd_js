@@ -58,6 +58,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Verify files exist
+        run: ls -la dist/angular-conduit/
       - name: Print working directory (before setup)
         run: pwd
       - name: Set up Docker Buildx
@@ -71,6 +73,8 @@ jobs:
         run: |
           pwd
           ls -la
+      - name: Clear Docker cache
+        run: docker builder prune --force
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
