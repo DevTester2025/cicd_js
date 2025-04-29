@@ -42,7 +42,7 @@ name: docker_test
                               rm -rf node_modules package-lock.json dist
                               npm install
                               ng build
-                              echo "Build output contents:"
+                              echo "Build output contents>>:"
                               ls -la dist/
                               echo "Docker should COPY from: dist/$(ls -1 dist/)"
                    EOF
