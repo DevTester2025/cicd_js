@@ -45,10 +45,11 @@ jobs:
             ls -la dist/
             echo "Docker should COPY from: dist/$(ls -1 dist/)"
           EOF
-      # - name: Download build artifacts from VM
-      #   run: |
-      #     mkdir -p dist
-      #     sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:~/projects/apps/sample_project/dist/ ./dist/
+      - name: Download build artifacts from VM
+        run: |
+          mkdir -p dist
+          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/ ./dist/
+          ls -la dist/  # Verify files were copied
 
   #---------------- DOCKER
   DOCKERHUB:
