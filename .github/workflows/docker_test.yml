@@ -21,7 +21,7 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: sqp_d5c17085de7fd62151dcac07600573c7c9ca70cc
-          SONAR_HOST_URL: http://51.20.80.105:9000
+          SONAR_HOST_URL: http://56.228.14.44:9000
   
   #---------------- BUILD_SCRIPT
   BUILD_SCRIPT:
@@ -31,7 +31,7 @@ jobs:
       - name: Run script on the VM
         run: |
           # 1. Run build on VM
-          sshpass -p "a7X2p9L4kR" ssh -p 222 omnisecure@51.20.80.105 <<EOF
+          sshpass -p "a7X2p9L4kR" ssh -p 222 omnisecure@56.228.14.44 <<EOF
             cd ~/projects/apps/sample_project
             rm -rf dist
             npm run build-prod  # Ensure this outputs to dist/cloudmatiq-web
@@ -41,7 +41,7 @@ jobs:
           # 2. Download artifacts to GitHub runner
           mkdir -p ./usr/src/app/dist  # <- Docker expects files here
           sshpass -p "a7X2p9L4kR" scp -P 222 -r \
-            omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/cloudmatiq-web \
+            omnisecure@56.228.14.44:/home/omnisecure/projects/apps/sample_project/dist/cloudmatiq-web \
             ./usr/src/app/dist/
 
           # 3. Verify files are in the right place for Docker
