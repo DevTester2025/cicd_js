@@ -24,7 +24,6 @@ jobs:
           SONAR_HOST_URL: http://56.228.14.44:9000
   
   #---------------- BUILD_SCRIPT
-  #---------------- BUILD_SCRIPT
   BUILD_SCRIPT:
     needs: [SONARQUBE]
     runs-on: ubuntu-latest
