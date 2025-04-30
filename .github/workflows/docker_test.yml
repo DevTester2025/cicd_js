@@ -24,28 +24,36 @@ jobs:
           SONAR_HOST_URL: http://56.228.14.44:9000
   
   #---------------- BUILD_SCRIPT
-  BUILD_SCRIPT:
-    needs: [SONARQUBE]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run script on the VM
-        run: |
-          # 1. Run build on VM
-          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@56.228.14.44 <<EOF
-            cd ~/projects/apps/sample_project
-            rm -rf dist
-            npm run build-prod  # Ensure this outputs to dist/cloudmatiq-web
-            ls -la dist/cloudmatiq-web/  # Verify files exist
-          EOF
+  #---------------- BUILD_SCRIPT
+BUILD_SCRIPT:
+  needs: [SONARQUBE]
+  runs-on: ubuntu-latest
+  steps:
+    - name: Run script on the VM
+      run: |
+        # 1. Run build on VM with error handling
+        sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@56.228.14.44 <<EOF
+          set -e  # Exit immediately if any command fails
+          cd ~/projects/apps/sample_project
+          rm -rf dist
+          echo "Running npm install..."
+          npm install || { echo "npm install failed"; exit 1; }
+          echo "Running build command..."
+          npm run build-prod || { echo "Build failed"; exit 1; }
+          echo "Build completed. Contents of dist:"
+          ls -la dist/
+          echo "Looking for cloudmatiq-web:"
+          ls -la dist/cloudmatiq-web/ || { echo "cloudmatiq-web directory not found"; exit 1; }
+        EOF
 
-          # 2. Download artifacts to GitHub runner
-          mkdir -p ./usr/src/app/dist  # <- Docker expects files here
-          sshpass -p "a7X2p9L4kR" scp -P 222 -r \
-            omnisecure@56.228.14.44:/home/omnisecure/projects/apps/sample_project/dist/cloudmatiq-web \
-            ./usr/src/app/dist/
+        # 2. Download artifacts to GitHub runner
+        mkdir -p ./usr/src/app/dist
+        sshpass -p "a7X2p9L4kR" scp -P 222 -r \
+          omnisecure@56.228.14.44:/home/omnisecure/projects/apps/sample_project/dist/cloudmatiq-web \
+          ./usr/src/app/dist/
 
-          # 3. Verify files are in the right place for Docker
-          ls -la ./usr/src/app/dist/cloudmatiq-web/
+        # 3. Verify files
+        ls -la ./usr/src/app/dist/cloudmatiq-web/
  
  #---------------- DOCKER
   DOCKERHUB:
