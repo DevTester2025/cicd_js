@@ -31,7 +31,7 @@ jobs:
       - name: Run script on the VM
         run: |
           # 1. Run build on VM
-          sshpass -p "a7X2p9L4kR" ssh -p 222 omnisecure@56.228.14.44 <<EOF
+          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@56.228.14.44 <<EOF
             cd ~/projects/apps/sample_project
             rm -rf dist
             npm run build-prod  # Ensure this outputs to dist/cloudmatiq-web
