@@ -11,7 +11,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
   
-  #---------------- SONARQUBE
+   #---------------- SONARQUBE
   SONARQUBE:
     needs: [build]
     runs-on: ubuntu-latest
@@ -19,40 +19,43 @@ jobs:
       - uses: actions/checkout@v3
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: http://56.228.14.44:9000
+        env:
+          SONAR_TOKEN: sqp_d5c17085de7fd62151dcac07600573c7c9ca70cc
+          SONAR_HOST_URL: http://56.228.14.44:9000
 
-  #---------------- BUILD ANGULAR ON GITHUB RUNNER
-  BUILD_ANGULAR:
-    needs: [SONARQUBE]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # Matches your Dockerfile
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-      - name: Build Angular app
-        run: npm run build-prod  # Or your specific build command
-      - name: Verify build output
-        run: ls -la dist/cloudmatiq-web/
+  #---------------- BUILD_SCRIPT
+  BUILD_SCRIPT:
+   needs: [SONARQUBE]
+   runs-on: ubuntu-latest
+   steps:
+   - name: Run script on the VM
+     run: |
+       sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@56.228.14.44 <<EOF
+       cd ~/projects/apps/sample_project
+       source ~/.nvm/nvm.sh
+       nvm use default
+       node -v
+       cd ~/projects/apps/sample_project
+       pwd
+       rm -rf node_modules package-lock.json dist
+       npm install
+       npm run build 
+       EOF
 
   #---------------- DOCKER BUILD & PUSH
   DOCKERHUB:
-    needs: [BUILD_ANGULAR]
+    needs: [BUILD_SCRIPT]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+            username: devtester2025
+            password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
