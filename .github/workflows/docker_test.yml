@@ -62,6 +62,8 @@ jobs:
           tags: devtester2025/pipelinev1:main
           context: .
           file: ./Dockerfile
+          build-args: |
+           ENV=dev
           
   #---------------- VIRTUAL_MACHINE
   VIRTUAL_MACHINE:
