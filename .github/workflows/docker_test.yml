@@ -30,12 +30,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: web-build-artifacts
-          path: ./dist/cloudmatiq-web/
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
