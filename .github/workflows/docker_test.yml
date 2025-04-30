@@ -24,11 +24,10 @@ jobs:
           SONAR_HOST_URL: http://56.228.14.44:9000
   
   #---------------- BUILD_SCRIPT
-  #---------------- BUILD_SCRIPT
-BUILD_SCRIPT:
-  needs: [SONARQUBE]
-  runs-on: ubuntu-latest
-  steps:
+  BUILD_SCRIPT:
+    needs: [SONARQUBE]
+    runs-on: ubuntu-latest
+    steps:
     - name: Run script on the VM
       run: |
         # 1. Run build on VM with error handling
