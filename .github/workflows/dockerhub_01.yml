@@ -63,6 +63,8 @@
                with:
                   push: true
                   tags: devtester2025/pipelinev2:main
+                  context: .
+                  file: ./Dockerfile
             
 
       #---------------- VIRTUAL_MACHINE
