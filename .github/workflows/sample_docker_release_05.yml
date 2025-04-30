@@ -27,7 +27,7 @@
                 SONAR_TOKEN: sqp_d5c17085de7fd62151dcac07600573c7c9ca70cc
                 SONAR_HOST_URL: http://56.228.14.44:9000
 
-    #---------------- BUILD_SCRIPT
+ #---------------- BUILD_SCRIPT
           BUILD_SCRIPT:
             needs: [SONARQUBE]
             runs-on: ubuntu-latest
