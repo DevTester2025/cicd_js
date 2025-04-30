@@ -23,7 +23,7 @@ RUN if [ "$ENV" = "demo" ]; then npm run build-demo; fi
 # Stage 2: Serve the Built Angular Application
 FROM node:16
 WORKDIR /app
-COPY --from=build /usr/src/app/dist/cloudmatiq-web /app
+COPY --from=build ./usr/src/app/dist/cloudmatiq-web /app
 RUN npm i -g serve@13.0.0
 CMD ["serve", "-s", "-l", "4200"]
 EXPOSE 4200
