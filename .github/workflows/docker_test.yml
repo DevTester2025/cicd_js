@@ -32,19 +32,20 @@ jobs:
       run: |
         # 1. Run build on VM with error handling
         sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@56.228.14.44 <<EOF
-          set -e  # Exit immediately if any command fails
           cd ~/projects/apps/sample_project
-          rm -rf dist
-          echo "Running npm install..."
-          npm install || { echo "npm install failed"; exit 1; }
-          echo "Running build command..."
-          npm run build-prod || { echo "Build failed"; exit 1; }
-          echo "Build completed. Contents of dist:"
-          ls -la dist/
-          echo "Looking for cloudmatiq-web:"
-          ls -la dist/cloudmatiq-web/ || { echo "cloudmatiq-web directory not found"; exit 1; }
+            source ~/.nvm/nvm.sh
+            nvm use default
+            node -v
+            cd ~/projects/apps/sample_project
+            pwd
+            rm -rf node_modules package-lock.json dist
+            npm install
+            ng build --configuration=production --output-path=dist/cloudmatiq-web
+            echo "Build output contents>>:"
+            ls -la dist/
+            echo "Docker should COPY from: dist/$(ls -1 dist/)"
+            ls -la dist/cloudmatiq-web/  # Verify
         EOF
-
         # 2. Download artifacts to GitHub runner
         mkdir -p ./usr/src/app/dist
         sshpass -p "a7X2p9L4kR" scp -P 222 -r \
