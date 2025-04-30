@@ -22,7 +22,7 @@ jobs:
         env:
           SONAR_TOKEN: sqp_d5c17085de7fd62151dcac07600573c7c9ca70cc
           SONAR_HOST_URL: http://51.20.80.105:9000
-
+  
   #---------------- BUILD_SCRIPT
   BUILD_SCRIPT:
     needs: [SONARQUBE]
@@ -30,55 +30,47 @@ jobs:
     steps:
       - name: Run script on the VM
         run: |
-          echo "Current working directory build: $PWD"
-          sshpass -p "a7X2p9L4kR" ssh -p 222 -o StrictHostKeyChecking=no omnisecure@51.20.80.105 <<EOF
+          # 1. Run build on VM
+          sshpass -p "a7X2p9L4kR" ssh -p 222 omnisecure@51.20.80.105 <<EOF
             cd ~/projects/apps/sample_project
-            source ~/.nvm/nvm.sh
-            nvm use default
-            node -v
-            cd ~/projects/apps/sample_project
-            pwd
-            rm -rf node_modules package-lock.json dist
-            npm install
-            ng build --configuration=production --output-path=dist/cloudmatiq-web
-            echo "Build output contents>>:"
-            ls -la dist/
-            echo "Docker should COPY from: dist/$(ls -1 dist/)"
-            ls -la dist/cloudmatiq-web/  # Verify
+            rm -rf dist
+            npm run build-prod  # Ensure this outputs to dist/cloudmatiq-web
+            ls -la dist/cloudmatiq-web/  # Verify files exist
           EOF
-      - name: Download build artifacts from VM
-        run: |
-          mkdir -p dist
-          sshpass -p "a7X2p9L4kR" scp -P 222 -r omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/cloudmatiq-web ./dist
-          ls -la dist/  # Verify files were copied
 
-  #---------------- DOCKER
+          # 2. Download artifacts to GitHub runner
+          mkdir -p ./usr/src/app/dist  # <- Docker expects files here
+          sshpass -p "a7X2p9L4kR" scp -P 222 -r \
+            omnisecure@51.20.80.105:/home/omnisecure/projects/apps/sample_project/dist/cloudmatiq-web \
+            ./usr/src/app/dist/
+
+          # 3. Verify files are in the right place for Docker
+          ls -la ./usr/src/app/dist/cloudmatiq-web/
+ 
+ #---------------- DOCKER
   DOCKERHUB:
     needs: [BUILD_SCRIPT]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Print working directory (before setup)
-        run: pwd
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: devtester2025
           password: dckr_pat_W9cx0PiYuv_5BgW54h7oBv1viCU
-      - name: Prepare Docker context
-        run: |
-          mkdir -p usr/src/app/dist
-          cp -r dist/cloudmatiq-web usr/src/app/dist/  # Match Dockerfile path
-          ls -la usr/src/app/dist/cloudmatiq-web/ 
-      - name: Build and push
+
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: devtester2025/pipelinev1:main
+          
   #---------------- VIRTUAL_MACHINE
   VIRTUAL_MACHINE:
     needs: [DOCKERHUB]
