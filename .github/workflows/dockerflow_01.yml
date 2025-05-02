@@ -64,7 +64,7 @@
                   push: true
                   context: .
                   file: ./Dockerfile
-              build-args: |
-                 ENV=dev
-                  tags: devtester2025/piplinev3:main
+                  build-args: |
+                   ENV=dev
+                   tags: devtester2025/piplinev3:main
             
